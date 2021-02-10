@@ -389,7 +389,7 @@ eg 3:
 \<kbd>Ctrl\</kbd>                                                                | <kbd>Ctrl</kbd>
 \<font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"\</font> | <font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"</font>
 \<table>\<tr>\<td bgcolor=orange>背景色是：orange\</td>\</tr>\</table>            | <table><tr><td bgcolor=orange>背景色是：orange</td></tr></table>
-篮球 \<br> 羽毛球             | 篮球 <br> 羽毛球
+篮球 \<br> 羽毛球                                                                | 篮球 <br> 羽毛球
 
 ### 转义
 
@@ -447,6 +447,7 @@ $$
 3. Markdown Shortcuts (提供快捷键功能)
 4. markdownlint (提供语法检查、提示与自动修复功能)
 5. Markdown Table Prettifier (提供表格美化功能)
+6. Markdown PDF（提供 Markdown 打印功能）
 
 ## 相关设置
 
@@ -490,6 +491,13 @@ key                                                             | command
 <kbd>Ctrl</kbd> + <kbd>.</kbd>                                  | 自动修复
 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> \  <kbd>L</kbd> | 格式化所有表格
 <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>→</kbd>                | 内容选取
+
+命令面板操作（ <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> ）：
+
+key              | command
+:----------------|:---------------------
+create table ... | 创建表格
+export ...       | 打印为 pdf、html、png  ...
 
 ## 格式转换 pandoc todo
 
