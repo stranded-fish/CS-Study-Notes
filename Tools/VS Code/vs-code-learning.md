@@ -108,6 +108,8 @@ key                                               | command
 :-------------------------------------------------|:---------------------
 <kbd>Ctrl</kbd> + <kbd>N</kbd>                    | 新建文件
 <kbd>Ctrl</kbd> + <kbd>W</kbd>                    | 关闭当前窗口
+<kbd>Ctrl</kbd> + <kbd>`</kbd>                    | 打开终端
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> | 新建终端
 <kbd>Ctrl</kbd> + <kbd>Tab</kbd>                  | 切换到最近使用文件
 <kbd>Ctrl</kbd> + <kbd>R</kbd>                    | 切换工作区
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> | 新建编辑器
