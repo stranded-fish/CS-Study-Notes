@@ -131,7 +131,7 @@ $ git commit --amend -m [message]
 ## 分支管理
 
 ```git
-# 列出所有 本地分支\远程分支\本地和远程分支
+# 列出所有本地分支\远程分支\本地和远程分支
 $ git branch [-r] [-a]
 
 # 新建一个分支，但依然停留在当前分支
@@ -213,6 +213,8 @@ $ git status
 $ git log
 
 # 显示所有分支的所有操作记录（包括 commit 和 reset 的操作）
+# 可以通过该命名查看当前 commit id 之前的操作
+# 如：通过 reset 命名回退版本后，git log 将只会显示到当前命名版本号，之后的版本号只能通过 git reflog 命令显示
 $ git reflog
 
 # 显示过去 5 次提交
@@ -244,12 +246,12 @@ $ git show [commit]
 $ git show --name-only [commit]
 
 # 显示某次提交时，某个文件的内容
-$ git show [commit]:[filename]
+$ git show [commit]:[file]
 ```
 
 ### 查看差异
 
-![状态差异查看](https://i.loli.net/2021/02/09/hSGbJzZ2YmvqEH8.png)
+![状态差异查看](https://i.loli.net/2021/02/11/pzGtnFD2y36PZ4e.png)
 
 ```git
 # 显示 工作区 和 暂存区 的差异
@@ -259,7 +261,7 @@ $ git diff [file]
 $ git diff [commit] [file]
 
 # 显示 暂存区 和 版本库 的差异
-$ git diff --cached [file]
+$ git diff --staged [file]
 
 # 显示 任意两个 版本库 版本（即任意两次提交的差异）
 $ git diff [commit] [commit]
@@ -305,8 +307,6 @@ $ git push [remote] --all
 
 `git fetch` 和 `git pull` 区别：
 
-![git fetch 和 git pull 区别](https://i.loli.net/2021/02/09/BePJ8GS97nWXLhv.png)
-
 * `git fetch` 只会将本地库所关联的远程库的 commit id 更新至最新；
 * `git pull` 会将本地库更新至远程库的最新状态，由于本地库进行了更新，`HEAD` 也会相应的指向最新的 commit id。
 
@@ -316,9 +316,9 @@ $ git push [remote] --all
 
 ### 撤销工作区文件修改
 
-若 工作区 的某个文件被修改了，但没有提交，可以通过 `git restore` 命令找回本次修改之前的文件。
+若 工作区 的某个文件被修改了，但没有提交，可以通过 `git restore` 命令恢复本次修改之前的文件。
 
-该命令会首先搜索 暂存区，若暂存区有该文件，则恢复该文件，否则恢复至上一次提交版本。
+该命令会首先搜索 暂存区，若 暂存区 有该文件，则恢复该文件，否则恢复至上一次提交版本。
 
 Changes not staged for commit:
 
@@ -337,6 +337,8 @@ Changes to be committed:
 $ git restore --staged [file]
 ```
 
+注意：该命令不会将 暂存区 内容覆盖至 工作区。（即工作区 内容将会保存，暂存区 内容将会被丢弃）
+
 ### 撤销本地提交
 
 ```git
@@ -346,9 +348,36 @@ $ git reset [commit]
 
 参数：
 
-* --soft：工作区 文件不会被修改，差异会被保存到 暂存区；
-* --mixed：工作区 文件不会被修改，差异不会被保存（默认参数）；
-* --hard：工作区 文件将会被修改为指定撤销的 commit，工作区 修改将会丢失。
+* --soft：工作区 文件不会被修改，原 版本库 内容会被保存到 暂存区；
+* --mixed：工作区 文件不会被修改，暂存区 与 版本库 都将被修改为指定 commit id 版本内容；
+* --hard：工作区 文件将会被修改，工作区、暂存区 与 版本库 都将被修改为指定 commit id 版本内容。
+
+示例：
+
+连续执行 3 次 commit：
+
+```git
+d13f1fa HEAD@{5}: commit: add 3
+69fdbf5 HEAD@{6}: commit: add 2
+fd93bdd HEAD@{7}: commit: add 1
+```
+
+file.txt 内容：
+
+```txt
+1 // commit: add 1
+2 // commit: add 2
+3 // commit: add 3
+4 // 工作区新增，未提交
+```
+
+当前 `HEAD` 指向 d13f1fa 执行命令 `git reset fd93bdd [参数]`：
+
+参数              | 工作区 | 暂存区 | 现版本库 | 原版本库
+------------------|--------|--------|----------|-----
+--soft            | 1234   | 123    | 1        | 123
+--mixed (default) | 1234   | 1      | 1        | 123
+--hard            | 1      | 1      | 1        | 123
 
 ### 撤销远程仓库提交
 
