@@ -7,15 +7,23 @@
 - [Git 快速入门](#git-快速入门)
   - [新建仓库](#新建仓库)
   - [配置仓库](#配置仓库)
+  - [忽略文件](#忽略文件)
   - [操作文件](#操作文件)
   - [提交代码](#提交代码)
   - [分支管理](#分支管理)
+    - [基本操作](#基本操作)
+    - [clone 远程仓库](#clone-远程仓库)
+    - [推送](#推送)
+    - [跟踪分支](#跟踪分支)
+    - [拉取](#拉取)
+    - [解决合并冲突](#解决合并冲突)
+    - [删除远程分支](#删除远程分支)
+  - [远程同步](#远程同步)
   - [标签设置](#标签设置)
   - [查看信息](#查看信息)
     - [查看状态](#查看状态)
     - [查看历史](#查看历史)
     - [查看差异](#查看差异)
-  - [远程同步](#远程同步)
   - [撤销操作](#撤销操作)
     - [撤销工作区文件修改](#撤销工作区文件修改)
     - [撤销暂存区文件修改](#撤销暂存区文件修改)
@@ -28,6 +36,7 @@
 
 ```git
 # 在当前目录新建一个 Git 仓库
+# 注意：只有当首次 commit 之后，才会真正建立分支
 $ git init
 
 # 新建一个名为 project-name 的目录，并将其初始化为 Git 仓库
@@ -74,6 +83,64 @@ $ git config --unset user.newKey
 
 # 编辑 Git 配置文件 
 $ git config --edit / -e 
+
+# 修改 git init 默认分支名
+$ git config --add init.defaultBranch main
+# [init]
+#   defaultBranch = main
+```
+
+## 忽略文件
+
+忽略文件原则：
+
+* 忽略操作系统自动生成的文件，比如缩略图等。
+* 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如 Java 编译产生的 .class 文件。
+* 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+
+实现方法：
+
+1. 在 Git 仓库工作区 根目录（即 `.git` 文件夹同级目录） 新建一个名为 `.gitignore` 的文件；
+1. 将要忽略的文件填进去，Git 即可自动忽略这些文件。
+
+注意：无需从头写 `.gitignore` 文件，GitHub 已经为我们准备了各种配置文件，只需要组合一下就可以使用了。所有配置文件可以直接在线浏览：[github/gitignore](https://github.com/github/gitignore)。
+
+示例：
+
+如果项目为 Java 项目，.java 文件编译后会生成 .class 文件，这些文件多数情况是不需要传到仓库中的，这时可以选择使用 Github 中的 [Java.gitignore](https://github.com/github/gitignore/blob/master/Java.gitignore) 模板，将该模板内容复制到本地 .gitignore 文件中：
+
+```gitignore
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+```
+
+保存后，通过 `git status` 命令即可检查是否已经忽略指定文件。
+
+若有些文件已经被忽略了，但仍想强制添加到 git 中去，需要加上 `-f` 参数：
+
+```git
+git add -f HelloWorld.class 
 ```
 
 ## 操作文件
@@ -130,6 +197,10 @@ $ git commit --amend -m [message]
 
 ## 分支管理
 
+由于自 2020 年 10 月 1 日起，Gihub 中的默认分支 master 将更改为 main，本文使用 Github 作为远程仓库示例，故出现的 master 直接视为 main 即可。
+
+### 基本操作
+
 ```git
 # 列出所有本地分支\远程分支\本地和远程分支
 $ git branch [-r] [-a]
@@ -146,12 +217,6 @@ $ git switch -c [branch-name]
 # 切换到指定分支，并更新工作区
 $ git switch [branch-name]
 
-# 新建一个分支，与指定的远程分支建立追踪关系
-$ git branch --track [branch] [remote-branch]
-
-# 建立追踪关系，在现有分支与指定的远程分支之间
-$ git branch --set-upstream [branch] [remote-branch]
-
 # 合并指定分支到当前分支
 $ git merge [branch]
 
@@ -160,11 +225,224 @@ $ git cherry-pick [commit]
 
 # 删除分支
 $ git branch -d [branch-name]
-
-# 删除远程分支
-$ git push origin --delete [branch-name]
-$ git branch -dr [remote/branch]
 ```
+
+### clone 远程仓库
+
+从远程 Git 服务器克隆代码 `git clone [url]`：
+
+* Git 的 `clone` 命令会自动将该远程 Git 服务器仓库命名为 `origin`，并拉取它的所有数据；
+* 同时创建一个指向它（远程仓库）的 `master` 分支的指针，并且在本地将其命名为 `origin/master`；
+* 最后 Git 也会创建一个与 `origin/master` 分支指向同一个地方的本地 `master` 分支，用户可通过本地 `master` 分支进行相关工作。
+
+**本地分支：`master` 跟踪 远程分支 `origin/master`。**
+
+![克隆之后的服务器与本地仓库](https://i.loli.net/2021/02/15/rCe1VdqI24hlDL6.png)
+
+**本地 `master` 分支 与 远程分支 `origin/master` 分支互不影响。** 如果在本地 `master` 分支做了一些工作，在同一时间有其他人推送到 Git 服务器并更新了 `master` 分支。即，提交历史已走向不同的方向。即便这样，只要自身不与 `origin` 服务器连接（并拉取数据），本地 `origin/master` 指针就不会移动。
+
+![本地与远程的工作可以交叉](https://i.loli.net/2021/02/15/wUO5uFt8WqcaLYX.png)
+
+**通过 `git fetch <remote>` 命令与给定的远程仓库同步数据。** 该命令会查找 “origin” 对应的服务器，并从中抓取本地没有的数据，并更新本地数据库，移动 `origin/master` 指针到更新后的位置。
+
+![git fetch 更新你的远程跟踪分支](https://i.loli.net/2021/02/15/tRHIPosSD1MqVyl.png)
+
+### 推送
+
+示例：
+
+```git
+# git push <remote> <branch>
+$ git push origin serverfix
+```
+
+该命令简化了部分工作。Git 自动将 `serverfix` 分支名字展开为 `refs/heads/serverfix:refs/heads/serverfix`，即，推送本地的 `serverfix` 分支来更新远程仓库上的 `serverfix` 分支。
+
+可以通过这种格式来指定待推送的本地分支与远程分支。如执行：
+
+```git
+$ git push origin serverfix:awesomebranch
+```
+
+表示将本地的 `serverfix` 分支推送到远程仓库上的 `awesomebranch` 分支。
+
+下一次其他协作者从服务器上抓取数据时，他们会在本地生成一个远程分支 `origin/serverfix`，指向服务器的 `serverfix` 分支的引用。
+
+```git
+$ git fetch origin
+remote: Counting objects: 7, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 3 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From https://github.com/schacon/simplegit
+ * [new branch]      serverfix    -> origin/serverfix
+```
+
+注意：当抓取到新的远程跟踪分支时，本地不会自动生成一份可编辑的副本（拷贝）。 即，这种情况下，不会有一个新的 `serverfix` 分支——只有一个不可以修改的 `origin/serverfix` 指针。
+
+若要生成可编辑的副本：
+
+* 可以运行 `git merge origin/serverfix` 将这些工作合并到当前所在的分支。
+* 如果想要在自己的 `serverfix` 分支上工作，可以将其建立在跟踪 远程分支 之上：
+
+  ```git
+  $ git checkout -b serverfix origin/serverfix
+  Branch serverfix set up to track remote branch serverfix from origin.
+  Switched to a new branch 'serverfix'
+  ```
+
+  该命令会创建一个用于工作的本地分支 `serverfix`，起点位于远程分支 `origin/serverfix`，并会跟踪该远程分支。
+
+### 跟踪分支
+
+从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支。 如果在一个跟踪分支上输入 git pull，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。当克隆一个仓库时，它通常会自动地创建一个跟踪 origin/master 的 master 分支。
+
+创建跟踪分支：
+
+```git
+$ git checkout -b <branch> <remote>/<branch>
+
+# --track 快捷模式
+$ git checkout --track origin/serverfix
+# Branch serverfix set up to track remote branch serverfix from origin.
+# Switched to a new branch 'serverfix'
+
+# 设置别名，将本地分支与远程分支设置为不同的名字
+$ git checkout -b sf origin/serverfix
+```
+
+设置已有的本地分支跟踪远程分支：
+
+```git
+$ git branch -u origin/serverfix
+# Branch serverfix set up to track remote branch serverfix from origin.
+```
+
+查看本地分支关联（跟踪）的远程分支：
+
+```git
+$ git branch -vv
+```
+
+上游快捷方式：
+
+当设置好跟踪分支后，可以通过简写 `@{upstream}` 或 `@{u}` 来引用它的上游分支。 所以在 `master` 分支时并且它正在跟踪 `origin/master` 时，如果愿意的话可以使用 `git merge @{u}` 来取代 `git merge origin/master`。
+
+### 拉取
+
+```git
+# 更新与远程仓库关联的版本号 commit id，但不修改本地内容（需要之后手动 merge）
+$ git fetch [remote]
+
+# 直接将本地代码与 commit id 更新为远程仓库最新版本
+$ git pull [remote] [branch]
+```
+
+`git fetch` 和 `git pull` 区别：
+
+* `git fetch` 从服务器上抓取本地没有的数据，但不会修改工作目录中的内容，只会修改远程跟踪分支，如：`origin/master`。
+* `git pull` 会查找当前分支所跟踪的远程仓库与分支，从服务器上抓取数据，并尝试合并入当前分支。
+
+从结果来看，`git pull` 类似于 `git fetch` + `git merge`。出于安全考虑，**应尽量使用 `git fetch` + `git merge`。**
+
+### 解决合并冲突
+
+当待合并的两个分支都分别有新的提交时，如下图所示：
+
+![冲突分支](https://i.loli.net/2021/02/15/iuJQ2YhpIDXoSTk.png)
+
+Git 无法快速合并，只能试图将各自修改合并起来，但这种合并就可能会有冲突：
+
+```git
+$ git merge feature1
+Auto-merging readme.txt
+CONFLICT (content): Merge conflict in readme.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+当发生冲突时，需要手动合并发生冲突的文件，同时可以通过 `git status` 显示冲突文件：
+
+```git
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+  both modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Git 通过 `<<<<<<<`，`=======`，`>>>>>>>` 标记出不同分支的内容。
+
+```git
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+Git has a mutable index called stage.
+Git tracks changes of files.
+<<<<<<< HEAD
+Creating a new branch is quick & simple.
+=======
+Creating a new branch is quick AND simple.
+>>>>>>> feature1
+```
+
+解决冲突后，再提交：
+
+```git
+$ git add readme.txt
+$ git commit -m "conflict fixed"
+[master cf810e4] conflict fixed
+```
+
+最终分支状态变为：
+
+![合并分支](https://i.loli.net/2021/02/15/R75DSAduGvhp69P.png)
+
+### 删除远程分支
+
+```git
+$ git push origin --delete serverfix
+```
+
+该命令只是从服务器上移除这个指针。Git 服务器通常会保留数据一段时间直到垃圾回收运行，所以如果不小心删除掉了，通常可以恢复。
+
+## 远程同步
+
+```git
+# 增加一个新的远程仓库，并命名
+$ git remote add [shortname] [url]
+
+# 显示所有远程仓库
+$ git remote -v
+
+# 显示指定远程仓库的信息
+$ git remote show [remote]
+
+# 更新与远程仓库关联的版本号 commit id，但不修改本地内容（需要之后手动 merge）
+$ git fetch [remote]
+
+# 直接将本地代码与 commit id 更新为远程仓库最新版本
+$ git pull [remote] [branch]
+
+# 上传本地指定分支到远程仓库
+$ git push [remote] [branch]
+
+# 强行推送当前分支到远程仓库，即使有冲突
+$ git push [remote] --force
+
+# 推送所有分支到远程仓库
+$ git push [remote] --all
+```
+
+![图解](https://i.loli.net/2021/02/09/uCTdrBA3w6l12qD.png)
 
 ## 标签设置
 
@@ -275,43 +553,6 @@ $ git diff --shortstat "@{0 day ago}"
 * 通过 `git diff HEAD test.txt`，实现当前 工作区 文件与最新 commit 版本库 中文件的差异比较。
 * `HEAD^` 表示 `HEAD` 分支上一分支（`HEAD^^` 同理）。
 
-## 远程同步
-
-```git
-# 增加一个新的远程仓库，并命名
-$ git remote add [shortname] [url]
-
-# 显示所有远程仓库
-$ git remote -v
-
-# 显示指定远程仓库的信息
-$ git remote show [remote]
-
-# 更新与远程仓库关联的版本号 commit id，但不修改本地内容（需要之后手动 merge）
-$ git fetch [remote]
-
-# 直接将本地代码与 commit id 更新为远程仓库最新版本
-$ git pull [remote] [branch]
-
-# 上传本地指定分支到远程仓库
-$ git push [remote] [branch]
-
-# 强行推送当前分支到远程仓库，即使有冲突
-$ git push [remote] --force
-
-# 推送所有分支到远程仓库
-$ git push [remote] --all
-```
-
-![图解](https://i.loli.net/2021/02/09/uCTdrBA3w6l12qD.png)
-
-`git fetch` 和 `git pull` 区别：
-
-* `git fetch` 只会将本地库所关联的远程库的 commit id 更新至最新；
-* `git pull` 会将本地库更新至远程库的最新状态，由于本地库进行了更新，`HEAD` 也会相应的指向最新的 commit id。
-
-从结果来看，git pull 类似于 git fetch + git merge。出于安全考虑，**应尽量使用 git fetch + git merge。**
-
 ## 撤销操作
 
 ### 撤销工作区文件修改
@@ -406,3 +647,6 @@ $ git config --global alias.last 'log -1'
 * [git 不同阶段撤回](http://einverne.github.io/post/2017/12/git-reset.html)
 * [配置别名](https://www.liaoxuefeng.com/wiki/896043488029600/898732837407424)
 * [Git 撤销commit文件 和 回退push的文件](https://www.jianshu.com/p/491a14d414f6)
+* [Git忽略文件.gitignore的使用](https://www.jianshu.com/p/a09a9b40ad20)
+* [廖雪峰-解决冲突](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344)
+* [Git 分支 - 远程分支](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF)
