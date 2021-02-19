@@ -13,6 +13,7 @@
   - [字体](#字体)
   - [分割线](#分割线)
   - [删除线](#删除线)
+  - [检查框](#检查框)
   - [脚注](#脚注)
   - [列表](#列表)
     - [无序列表](#无序列表)
@@ -30,15 +31,14 @@
   - [图片](#图片)
   - [表格](#表格)
   - [高级技巧](#高级技巧)
-    - [HTML元素](#html元素)
+    - [HTML 元素](#html-元素)
     - [转义](#转义)
     - [公式](#公式)
     - [目录](#目录)
-    - [自定义CSS样式](#自定义css样式)
+    - [自定义 CSS 样式](#自定义-css-样式)
   - [相关插件](#相关插件)
   - [相关设置](#相关设置)
   - [快捷键](#快捷键)
-  - [格式转换 pandoc todo](#格式转换-pandoc-todo)
   - [参考链接](#参考链接)
 
 ## 标题
@@ -132,6 +132,18 @@ ___粗斜体文本___
 ```
 
 ~~test~~
+
+## 检查框
+
+- [x] 刷牙
+- [x] 洗脸
+- [ ] 做饭
+
+```markdown
+- [x] 刷牙
+- [x] 洗脸
+- [ ] 做饭
+```
 
 ## 脚注
 
@@ -381,7 +393,7 @@ eg 3:
 
 ## 高级技巧
 
-### HTML元素
+### HTML 元素
 
 元素                                                                             | 效果
 :--------------------------------------------------------------------------------|:--------------------------------------------------------------------------
@@ -390,6 +402,7 @@ eg 3:
 \<font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"\</font> | <font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"</font>
 \<table>\<tr>\<td bgcolor=orange>背景色是：orange\</td>\</tr>\</table>            | <table><tr><td bgcolor=orange>背景色是：orange</td></tr></table>
 篮球 \<br> 羽毛球                                                                | 篮球 <br> 羽毛球
+\<details>\<summary>展开\</summary>Answer\</details> | Question 1 ? <details><summary>展开</summary>Answer</details>
 
 ### 转义
 
@@ -429,7 +442,7 @@ $$
 
 注：有些渲染器无法解析 `[TOC]`，故为了确保可移植性，可使用 Markdown All in One 插件来自动生成目录。
 
-### 自定义CSS样式
+### 自定义 CSS 样式
 
 可以通过添加自定义 CSS 样式，实现高级的布局功能。
 
@@ -447,7 +460,7 @@ $$
 3. Markdown Shortcuts (提供快捷键功能)
 4. markdownlint (提供语法检查、提示与自动修复功能)
 5. Markdown Table Prettifier (提供表格美化功能)
-6. Markdown PDF（提供 Markdown 打印功能）
+6. Markdown PDF（提供 Markdown 格式转换与打印功能）
 
 ## 相关设置
 
@@ -498,8 +511,6 @@ key              | command
 :----------------|:---------------------
 create table ... | 创建表格
 export ...       | 打印为 pdf、html、png  ...
-
-## 格式转换 pandoc todo
 
 ## 参考链接
 
