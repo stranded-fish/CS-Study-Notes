@@ -34,8 +34,9 @@
 #parse("File Header.java")
 /**
  * ${DESCRIPTION}
+ *
  * @author Tom
- * @date ${YEAR}-${MONTH}-${DAY} ${TIME}
+ * @date ${YEAR}/${MONTH}/${DAY}
  */
 public class ${NAME} {
 }
@@ -65,12 +66,13 @@ public class ${NAME} {
 
 ```java
 **
-* @Description: $description$
-* @Param: $params$
-* @return: $returns$
-* @Author: Mr.Wang
-* @Date: $date$
-*/
+ * $description$
+ *
+ * @param 
+ * @return $returns$
+ * @author Tom
+ * @date $date$
+ */
 ```
 
 注：省略了注释开头的 `/` ，触发方法为在相关方法前一行通过 <kbd>/</kbd> + Abbreviation + <kbd>Tab</kbd> 生成模板。若不省略 `/` ，则无法在函数外获得该函数的参数以及返回值。
