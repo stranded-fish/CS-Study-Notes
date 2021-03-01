@@ -11,8 +11,9 @@
     - [工作区配置](#工作区配置)
     - [工作区插件管理](#工作区插件管理)
     - [VS Code settings.json](#vs-code-settingsjson)
+    - [设置同步](#设置同步)
   - [快捷键](#快捷键)
-    - [快捷键设置 todo](#快捷键设置-todo)
+    - [快捷键设置](#快捷键设置)
     - [主命令框](#主命令框)
     - [窗口管理](#窗口管理)
     - [代码编辑](#代码编辑)
@@ -25,11 +26,11 @@
 VS Code 层级：**系统全局默认设置（不可修改）-> 用户设置 -> 工作区设置 -> 文件夹设置**
 **优先级依次升高**，后者的设置会覆盖前者的设置，若没有设置某一项，将继续使用前者的设置。
 
-注：系统全局默认设置（defaultSettings.json），位于安装目录中的特定位置，只读。
+注：系统全局默认设置（`defaultSettings.json`），位于安装目录中的特定位置，只读。
 
-* **用户设置 (settings.json)：** 全局设置，若无相关设置则使用默认设置。
-* **工作区设置 (工作区.code-workspace)：** 对不同的工作环境使用不同的配置，若某项无设定，即使用上一层用户设置。
-* **文件夹设置 (.vscode/settings.json)：** 项目设置，将一个文件夹作为一个项目，对同一个工作区的不同项目，使用不同的配置，若某项无设定，即使用上一层工作区设置。
+* **用户设置 (`settings.json`)：** 全局设置，若无相关设置则使用默认设置。
+* **工作区设置 (`工作区.code-workspace`)：** 对不同的工作环境使用不同的配置，若某项无设定，即使用上一层用户设置。
+* **文件夹设置 (`.vscode/settings.json`)：** 项目设置，将一个文件夹作为一个项目，对同一个工作区的不同项目，使用不同的配置，若某项无设定，即使用上一层工作区设置。
 
 ### 新建工作区
 
@@ -72,27 +73,51 @@ VS Code 层级：**系统全局默认设置（不可修改）-> 用户设置 -> 
 
 ### VS Code settings.json
 
-* settings.json文件为VS Code配置文件之一，用于控制工作项的配置。
+* `settings.json` 文件为VS Code配置文件之一，用于控制工作项的配置。
 * 文件为 JSON 形式，包含多条配置数据（键值对形式，以逗号分隔）并与 **UI 设置界面同步**。
-* 打开方式：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>  并输入命令 settings.json。
+* 打开方式：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>  并输入 `settings.json`。
 * settings.json文件有 **用户设置**、**文件夹设置** 两个分支，分别对应了 **不同位置的配置文件：**
   * **用户设置：** 位于与用户相关联的特定文件夹中 `C:\Users\User\AppData\Roaming\Code\User\settings.json`
   * **文件夹设置：** 位于工作区配置下的文件夹中的.vscode子目录下 `工作区路径\.vscode\settings.json`
   ![UI配置](https://i.loli.net/2020/10/21/CTanFbRPjGVH2Yw.png)
 * 优先级：**文件夹设置 ＞ 用户设置** ，**（高优先级可覆盖低优先级）** 可以为不同的项目，做不同的配置。
 * 同一工作区，多个文件夹（项目）配置示例：
-  * 修改 **工作区.code-workspace** 将其他文件夹 path 加入到工作区中。
-  * 在新添加文件夹中新建 .vscode 文件夹，并在 .vscode 文件夹中新建 settings.json 文件。
-  * 在 settings.json 中，添加相应的配置，覆盖全局用户配置。
+  * 修改 **`工作区.code-workspace`** 将其他文件夹 path 加入到工作区中。
+  * 在新添加文件夹中新建 `.vscode` 文件夹，并在 `.vscode` 文件夹中新建 `settings.json` 文件。
+  * 在 `settings.json` 中，添加相应的配置，覆盖全局用户配置。
+
+### 设置同步
+
+通过扩展插件 `Settings Sync` 实现利用 GitHub Gist 跨设备同步设置、片段、主题、文件图标、启动、按键绑定、工作空间和扩展。
+
+key                                              | command
+:------------------------------------------------|--------
+sync（命令面板下）                                 | 显示所有命令
+<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>U</kbd> | 更新\上传配置
+<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>D</kbd> | 下载配置
 
 ## 快捷键
 
-### 快捷键设置 todo
+### 快捷键设置
+
+**eg 1. 图形化界面**
+
+1. <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开命令面板；
+2. type Shortcuts；
+3. 搜索相关快捷键操作，并修改。
+
+**eg 2. 修改 keybindings.json**
+
+1. <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开命令面板；
+2. type Shortcuts；
+3. 点击右上方图标，打开 `keybindings.json`。
+
+![打开 keybindings.json](https://i.loli.net/2021/03/01/6LnrmXWFRa4ixOD.png)
 
 ### 主命令框
 
 key                                                               | command
-:-----------------------------------------------------------------|--------
+:-----------------------------------------------------------------|:-------
 <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> | 打开命令面板
 <kbd>Ctrl</kbd> + <kbd>P</kbd>                                    | 选择操作模式
 <kbd>Ctrl</kbd> + <kbd>P</kbd> 常用操作如下：
@@ -104,10 +129,10 @@ key                                                               | command
 
 ### 窗口管理
 
-key                                               | command
-:-------------------------------------------------|:---------------------
-<kbd>Ctrl</kbd> + <kbd>N</kbd>                    | 新建文件
-<kbd>Ctrl</kbd> + <kbd>W</kbd>                    | 关闭当前窗口
+key                            | command
+:------------------------------|:-------
+<kbd>Ctrl</kbd> + <kbd>N</kbd> | 新建文件
+<kbd>Ctrl</kbd> + <kbd>W</kbd> | 关闭当前窗口
 <kbd>Ctrl</kbd> + <kbd>`</kbd>                    | 打开终端
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> | 新建终端
 <kbd>Ctrl</kbd> + <kbd>Tab</kbd>                  | 切换到最近使用文件
@@ -142,6 +167,3 @@ key                                                             | command
 ## 参考链接
 
 * [VS Code 添加新建文件夹快捷键（配置 when 属性）](https://blog.csdn.net/u011511756/article/details/85058990)
-
-<!-- TODO vs code 配置同步上传 插件的使用与快捷键 -->
-<!-- TODO vs code 终端操作的相关快捷键 -->
