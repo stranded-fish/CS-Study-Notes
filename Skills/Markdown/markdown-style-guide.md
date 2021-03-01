@@ -293,9 +293,3 @@ key                                               | command
 * [基于 Markdown 的中文文档排版规范](https://xie.infoq.cn/article/69feb60ca6fba4ae0c8adeef6)
 * [Markdown 编写规范](https://github.com/fex-team/styleguide/blob/master/markdown.md)
 * [中文里直角引号与弯引号的使用](https://www.zhihu.com/question/20110888)
-
-
-整理各种细节排版风格（主要是序号排序问题，而不选择用下一级标题的方法）
-
-1. 比如 centos IP config 文件中 关于显示步骤，而不使用有序标题缩进的布局方式
-2. 比如 apis 关于显示非常多的无需标题，但不使用有序标题缩进的布局方式
