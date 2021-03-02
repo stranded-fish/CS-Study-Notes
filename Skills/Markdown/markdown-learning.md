@@ -512,6 +512,8 @@ key              | command
 create table ... | 创建表格
 export ...       | 打印为 pdf、html、png  ...
 
+注：在 markdown 源文件下操作，而不是预览模式。
+
 ## 参考链接
 
 * [Markdown 教程 | 菜鸟教程](https://www.runoob.com/markdown/md-tutorial.html)
