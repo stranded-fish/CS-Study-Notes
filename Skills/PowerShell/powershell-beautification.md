@@ -195,6 +195,7 @@ $sl.Colors.AccentColor = [System.ConsoleColor]::DarkGray
 * 省略全路径，仅保留当前所处文件夹信息。
 * 可显示当前是否处在 Git 仓库中以及所处分支。
 * 可显示当前 Git 仓库状态（分为暂存区、工作区，并依次显示增改删信息）。
+* 可显示当前 Git 分支领先远程跟踪分支的 commit 数。
 
 ## 参考链接
 
