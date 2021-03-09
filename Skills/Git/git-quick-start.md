@@ -456,6 +456,9 @@ $ git tag [tag]
 # 新建一个 tag 在指定 commit
 $ git tag [tag] [commit]
 
+# 新建一个 tag 在指定 commit 并附带说明内容 -a 指定标签名 -m 指定说明内容
+$ git tag -a v0.1 -m "version 0.1 released" 1094adb
+
 # 删除本地 tag
 $ git tag -d [tag]
 
