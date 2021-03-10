@@ -197,7 +197,7 @@ $ git commit --amend -m [message]
 
 ## 分支管理
 
-由于自 2020 年 10 月 1 日起，Gihub 中的默认分支 master 将更改为 main，本文使用 Github 作为远程仓库示例，故出现的 master 直接视为 main 即可。
+由于自 2020 年 10 月 1 日起，Gihub 中的默认分支 master 将更改为 main，本文使用 Github 作为远程仓库示例，将出现的 master 等价为 main 即可。
 
 ### 基本操作
 
