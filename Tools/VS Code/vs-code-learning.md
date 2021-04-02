@@ -167,3 +167,7 @@ key                                                             | command
 ## 参考链接
 
 * [VS Code 添加新建文件夹快捷键（配置 when 属性）](https://blog.csdn.net/u011511756/article/details/85058990)
+
+
+
+TODO 工作区插件管理 每个工作区只能使用自己工作区的插件 （全局禁用 - 需要使用的工作区单独启用）

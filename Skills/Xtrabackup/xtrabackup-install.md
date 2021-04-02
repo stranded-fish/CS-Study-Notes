@@ -20,7 +20,12 @@ yum remove percona-xtrabackup-24
 
 ## eg 2 下载源码编译
 
-安装：
+安装：https://blog.csdn.net/anzhen0429/article/details/7630215
+
+根目录执行：
+
+cmake -DBUILD_CONFIG=xtrabackup_release -DWITH_MAN_PAGES=OFF -DWITH_BOOST=/usr/local/boost && make -j1 && make install
+
 
 11
 https://www.programmersought.com/article/25122068037/
