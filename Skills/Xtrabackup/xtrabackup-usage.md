@@ -18,10 +18,6 @@ Preparing a backup
 gdbserver :2333 xtrabackup --user=root --password=MyNewPass4! --backup --target-dir=/data/backups/
 
 
-
-
-备份
-innobackupex --defaults-file=/usr/local/mysql/my.cnf --user=root --stream=xbstream --compress /data/backup/ > /data/backup/full.xbstream
 解压缩xbstream
 xbstream -x < /data/innobackupextest.xbstream -C /data/backup_qp/
 解压qp
