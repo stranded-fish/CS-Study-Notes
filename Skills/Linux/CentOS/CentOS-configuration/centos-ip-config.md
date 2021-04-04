@@ -1,6 +1,6 @@
-# Centos 新建虚拟机 IP 设置
+# CentOS 新建虚拟机 IP 设置
 
-VMware vSphere Centos 7 虚拟机安装完成后，默认配置文件没有激活网络接口，且没有相关 IP 设置，若需要以静态 IP 方式联网，则需手动进行相关设置。
+VMware vSphere CentOS 7 虚拟机安装完成后，默认配置文件没有激活网络接口，且没有相关 IP 设置，若需要以静态 IP 方式联网，则需手动进行相关设置。
 
 默认情况：
 
@@ -9,7 +9,7 @@ VMware vSphere Centos 7 虚拟机安装完成后，默认配置文件没有激�
 
 目录：
 
-- [Centos 新建虚拟机 IP 设置](#centos-新建虚拟机-ip-设置)
+- [CentOS 新建虚拟机 IP 设置](#centos-新建虚拟机-ip-设置)
   - [设置方法](#设置方法)
   - [参考链接](#参考链接)
 
