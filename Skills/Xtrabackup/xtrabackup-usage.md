@@ -1,4 +1,37 @@
-# xtrabackup usage
+# Xtrabackup 使用教程
+
+Xtrabackup 安装完成后，工具集中包含以下可执行文件：
+
+bin/
+├── innobackupex -> xtrabackup
+├── xtrabackup
+├── xbstream
+├── xbcrypt
+└── xbcloud
+
+各可执行文件功能介绍如下：
+
+![工具集介绍](https://i.loli.net/2021/04/05/5KbLOAuz2Z9npT6.png)
+
+目录：
+
+- [Xtrabackup 使用教程](#xtrabackup-使用教程)
+  - [xtrabackup 备份流程 - 全量备份](#xtrabackup-备份流程---全量备份)
+  - [xtrabackup 备份流程 - 增量备份](#xtrabackup-备份流程---增量备份)
+  - [innobackupex 备份流程 - 全量备份](#innobackupex-备份流程---全量备份)
+  - [innobackupex 备份流程 - 增量备份](#innobackupex-备份流程---增量备份)
+  - [参考链接](#参考链接)
+
+## xtrabackup 备份流程 - 全量备份
+
+
+
+## xtrabackup 备份流程 - 增量备份
+
+## innobackupex 备份流程 - 全量备份
+
+## innobackupex 备份流程 - 增量备份
+
 
 Create a backup
 
@@ -29,3 +62,5 @@ innobackupex --decompress /data/backup_qp
 
 删除qp文件
 find /data/backup -name "*.qp" | xargs rm
+
+## 参考链接
