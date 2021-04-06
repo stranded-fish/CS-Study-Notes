@@ -27,13 +27,14 @@ yum remove percona-xtrabackup-24
 cmake -DBUILD_CONFIG=xtrabackup_release -DWITH_MAN_PAGES=OFF -DWITH_BOOST=/usr/local/boost && make -j1 && make install
 
 
-11
 https://www.programmersought.com/article/25122068037/
 
 https://blog.csdn.net/qq_29573053/article/details/69665996
 
 bug 1 cmake/boost.cmake:81 解决
 bug 2 internal compiler error: Killed (program cc1plus) 内存不够，编译器被 kill 了 解决
+
+步骤：
 
 1. 下载指定版本源码 或者 下载整个 git 工程并切换至目标版本
 2. 下载相关依赖

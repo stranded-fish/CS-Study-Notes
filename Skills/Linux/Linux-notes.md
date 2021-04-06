@@ -1,4 +1,4 @@
-# Linux Notes
+# TODO Linux Notes
 
 ## rz sz
 
@@ -17,3 +17,5 @@ pmap -d pid
 ## linux笔记：查看磁盘空间大小和所有用户各自占用空间 df -h
 
 https://blog.csdn.net/abc13526222160/article/details/84962310
+
+## tee 命令保存程序控制台输出到文件中
