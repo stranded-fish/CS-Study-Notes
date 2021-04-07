@@ -44,8 +44,6 @@ innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /da
 执行 绝对路径下编译的
 /root/percona-xtrabackup-release-2.4.8/storage/innobase/xtrabackup/src/innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
 
-
-
 Preparing a backup
 
 gdbserver :2333 xtrabackup --user=root --password=MyNewPass4! --backup --target-dir=/data/backups/
