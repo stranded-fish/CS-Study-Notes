@@ -153,3 +153,6 @@ gdbserver :2333 program_name arg1 arg2 arg3 arg4
 
 * [使用 VSCode 远程访问代码以及远程 GDB 调试](https://warmgrid.github.io/2019/05/21/remote-debug-in-vscode-insiders.html)
 * [VS Code远程调试Linux C指南](https://zhuanlan.zhihu.com/p/98801522)
+
+
+TODO 注意：remote debug 的时候，要注意，一定要打开对应的源码进行单步调试，如果运行的程序和调试的代码不是同一个的话，可能部分步骤无法跳转，并且，断点是根据行号来的，如果加了注释或者其他东西之后，再在那个源码上加断点，会错位，最终显示也会错位

@@ -1,42 +1,142 @@
-# Xtrabackup 压缩全过程源码解析
+# Percona XtraBackup 全量备份过程源码解析
 
-TODO Xtrabackup 压缩全过程源码解析
+Xrabackup 工具集包含以下可执行文件：
 
-版本：2.4.8
+bin/
+├── innobackupex -> xtrabackup
+├── xtrabackup
+├── xbstream
+├── xbcrypt
+└── xbcloud
+
+其中主要通过 innobackupex 工具，实现对 InnoDB 和非 InnoDB 表、文件的压缩备份。
+
+本文主要介绍通过 innobackupex 命令，在设置参数 `--compress`、`--stream=xbsream` 情况下对数据进行压缩并转化为 xbsream 流格式备份的全过程源码解析。
+
+**注：本文内容基于 percona-xtrabackup-2.4.8**
 
 目录：
 
-- [Xtrabackup 压缩全过程源码解析](#xtrabackup-压缩全过程源码解析)
+- [Percona XtraBackup 全量备份过程源码解析](#percona-xtrabackup-全量备份过程源码解析)
   - [概述](#概述)
+  - [备份过程](#备份过程)
+  - [调用关系](#调用关系)
   - [关键结构体定义](#关键结构体定义)
+  - [核心设计思想](#核心设计思想)
   - [流程解析](#流程解析)
-  - [参考链接](#参考链接)
+    - [获取参数](#获取参数)
+    - [启动线程](#启动线程)
+    - [data_copy_thread_func](#data_copy_thread_func)
+    - [xtrabackup_copy_datafile](#xtrabackup_copy_datafile)
+    - [wf_wt_process & ds_write](#wf_wt_process--ds_write)
+    - [compress_write](#compress_write)
+    - [输出到 STDOUT](#输出到-stdout)
 
 ## 概述
 
-TODO
+innobackupex 工具，全量备份命令示例如下：
 
-压缩命令：innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
+```bash
+innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
+```
 
-参数说明：
+**参数说明：**
 
-innobackupex 需要与数据库交互，所以需要连接数据库，故需要登录数据库 user 、password。
+* `--user=root` | `--password=MyNewPass4!` ：待备份数据库的登录用户名与密码。
+  由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
+* `--stream=xbstream` ：指定进行流备份的格式，一般选择 xbstream 格式。
+* `--compress` ：进行压缩备份。
+* `/data/backups/ > /data/innobackupextest.xbstream` ：指定保存目录路径以及流文件名称。
 
---user=root ： 登录数据库 user
---password=MyNewPass4! ： 登录数据库 password
---stream=xbstream ： 将压缩后的 .qp 文件打包转换为 xbsream 流格式保存
---compress /data/backups/ > /data/innobackupextest.xbstream ： 选择压缩数据文件，并指定 xbsream 保存路径以及名称
+**命令作用：**
 
-作用：
-将 innodb 表数据（.ibd...）和非 innodb 表数据（.frm...）备份，并压缩为 .qp 格式，并最终转化为 xbsream 流格式，保存到指定位置。
+该命令将从数据库默认存储路径 `/var/lib/mysql` 中读取 innodb 表数据（`.ibd`...）和 非 innodb 表数据（`.frm`...），并调用 qpress 压缩算法将其压缩为 `.qp` 格式，然后合并为一个 xbsream 流格式文件，并保存到指定位置。
+
+## 备份过程
+
+TODO 流程图、时序图
+
+## 调用关系
+
+![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/08/Xj6Dv72aGm8lWny.png)
 
 ## 关键结构体定义
 
-TODO
+struct datasink_struct;
+typedef struct datasink_struct datasink_t;
+
+typedef struct ds_ctxt {
+	datasink_t	*datasink;
+	char 		*root;
+	void		*ptr;
+	struct ds_ctxt	*pipe_ctxt;
+} ds_ctxt_t;
+
+typedef struct {
+	void		*ptr;
+	char		*path;
+	datasink_t	*datasink;
+} ds_file_t;
+
+struct datasink_struct {
+	ds_ctxt_t *(*init)(const char *root);
+	ds_file_t *(*open)(ds_ctxt_t *ctxt, const char *path, MY_STAT *stat);
+	int (*write)(ds_file_t *file, const void *buf, size_t len);
+	int (*close)(ds_file_t *file);
+	void (*deinit)(ds_ctxt_t *ctxt);
+};
+
+/* Supported datasink types */
+typedef enum {
+	DS_TYPE_STDOUT,
+	DS_TYPE_LOCAL,
+	DS_TYPE_ARCHIVE,
+	DS_TYPE_XBSTREAM,
+	DS_TYPE_COMPRESS,
+	DS_TYPE_ENCRYPT,
+	DS_TYPE_DECRYPT,
+	DS_TYPE_TMPFILE,
+	DS_TYPE_BUFFER
+} ds_type_t;
+
+typedef struct {
+	pthread_t		id;
+	uint			num;
+	pthread_mutex_t 	ctrl_mutex;
+	pthread_cond_t		ctrl_cond;
+	pthread_mutex_t		data_mutex;
+	pthread_cond_t  	data_cond;
+	my_bool			started;
+	my_bool			data_avail;
+	my_bool			cancelled;
+	const char 		*from;
+	size_t			from_len;
+	char			*to;
+	size_t			to_len;
+	qlz_state_compress	state;
+	ulong			adler;
+} comp_thread_ctxt_t;
+
+typedef struct {
+	comp_thread_ctxt_t	*threads;
+	uint			nthreads;
+} ds_compress_ctxt_t;
+
+typedef struct {
+	ds_file_t		*dest_file;
+	ds_compress_ctxt_t	*comp_ctxt;
+	size_t			bytes_processed;
+} ds_compress_file_t;
+
+
+
+相关结构体的说明
+
+## 核心设计思想
 
 ## 流程解析
 
-**step 1. 获取参数**
+### 获取参数
 
 xtrabackup.cc main func
 
@@ -70,7 +170,7 @@ if (strcmp(base_name(my_progname), INNOBACKUPEX_BIN_NAME) == 0 &&
 
 同时根据输入参数 --compress，将 xtrabackup_backup 设置 TRUE，以调用相关备份方法。
 
-**step 2. 启动线程**
+### 启动线程
 
 **1\. 先启动 io_watching_thread 线程，开始 io 限流（单线程）；**
 
@@ -132,7 +232,7 @@ os_thread_create(log_copying_thread, NULL, &log_copying_thread_id);
 	mutex_free(&count_mutex);
 ```
 
-**step 3. data_copy_thread_func**
+### data_copy_thread_func
 
 ```c
 while ((node = datafiles_iter_next(ctxt->it)) != NULL) {
@@ -155,7 +255,7 @@ mutex_exit(ctxt->count_mutex);  // 释放锁
 
 当遍历完成后，即表示该线程任务完成，该线程将尝试获取互斥锁，获取到互斥锁后，将 count 计数 - 1，当 count 计数为 0 时，表示所有线程完成任务。
 
-**step 4. xtrabackup_copy_datafile**
+### xtrabackup_copy_datafile
 
 ```c
 /* Setup the page write filter */
@@ -192,7 +292,7 @@ while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 
 在 main copy loop 中，将不断调用 `write_filter->process` 方法，也即 `wf_write_through->process` 方法。
 
-**step 5. wf_wt_process & ds_write**
+### wf_wt_process & ds_write
 
 ```c
 if (ds_write(dstfile, cursor->buf, cursor->buf_read)) {
@@ -208,7 +308,7 @@ ds_write(ds_file_t *file, const void *buf, size_t len)
 
 datasink 在之前已经初始化，此时调用的方法为 compress_write : ds_compress.c 方法。
 
-**step 6. compress_write**
+### compress_write
 
 ```c
 // TODO 获取执行压缩任务的线程
@@ -252,4 +352,6 @@ for (i = 0; i < nthreads; i++) {
 
 线程解锁后，compress_worker_thread_func 方法，将调用 qlz_compress 函数实现最终的压缩。
 
-## 参考链接
+### 输出到 STDOUT
+
+压缩完成后，xtrabackup_copy_logfile 执行 ds_close 方法，然后关闭相关信息 并 落盘

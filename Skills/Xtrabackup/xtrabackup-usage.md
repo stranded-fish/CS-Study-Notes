@@ -1,6 +1,6 @@
 # Xtrabackup 使用教程
 
-Xtrabackup 安装完成后，工具集中包含以下可执行文件：
+Xtrabackup 安装完成后，工具集包含以下可执行文件：
 
 bin/
 ├── innobackupex -> xtrabackup
@@ -42,7 +42,7 @@ xtrabackup --user=root --password=MyNewPass4! --compress --backup --target-dir=/
 innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
 
 执行 绝对路径下编译的
-/root/percona-xtrabackup-release-2.4.8/storage/innobase/xtrabackup/src/innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
+/root/percona-xtrabackup-release-2.4.8/storage/innobase/xtrabackup/src/innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/backups/innobackupextest.xbstream
 
 Preparing a backup
 
