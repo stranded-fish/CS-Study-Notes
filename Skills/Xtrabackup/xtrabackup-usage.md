@@ -50,7 +50,7 @@ gdbserver :2333 xtrabackup --user=root --password=MyNewPass4! --backup --target-
 
 
 解压缩xbstream
-xbstream -x < /data/innobackupextest.xbstream -C /data/backup_qp/
+xbstream -x < /data/backups/innobackupextest.xbstream -C /data/backup_qp/
 解压qp
 
 innobackupex --decompress /data/backup_qp

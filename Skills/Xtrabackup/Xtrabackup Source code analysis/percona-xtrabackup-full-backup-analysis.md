@@ -24,12 +24,17 @@ bin/
   - [关键结构体定义](#关键结构体定义)
   - [核心设计思想](#核心设计思想)
   - [流程解析](#流程解析)
-    - [获取参数](#获取参数)
+    - [输入参数 与 innobackupex 兼容性处理](#输入参数-与-innobackupex-兼容性处理)
+    - [多线程模型](#多线程模型)
+    - [初始化 datasink](#初始化-datasink)
+    - [](#)
     - [启动线程](#启动线程)
-    - [data_copy_thread_func](#data_copy_thread_func)
+    - [执行 data_copy_thread_func](#执行-data_copy_thread_func)
     - [xtrabackup_copy_datafile](#xtrabackup_copy_datafile)
     - [wf_wt_process & ds_write](#wf_wt_process--ds_write)
     - [compress_write](#compress_write)
+    - [备份非 InnoDB 数据](#备份非-innodb-数据)
+    - [](#-1)
     - [输出到 STDOUT](#输出到-stdout)
 
 ## 概述
@@ -58,7 +63,7 @@ TODO 流程图、时序图
 
 ## 调用关系
 
-![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/08/Xj6Dv72aGm8lWny.png)
+![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/09/9mkftJUxElnuoBA.png)
 
 ## 关键结构体定义
 
@@ -136,11 +141,15 @@ typedef struct {
 
 ## 流程解析
 
-### 获取参数
+### 输入参数 与 innobackupex 兼容性处理
 
-xtrabackup.cc main func
+自版本 2.3 起，innobackupex 功能全部合并到了 xtrabackup 中，为了兼容之前版本，
+最终工具集仍保留了名为 innobackupex 的可执行文件，但该文件实际为指向 xtrabackup 可执行文件的软链接。`file innobackupex > innobackupex: symbolic link to 'xtrabackup'`
+故 xtrabackup \ innobackupex 命令入口均为 xtrabackup main 方法。
 
-```c
+**main : xtrabackup.cc**
+
+```cpp
 // 处理执行命令及参数
 handle_options(argc, argv, &client_defaults, &server_defaults);
 
@@ -152,7 +161,9 @@ if (innobackupex_mode) {
 }
 ```
 
-```c
+**handle_options : xtrabackup.cc**
+
+```cpp
 // 判断调用程序名是否为 innobackupex，若是则模拟执行 innobackupex 脚本
 if (strcmp(base_name(my_progname), INNOBACKUPEX_BIN_NAME) == 0 &&
     argc_client > 0) {
@@ -164,77 +175,155 @@ if (strcmp(base_name(my_progname), INNOBACKUPEX_BIN_NAME) == 0 &&
 }
 ```
 
-首先通过 handle_options() 方法获取命令运行参数，并根据运行程序名，判断调用程序名是否为 innobackupex。
+同时在 handle_options 阶段，程序将获取到用户输入的待执行任务参数并将其设置为 TRUE（初始化值均为 FALSE），并最终执行相应的任务。
 
-如果为 innobackupex 则通过程序模拟执行 innobackupex 脚本。
+```cpp
+/* === xtrabackup specific options === */
+char xtrabackup_real_target_dir[FN_REFLEN] = "./xtrabackup_backupfiles/";
+char *xtrabackup_target_dir= xtrabackup_real_target_dir;
+my_bool xtrabackup_version = FALSE;
+my_bool xtrabackup_backup = FALSE;
+my_bool xtrabackup_stats = FALSE;
+my_bool xtrabackup_prepare = FALSE;
+my_bool xtrabackup_copy_back = FALSE;
+my_bool xtrabackup_move_back = FALSE;
+my_bool xtrabackup_decrypt_decompress = FALSE;
+my_bool xtrabackup_print_param = FALSE;
+```
 
-同时根据输入参数 --compress，将 xtrabackup_backup 设置 TRUE，以调用相关备份方法。
+```cpp
+/* ============== exec task ================= */
+
+/* --backup */
+if (xtrabackup_backup)
+	xtrabackup_backup_func();
+
+/* --stats */
+if (xtrabackup_stats)
+	xtrabackup_stats_func();
+
+/* --prepare */
+if (xtrabackup_prepare)
+	xtrabackup_prepare_func();
+
+/* --copy-back || --move-back */
+if (xtrabackup_copy_back || xtrabackup_move_back) {
+	if (!check_if_param_set("datadir")) {
+		msg("Error: datadir must be specified.\n");
+		exit(EXIT_FAILURE);
+	}
+	if (!copy_back())
+		exit(EXIT_FAILURE);
+}
+
+/* --decrypt || --decompress */
+if (xtrabackup_decrypt_decompress && !decrypt_decompress()) {
+	exit(EXIT_FAILURE);
+}
+```
+
+### 多线程模型
+
+---
+
+xtrabackup_init_datasinks(); 初始化数据池，同时创建 xtrabackup_compress_threads 线程。xtrabackup_compress_threads 线程创建后将进入死循环，等待后续创建的 data_copy_thread 线程调用 compress_write 方法进行解锁。
+
+xtrabackup_compress_threads 线程数量默认为 1，用户可通过参数 --compress-thread 设置。
+
+---
+
+os_thread_create(data_copy_thread_func, data_threads + i, &data_threads[i].id); 创建 data_copy_thread。
+
+data_copy_thread 线程数量默认为 1，用户可通过参数 --parallel 设置。
+
+---
+
+InnoDB 数据压缩备份过程：
+
+1. 首先根据用户 parallel 参数，创建指定数量的 data_copy_thread 线程，并注册回调函数 data_copy_thread_func，然后主进程进入 wait 状态，等待所有的 data_copy_thread 线程执行完毕。
+2. data_copy_thread_func 方法通过 data_copy_thread 线程迭代器，遍历所有数据，直到迭代器返回 NULL，此时该线程的任务完成，退出循环，并尝试修改 count 计数，当 count == 0 时，表示所有线程均完成任务，主线程退出 wait 状态。
+
+data_copy_thread 线程执行具体 copy data 任务的方法 xtrabackup_copy_datafile：
+
+1. xtrabackup_copy_datafile 最终会循环调用 compress_write 方法。
+2. compress_write 方法会先获取执行压缩任务的 xtrabackup_compress_threads 线程，并尝试获取其 ctrl_mutex 锁。
+3. 获取到 ctrl_mutex 锁之后，会设置 xtrabackup_compress_threads 线程压缩的数据起始地址，总长度信息，**然后解锁该线程**，同时修改文件剩余总字节数 len、以及下一次压缩的起始地址 ptr。
+
+### 初始化 datasink
+
+### 
+
+
+
+```cpp
+
+```
 
 ### 启动线程
 
-**1\. 先启动 io_watching_thread 线程，开始 io 限流（单线程）；**
+**1\. 启动 io_watching_thread 线程，开始 io 限流（单线程）**
 
-```c
+```cpp
 os_thread_create(io_watching_thread, NULL,&io_watching_thread_id);
 ```
 
-**2\. 再启动 redo 日志复制线程（单线程）；**
+**2\. 启动 redo 日志复制线程（单线程）**
 
-```c
+```cpp
 os_thread_create(log_copying_thread, NULL, &log_copying_thread_id);
 ```
 
-**3\. 最后启动数据复制线程（多线程）。**
+**3\. 启动数据复制线程（多线程）并等待其执行完毕**
 
-```c
+```cpp
 // 根据并行线程数，分配线程执行所需内存
-	data_threads = (data_thread_ctxt_t *)
-		ut_malloc_nokey(sizeof(data_thread_ctxt_t) *
-                                xtrabackup_parallel);
-	count = xtrabackup_parallel;
+data_threads = (data_thread_ctxt_t *)
+	ut_malloc_nokey(sizeof(data_thread_ctxt_t) *
+                            xtrabackup_parallel);
+count = xtrabackup_parallel;
 
-	// 创建互斥锁
-	mutex_create(LATCH_ID_XTRA_COUNT_MUTEX, &count_mutex);
+// 创建互斥锁
+mutex_create(LATCH_ID_XTRA_COUNT_MUTEX, &count_mutex);
 
-	// 创建并行数据复制线程
-	for (i = 0; i < (uint) xtrabackup_parallel; i++) {
-		data_threads[i].it = it; 	                // 设置文件迭代器
-		data_threads[i].num = i+1; 	                // 设置线程序号
-		data_threads[i].count = &count;             // 设置线程数
-		data_threads[i].count_mutex = &count_mutex; // 设置互斥锁
+// 创建并行数据复制线程
+for (i = 0; i < (uint) xtrabackup_parallel; i++) {
+	data_threads[i].it = it; 	                // 设置文件迭代器
+	data_threads[i].num = i+1; 	                // 设置线程序号
+	data_threads[i].count = &count;             // 设置线程数
+	data_threads[i].count_mutex = &count_mutex; // 设置互斥锁
 
-		// 线程 3 数据复制线程
-		os_thread_create(data_copy_thread_func, data_threads + i,
-				 &data_threads[i].id);
+	// 线程 3 数据复制线程
+	os_thread_create(data_copy_thread_func, data_threads + i,
+			 &data_threads[i].id);
 				 
-	}
+}
 
-	/* Wait for threads to exit */
-	while (1) {
-		os_thread_sleep(1000000);
+/* Wait for threads to exit */
+while (1) {
+	os_thread_sleep(1000000);
 
-		// 尝试获取锁，若已被占用，则等待
-		mutex_enter(&count_mutex);
+	// 尝试获取锁，若已被占用，则等待
+	mutex_enter(&count_mutex);
 
-		// 当 count 为 0 时，表示所有线程 data_copy_thread_func 执行完毕，此时可退出循环
-		if (count == 0) {
+	// 当 count 为 0 时，表示所有线程 data_copy_thread_func 执行完毕，此时可退出循环
+	if (count == 0) {
 
-			// 释放锁，同时唤醒所有等待的线程，拿到锁的线程开始执行，其余线程继续等待
-			mutex_exit(&count_mutex);
-			break;
-		}
-
-		// 释放锁......
+		// 释放锁，同时唤醒所有等待的线程，拿到锁的线程开始执行，其余线程继续等待
 		mutex_exit(&count_mutex);
+		break;
 	}
 
-	// 释放锁
-	mutex_free(&count_mutex);
+	// 释放锁......
+	mutex_exit(&count_mutex);
+}
+
+// 释放锁
+mutex_free(&count_mutex);
 ```
 
-### data_copy_thread_func
+### 执行 data_copy_thread_func
 
-```c
+```cpp
 while ((node = datafiles_iter_next(ctxt->it)) != NULL) {
 
 	/* copy the datafile */
@@ -257,7 +346,7 @@ mutex_exit(ctxt->count_mutex);  // 释放锁
 
 ### xtrabackup_copy_datafile
 
-```c
+```cpp
 /* Setup the page write filter */
 if (xtrabackup_incremental) {
 	write_filter = &wf_incremental;
@@ -280,7 +369,7 @@ xb_write_filt_t wf_write_through = {
 
 因为输入参数为 --compress，在参数处理阶段，xtrabackup_compress 设置为了 TRUE，而其他模式均为初始化状态 FALSE，故这个地方将执行 `write_filter = &wf_write_through;`
 
-```c
+```cpp
 /* The main copy loop */
 while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 	// TODO 这个地方调用了 compress_write 方法！！！！！！！！！！！！
@@ -294,7 +383,7 @@ while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 
 ### wf_wt_process & ds_write
 
-```c
+```cpp
 if (ds_write(dstfile, cursor->buf, cursor->buf_read)) {
 	return(FALSE);
 }
@@ -310,7 +399,7 @@ datasink 在之前已经初始化，此时调用的方法为 compress_write : ds
 
 ### compress_write
 
-```c
+```cpp
 // TODO 获取执行压缩任务的线程
 threads = comp_ctxt->threads;
 nthreads = comp_ctxt->nthreads;
@@ -351,6 +440,10 @@ for (i = 0; i < nthreads; i++) {
 在 compress_write 方法中，需要设置一些线程所需必要环境参数，（线程在 datasink init 阶段已初始化，并一直在 while 死循环，等待必要事件发生），然后执行 `thd->data_avail = TRUE;`，解锁线程开始执行压缩。
 
 线程解锁后，compress_worker_thread_func 方法，将调用 qlz_compress 函数实现最终的压缩。
+
+### 备份非 InnoDB 数据
+
+### 
 
 ### 输出到 STDOUT
 
