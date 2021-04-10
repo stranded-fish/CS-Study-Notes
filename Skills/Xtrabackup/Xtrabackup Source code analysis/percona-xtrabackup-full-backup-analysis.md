@@ -18,7 +18,7 @@ bin/
 目录：
 
 - [Percona XtraBackup 全量备份过程源码解析](#percona-xtrabackup-全量备份过程源码解析)
-  - [概述](#概述)
+  - [备份命令](#备份命令)
   - [备份过程](#备份过程)
   - [调用关系](#调用关系)
   - [关键结构体定义](#关键结构体定义)
@@ -37,20 +37,22 @@ bin/
     - [](#-1)
     - [输出到 STDOUT](#输出到-stdout)
 
-## 概述
+## 备份命令
 
-innobackupex 工具，全量备份命令示例如下：
+innobackupex 工具进行全量备份的命令示例如下：
 
 ```bash
-innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
+innobackupex --user=root --password=MyNewPass4! --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/innobackupextest.xbstream
 ```
 
 **参数说明：**
 
 * `--user=root` | `--password=MyNewPass4!` ：待备份数据库的登录用户名与密码。
-  由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
+  由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加 MDL 锁、加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
+* `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
 * `--stream=xbstream` ：指定进行流备份的格式，一般选择 xbstream 格式。
 * `--compress` ：进行压缩备份。
+* `--compress-thread=4` ：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
 * `/data/backups/ > /data/innobackupextest.xbstream` ：指定保存目录路径以及流文件名称。
 
 **命令作用：**
@@ -59,11 +61,11 @@ innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /da
 
 ## 备份过程
 
-TODO 流程图、时序图
+![innobackupex full backup 时序图](https://i.loli.net/2021/04/10/JZkwHeO2v1f567D.png)
 
 ## 调用关系
 
-![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/09/9mkftJUxElnuoBA.png)
+![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/10/1JjZ4tzkQDFqsyL.png)
 
 ## 关键结构体定义
 
