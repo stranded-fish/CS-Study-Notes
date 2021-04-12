@@ -65,7 +65,8 @@ innobackupex --user=root --password=MyNewPass4! --parallel=4 --stream=xbstream -
 
 ## 调用关系
 
-![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/10/1JjZ4tzkQDFqsyL.png)
+![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/12/4GLpnjbJNh5mdfu.png)
+
 
 ## 关键结构体定义
 
