@@ -1,8 +1,33 @@
-# xtrabackup 安装与使用
+# Percona XtraBackup 安装与使用
 
+Percona XtraBackup 是一个开源的 MySQL 热备份工具，利用该工具（2.4 版本）可以实现在 MySQL 5.5, 5.6 和 5.7 服务器上备份 InnoDB, XtraDB 和 MyISAM 表的数据，以及备份 Percona 服务器的 XtraDB MySQL。
 
+Percona XtraBackup 特点：
 
-## eg 1 下载 rpm 安装包安装
+* 快速可靠地完成备份。
+* 备份期间不中断事务处理。
+* 节省磁盘空间和网络带宽。
+* 自动完成备份验证。
+* 更快的恢复速度，以提升正常运行时间。
+
+## Percona XtraBackup 安装
+
+Percona XtraBackup 安装方式如下：
+
+* 通过软件仓库安装。
+* 通过二进制压缩文件安装。
+* 通过 rpm 或 apt 安装包安装。
+* 通过编译源码安装。
+
+### 通过软件仓库安装
+
+Percona 为 yum 和 apt 仓库提供了软件源，可通过 yum 或 apt 包管理器便捷的安装和更新 Percona XtraBackup 及其依赖。
+
+Centos 7 系统安装命令如下：
+
+### 通过二进制压缩文件安装
+
+### 通过 rpm 或 apt 安装包安装
 
 安装：
 
@@ -20,7 +45,7 @@ https://blog.csdn.net/anzhen0429/article/details/76302158
 
 yum remove percona-xtrabackup-24
 
-## eg 2 下载源码编译
+### 通过编译源码安装
 
 安装：https://blog.csdn.net/anzhen0429/article/details/7630215
 
@@ -50,14 +75,8 @@ bug 2 internal compiler error: Killed (program cc1plus) 内存不够，编译器
 卸载：
 
 
-## eg 3 内网离线安装
 
-
-
-
-
-
-# Xtrabackup 使用教程
+## Xtrabackup 使用
 
 Xtrabackup 安装完成后，工具集包含以下可执行文件：
 
@@ -74,11 +93,13 @@ bin/
 
 目录：
 
-- [xtrabackup 安装与使用](#xtrabackup-安装与使用)
-  - [eg 1 下载 rpm 安装包安装](#eg-1-下载-rpm-安装包安装)
-  - [eg 2 下载源码编译](#eg-2-下载源码编译)
-  - [eg 3 内网离线安装](#eg-3-内网离线安装)
-- [Xtrabackup 使用教程](#xtrabackup-使用教程)
+- [Percona XtraBackup 安装与使用](#percona-xtrabackup-安装与使用)
+  - [Percona XtraBackup 安装](#percona-xtrabackup-安装)
+    - [通过软件仓库安装](#通过软件仓库安装)
+    - [通过二进制压缩文件安装](#通过二进制压缩文件安装)
+    - [通过 rpm 或 apt 安装包安装](#通过-rpm-或-apt-安装包安装)
+    - [通过编译源码安装](#通过编译源码安装)
+  - [Xtrabackup 使用](#xtrabackup-使用)
   - [xtrabackup 备份流程 - 全量备份](#xtrabackup-备份流程---全量备份)
   - [xtrabackup 备份流程 - 增量备份](#xtrabackup-备份流程---增量备份)
   - [innobackupex 备份流程 - 全量备份](#innobackupex-备份流程---全量备份)
@@ -127,3 +148,5 @@ innobackupex --decompress /data/backup_qp
 find /data/backup -name "*.qp" | xargs rm
 
 ## 参考链接
+
+* [Installing Percona XtraBackup 2.4](https://www.percona.com/doc/percona-xtrabackup/2.4/installation.html#installing-from-binaries)
