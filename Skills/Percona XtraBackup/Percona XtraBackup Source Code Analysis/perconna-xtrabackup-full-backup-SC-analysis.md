@@ -22,7 +22,8 @@ bin/
   - [备份过程](#备份过程)
   - [调用关系](#调用关系)
   - [关键结构体定义](#关键结构体定义)
-  - [流程解析](#流程解析)
+  - [核心设计思想](#核心设计思想)
+  - [关键流程解析](#关键流程解析)
     - [输入参数 与 innobackupex 兼容性处理](#输入参数-与-innobackupex-兼容性处理)
     - [多线程模型](#多线程模型)
     - [数据落盘机制](#数据落盘机制)
@@ -53,11 +54,17 @@ innobackupex --user=root --password=MyNewPass4! --parallel=4 --stream=xbstream -
 
 ![innobackupex full backup 时序图](https://i.loli.net/2021/04/10/JZkwHeO2v1f567D.png)
 
+TODO 时许图介绍
+
 ## 调用关系
 
 ![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/12/4GLpnjbJNh5mdfu.png)
 
 ## 关键结构体定义
+
+TODO
+1. 更为完整的结构体介绍
+2. 加上 datasink 那个 init create write 那个结构体
 
 ```cpp
 // 数据池环境 (ds_create)
@@ -90,13 +97,21 @@ typedef struct {
 } ds_compress_file_t;
 ```
 
+## 核心设计思想
+
+TODO 介绍那个 datasink 通过 init 方式 实现类似于 java 的多态
+
+TODO 数据流再详细介绍一下，弄个图
+
 **数据流传递方向：**
 
 通过 ds_file_t->ptr 指针获取具体数据文件，再通过数据文件 dest_file 指针定位到下一个管道：
 
 ![数据流图](https://i.loli.net/2021/04/12/BbPwzFmi9qOMWCG.png)
 
-## 流程解析
+## 关键流程解析
+
+TODO 有待梳理更多关键的流程并总结
 
 ### 输入参数 与 innobackupex 兼容性处理
 
