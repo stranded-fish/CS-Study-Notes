@@ -1,6 +1,6 @@
 # Percona XtraBackup 安装与使用
 
-Percona XtraBackup 是一个开源的 MySQL 热备份工具，利用该工具（2.4 版本）可以实现在 MySQL 5.5, 5.6 和 5.7 服务器上备份 InnoDB, XtraDB 和 MyISAM 表的数据，以及备份 Percona 服务器的 XtraDB MySQL。
+Percona XtraBackup 是一个开源的 MySQL 热备份工具，利用该工具（2.4 版本）可以实现在 MySQL 5.5, 5.6 和 5.7 服务器上备份 InnoDB、XtraDB 和 MyISAM 表的数据，以及备份 Percona 服务器的 XtraDB MySQL。
 
 Percona XtraBackup 特点：
 
@@ -10,9 +10,27 @@ Percona XtraBackup 特点：
 * 自动完成备份验证。
 * 更快的恢复速度，以提升正常运行时间。
 
+目录：
+
+- [Percona XtraBackup 安装与使用](#percona-xtrabackup-安装与使用)
+  - [Percona XtraBackup 安装](#percona-xtrabackup-安装)
+    - [通过软件仓库安装](#通过软件仓库安装)
+    - [通过二进制压缩文件安装](#通过二进制压缩文件安装)
+    - [通过 rpm 或 apt 安装包安装](#通过-rpm-或-apt-安装包安装)
+    - [通过编译源码安装](#通过编译源码安装)
+  - [Percona XtraBackup 使用](#percona-xtrabackup-使用)
+  - [innobackupex 备份周期 - 全量备份](#innobackupex-备份周期---全量备份)
+    - [Create a backup](#create-a-backup)
+    - [Preparing a backup](#preparing-a-backup)
+    - [Restoring a Backup](#restoring-a-backup)
+  - [innobackupex 备份周期 - 增量备份](#innobackupex-备份周期---增量备份)
+    - [Creating an Incremental Backup](#creating-an-incremental-backup)
+    - [Preparing the Incremental Backups](#preparing-the-incremental-backups)
+  - [参考链接](#参考链接)
+
 ## Percona XtraBackup 安装
 
-Percona XtraBackup 安装方式如下：
+Percona XtraBackup 有如下安装方式：
 
 * 通过软件仓库安装。
 * 通过二进制压缩文件安装。
@@ -23,9 +41,15 @@ Percona XtraBackup 安装方式如下：
 
 Percona 为 yum 和 apt 仓库提供了软件源，可通过 yum 或 apt 包管理器便捷的安装和更新 Percona XtraBackup 及其依赖。
 
-Centos 7 系统安装命令如下：
+Centos 7 系统下安装命令如下：
+
+```bash
+
+```
 
 ### 通过二进制压缩文件安装
+
+TODO
 
 ### 通过 rpm 或 apt 安装包安装
 
@@ -69,53 +93,59 @@ bug 2 internal compiler error: Killed (program cc1plus) 内存不够，编译器
 4. 可能会出现一些 bug 
 5. 将可执行程序移动到 /usr/bin 目录
 
-
-
-
 卸载：
 
+## Percona XtraBackup 使用
 
-
-## Xtrabackup 使用
-
-Xtrabackup 安装完成后，工具集包含以下可执行文件：
+Percona XtraBackup 安装完成后，工具集包含以下可执行文件：
 
 bin/
-├── innobackupex -> xtrabackup
 ├── xtrabackup
+├── innobackupex -> xtrabackup
 ├── xbstream
 ├── xbcrypt
 └── xbcloud
 
-各可执行文件功能介绍如下：
+* xtrabackup：用于非阻塞备份各种类型的数据库表（注意：发行时间较早的旧版 xtrabackup 只能用于备份 innoDB 数据库表，而较新版 xtrabackup 均可备份）。
+* innobackupex：为指向 xtrabackup 的软链接，通过在程序运行中判断程序名，执行不同的参数处理操作，以兼容旧版 innobackupex 命令行。
+* xbstream：以 XBSTREAM 格式序列化/反序列化文件。
+* xbcrypt：以 XBCRYPT 格式加密或解密文件。
+* xbcloud：在云服务上管理备份。
 
-![工具集介绍](https://i.loli.net/2021/04/05/5KbLOAuz2Z9npT6.png)
+## innobackupex 备份周期 - 全量备份
 
-目录：
+### Create a backup
 
-- [Percona XtraBackup 安装与使用](#percona-xtrabackup-安装与使用)
-  - [Percona XtraBackup 安装](#percona-xtrabackup-安装)
-    - [通过软件仓库安装](#通过软件仓库安装)
-    - [通过二进制压缩文件安装](#通过二进制压缩文件安装)
-    - [通过 rpm 或 apt 安装包安装](#通过-rpm-或-apt-安装包安装)
-    - [通过编译源码安装](#通过编译源码安装)
-  - [Xtrabackup 使用](#xtrabackup-使用)
-  - [xtrabackup 备份流程 - 全量备份](#xtrabackup-备份流程---全量备份)
-  - [xtrabackup 备份流程 - 增量备份](#xtrabackup-备份流程---增量备份)
-  - [innobackupex 备份流程 - 全量备份](#innobackupex-备份流程---全量备份)
-  - [innobackupex 备份流程 - 增量备份](#innobackupex-备份流程---增量备份)
-  - [参考链接](#参考链接)
+启动备份：
 
-## xtrabackup 备份流程 - 全量备份
+```bash
+innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/backups/innobackupextest.xbstream
+```
 
+参数说明：
 
+* --user=root
+* --password=MyNewPass4!
+* --stream=xbstream
+* --compress /data/backups/ > /data/backups/innobackupextest.xbstream
 
-## xtrabackup 备份流程 - 增量备份
+### Preparing a backup
 
-## innobackupex 备份流程 - 全量备份
+```bash
 
-## innobackupex 备份流程 - 增量备份
+```
 
+### Restoring a Backup
+
+```bash
+
+```
+
+## innobackupex 备份周期 - 增量备份
+
+### Creating an Incremental Backup
+
+### Preparing the Incremental Backups
 
 Create a backup
 
@@ -126,7 +156,7 @@ xtrabackup --user=root --password=MyNewPass4! --compress --backup --target-dir=/
 innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/innobackupextest.xbstream
 
 执行 绝对路径下编译的
-/root/percona-xtrabackup-release-2.4.8/storage/innobase/xtrabackup/src/innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/backups/innobackupextest.xbstream
+innobackupex --user=root --password=MyNewPass4! --stream=xbstream --compress /data/backups/ > /data/backups/innobackupextest.xbstream
 
 Preparing a backup
 
@@ -141,6 +171,7 @@ xbstream -x < /data/backups/innobackupextest.xbstream -C /data/backup_qp/
 innobackupex --decompress /data/backup_qp
 
 ```
+
 绝对路径：
 /root/percona-xtrabackup-release-2.4.8/storage/innobase/xtrabackup/src/innobackupex --decompress /data/backup_qp
 

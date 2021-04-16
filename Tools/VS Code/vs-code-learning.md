@@ -17,6 +17,7 @@
     - [主命令框](#主命令框)
     - [窗口管理](#窗口管理)
     - [代码编辑](#代码编辑)
+    - [终端操作](#终端操作)
   - [参考链接](#参考链接)
 
 ## VS Code 设置
@@ -136,26 +137,25 @@ key                                                               | command
 
 ### 窗口管理
 
-key                            | command
-:------------------------------|:-------
-<kbd>Ctrl</kbd> + <kbd>N</kbd> | 新建文件
-<kbd>Ctrl</kbd> + <kbd>W</kbd> | 关闭当前窗口
-<kbd>Ctrl</kbd> + <kbd>`</kbd>                    | 打开终端
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> | 新建终端
-<kbd>Ctrl</kbd> + <kbd>Tab</kbd>                  | 切换到最近使用文件
-<kbd>Ctrl</kbd> + <kbd>R</kbd>                    | 切换工作区
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> | 新建编辑器
-<kbd>Ctrl</kbd> + <kbd>K</kbd> + <kbd>O</kbd>     | 将当前文件，在新建编辑器中打开
-<kbd>Ctrl</kbd> + <kbd>K</kbd> + <kbd>W</kbd>     | 关闭所有编辑器
-<kbd>Ctrl</kbd> + <kbd>\\</kbd>                   | 拆分窗口
-<kbd>Ctrl</kbd> + <kbd>1</kbd> + <kbd>2</kbd> ... | 选中不同的窗口
-<kbd>Ctrl</kbd> + <kbd>End</kbd>                  | 移动到文件结尾
-<kbd>Ctrl</kbd> + <kbd>Home</kbd>                 | 移动到文件开头
-<kbd>Alt</kbd> + <kbd>1</kbd>                     | 显示侧边栏
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | 聚焦侧边栏
-<kbd>Insert</kbd>                                 | 新建文件
-<kbd>Alt</kbd> + <kbd>Insert</kbd>                | 新建文件夹
-<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>  | 选中侧边栏文件后，新建文件资源管理器并显示
+key                                                            | command
+:--------------------------------------------------------------|:---------------------
+<kbd>Ctrl</kbd> + <kbd>N</kbd>                                 | 新建文件
+<kbd>Ctrl</kbd> + <kbd>W</kbd>                                 | 关闭当前窗口
+<kbd>Ctrl</kbd> + <kbd>Tab</kbd>                               | 切换到最近使用文件
+<kbd>Ctrl</kbd> + <kbd>R</kbd>                                 | 切换工作区
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd>              | 新建编辑器
+<kbd>Ctrl</kbd> + <kbd>K</kbd> + <kbd>O</kbd>                  | 将当前文件，在新建编辑器中打开
+<kbd>Ctrl</kbd> + <kbd>K</kbd> + <kbd>W</kbd>                  | 关闭所有编辑器
+<kbd>Ctrl</kbd> + <kbd>\\</kbd>                                | 拆分窗口
+<kbd>Ctrl</kbd> + <kbd>1</kbd> + <kbd>2</kbd> ...              | 选中不同的窗口
+<kbd>Ctrl</kbd> + <kbd>End</kbd>                               | 移动到文件结尾
+<kbd>Ctrl</kbd> + <kbd>Home</kbd>                              | 移动到文件开头
+<kbd>Alt</kbd> + <kbd>1</kbd>                                  | 显示侧边栏
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>              | 聚焦侧边栏
+<kbd>Insert</kbd>                                              | 新建文件
+<kbd>Alt</kbd> + <kbd>Insert</kbd>                             | 新建文件夹
+<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>               | 选中侧边栏文件后，新建文件资源管理器并显示
+<kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | 将编辑器移动到上 / 下一组
 
 ### 代码编辑
 
@@ -170,6 +170,16 @@ key                                                             | command
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd>           | 在当前行上方插入一行，并移动光标
 <kbd>Ctrl</kbd> + <kbd>K</kbd> + <kbd>Q</kbd>                   | 返回上一编辑位置
 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd>                 | 格式化代码
+
+### 终端操作
+
+key                                                | command
+:--------------------------------------------------|:-------
+<kbd>Ctrl</kbd> + <kbd>`</kbd>                     | 切换终端
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd>  | 新建终端
+<kbd>Ctrl</kbd> + <kbd>\\</kbd>                    | 拆分终端
+<kbd>Alt</kbd> + <kbd>←</kbd> / <kbd>→</kbd>       | 聚焦到上 / 下一窗格
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>\\</kbd> | 终止活动终端实例
 
 ## 参考链接
 
