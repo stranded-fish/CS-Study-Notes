@@ -53,15 +53,14 @@ openssl enc -d -aes-256-cbc -salt -pass pass:123456 -in innobackupextest.xbstrea
 innobackupex 工具进行解压的命令示例如下：
 
 ```bash
-innobackupex --decompress --parallel=4 --compress-threads=4 /data/backup_qp
+innobackupex --decompress --parallel=4 /data/backup_qp
 ```
 
 **参数说明：**
 
-`--decompress` ：解压所有以 `.qp` 为后缀的压缩文件。
-`--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
-`--compress-threads=4` ：?
-`/data/backup_qp` ：待解压文件路径。
+* `--decompress` ：解压所有以 `.qp` 为后缀的压缩文件。
+* `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
+* `/data/backup_qp` ：待解压文件路径。
 
 **命令作用：**
 

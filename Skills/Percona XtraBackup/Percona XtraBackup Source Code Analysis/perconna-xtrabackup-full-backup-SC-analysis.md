@@ -13,7 +13,7 @@ bin/
 
 本文主要介绍通过 innobackupex 命令，在设置参数 `--compress`、`--stream=xbsream` 情况下对数据进行压缩并转化为 xbsream 流格式备份的全过程源码解析。
 
-**注：本文内容基于 percona-xtrabackup-2.4.8**
+**注意：本文内容基于 percona-xtrabackup-2.4.8**
 
 目录：
 
