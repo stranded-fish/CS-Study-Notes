@@ -10,7 +10,7 @@ Percona XtraBackup 特点：
 * 自动完成备份验证。
 * 更快的恢复速度，以提升正常运行时间。
 
-**注意：本文内容基于 percona-xtrabackup-2.4.8**
+**注意：本文内容基于 percona-xtrabackup-2.4.8。** 2.4.8 相较于旧版有较大改动：innobackupex 功能全部集成到了 xtrabackup 里，但考虑到兼容性，仍保留了 innobackupex 作为 xtrabackup 的一个软链接。并且 xtrabackup 现在已经支持非 Innodb 表备份，而 Innobackupex 将在后续版本中移除，建议通过 xtrabackup 替换 innobackupex。由于 Percona XtraBackup 官网已有较为详细的 [xtrabackup 工具使用文档](https://www.percona.com/doc/percona-xtrabackup/2.4/index.html#backup-scenarios)，本文将主要介绍 innobackupex 的使用方法以兼容旧版。
 
 目录：
 
@@ -180,8 +180,6 @@ rm boost_1_59_0.tar.gz
 
 **Step 3.** 执行 make
 
-TODO cmake make 命令相关内容及作用
-
 ```bash
 make -j1 && make install
 ```
@@ -190,7 +188,7 @@ make -j1 && make install
 
 **解决方法：**
 
-TODO 以下方式的具体意义
+创建交换分区：
 
 1\. 创建分区文件，大小 2 G；
 
@@ -204,7 +202,7 @@ dd if=/dev/zero of=/swapfile bs=1k count=2048000
 mkswap /swapfile
 ```
 
-3\. 激活 swap 文件；
+3\. 启用 swap 文件；
 
 ```bash
 swapon /swapfile
@@ -213,7 +211,7 @@ swapon /swapfile
 4\. 设置重启系统自动加载。
 
 ```bash
-/swapfile  swap  swap    defaults 0 0
+echo "/swapfile  swap  swap    defaults 0 0" >>  /etc/fstab
 ```
 
 ## Percona XtraBackup 使用
@@ -304,7 +302,7 @@ innobackupex --apply-log /data/backup_qp --redo-only
 参数说明：
 
 * `--apply-log` ：通过应用同级目录下的 `xtrabackup_logfile` 事务日志文件来准备备份。
-* `--redo-only` ：在准备基本完全备份和合并除最后一个增量以外的所有增量时，应该使用此选项。
+* `--redo-only` ：如果该全量备份将作为后续增量备份的基础备份或者后续需要将某个增量备份应用到该全量备份，则需要该参数。该参数将强制 xtrabackup 跳过 “rollback” 阶段（回滚未提交事务），只执行 “redo” 阶段。
 
 #### Restoring a Backup
 
@@ -346,18 +344,66 @@ service mysqld start
 
 #### Creating an Incremental Backup
 
-TODO
+增量备份不直接比较数据文件，而是读取 pages，并将它们的 LSN 与上一次备份的 LSN 进行比较。并且，增量备份仍然需要全量备份来恢复增量更改。
+
+创建增量备份：
+
+```bash
+innobackupex --user=root --password=MyNewPass4! --incremental --incremental-lsn=36434555441 --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest_inc.xbstream
+```
+
+参数说明：
+
+* `--incremental` ：表明将进行增量备份。
+* `--incremental-lsn=36434555441` ：指定增量备份使用的日志序列号（LSN）。
+  * 通过该参数可以在没有全量基备份的情况下，直接从某一 LSN 开始增量备份。
+  * 若有对应的全量备份，想在该全量备份基础上进行增量备份，可以查看全量备份基地址的 `xtrabackup_checkpoints` 文件，该文件中的 `to_lsn` 值即为该全量备份结束时数据库的 LSN。
+  * 若有对应的全量备份，也可以通过 `--incremental-basedir=name` 参数指定包含全量备份的目录并将其作为基备份，用于后续在此基础上的增量备份。
 
 #### Preparing the Incremental Backups
 
-TODO
+**Step 1.** 从 XBSTREAM 流提取文件
+
+```bash
+xbstream -x < /data/backups/innobackupextest_inc.xbstream -C /data/backup_inc/
+```
+
+**Step 2.** 解压文件
+
+```bash
+innobackupex --decompress --parallel=4 /data/backup_inc
+```
+
+解压完成后，`/data/backup_inc` 目录将包含 `delta` 文件，如 `ibdata1.delta` 和 `test/table1.ibd.delta`。这些文件代表自之前创建增量备份所选择的 LSN 之后的差异。
+
+**Step 3.** 准备备份
+
+增量备份准备与全量备份准备有所不同，全量备份中为了数据库一致性需要执行两种类型的操作：
+
+* 根据数据文件从日志文件中 replay 已提交的事务。
+* 回滚未提交的事务。
+
+但增量备份由于在当前备份过程中未提交的事务可能正在进行中，并很可能在下一个增量备份中提交，故增量备份中应该使用 `--redo-only` 参数防止回滚。
+
+首先准备之前创建的全量备份（注意：添加 `--redo-only` 参数防止回滚）：
+
+```bash
+innobackupex --apply-log /data/backup_qp --redo-only
+```
+
+将增量备份应用到全量备份：
+
+```bash
+innobackupex --apply-log /data/backup_qp/ --redo-only --incremental-dir=/data/backup_inc
+```
 
 #### Restoring a Incremental Backup
 
-TODO
+在完成备份准备后，`/data/backup_qp/` 内容与常规全量备份内容相同，可参考常规 [全量备份恢复](#restoring-a-backup) 步骤恢复数据库。
 
 ## 参考链接
 
+* [xtrabackup 使用说明（续）](https://www.cnblogs.com/zhoujinyi/p/5893333.html)
 * [Installing Percona XtraBackup 2.4](https://www.percona.com/doc/percona-xtrabackup/2.4/installation.html)
 * [MySQL install and uninstall backup Percona Xtrabackup](https://www.programmersought.com/article/25122068037/)
 * [gcc 编译出现 internal compiler error: Killed](https://blog.csdn.net/qq_29573053/article/details/69665996)
