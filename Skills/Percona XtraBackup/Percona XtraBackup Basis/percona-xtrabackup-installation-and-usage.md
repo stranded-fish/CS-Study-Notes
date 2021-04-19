@@ -225,11 +225,11 @@ bin/
 ├── xbcrypt
 └── xbcloud
 
-* `xtrabackup` ：用于非阻塞备份各种类型的数据库表（注意：发行时间较早的旧版 xtrabackup 只能用于备份 innoDB 数据库表，而较新版 xtrabackup 均可备份）。
-* `innobackupex` ：为指向 xtrabackup 的软链接，通过在程序运行中判断程序名，执行不同的参数处理操作，以兼容旧版 innobackupex 命令行。
-* `xbstream` ：以 XBSTREAM 格式序列化/反序列化文件。
-* `xbcrypt` ：以 XBCRYPT 格式加密或解密文件。
-* `xbcloud` ：在云服务上管理备份。
+* `xtrabackup`：用于非阻塞备份各种类型的数据库表（注意：发行时间较早的旧版 xtrabackup 只能用于备份 innoDB 数据库表，而较新版 xtrabackup 均可备份）。
+* `innobackupex`：为指向 xtrabackup 的软链接，通过在程序运行中判断程序名，执行不同的参数处理操作，以兼容旧版 innobackupex 命令行。
+* `xbstream`：以 XBSTREAM 格式序列化/反序列化文件。
+* `xbcrypt`：以 XBCRYPT 格式加密或解密文件。
+* `xbcloud`：在云服务上管理备份。
 
 ### innobackupex 备份周期 - 全量备份
 
@@ -240,18 +240,18 @@ bin/
 创建备份：
 
 ```bash
-innobackupex --user=root --password=MyNewPass4! --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest.xbstream
+innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest.xbstream
 ```
 
 参数说明：
 
-* `--user=root` | `--password=MyNewPass4!` ：待备份数据库的登录用户名与密码。
+* `--user=root` | `--password=xxxxxxxx`：待备份数据库的登录用户名与密码。
   由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加 MDL 锁、加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
-* `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
-* `--stream=xbstream` ：指定进行流备份的格式，一般选择 xbstream 格式。
-* `--compress` ：进行压缩备份。
-* `--compress-thread=4` ：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
-* `/data/backups/ > /data/backups/innobackupextest.xbstream` ：指定保存目录路径以及流文件名称。
+* `--parallel=4`：指定用于 data transfer 的 data copy thread 创建数量。
+* `--stream=xbstream`：指定进行流备份的格式，一般选择 xbstream 格式。
+* `--compress`：进行压缩备份。
+* `--compress-thread=4`：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
+* `/data/backups/ > /data/backups/innobackupextest.xbstream`：指定保存目录路径以及流文件名称。
 
 #### Preparing a backup
 
@@ -265,10 +265,10 @@ xbstream -x < /data/backups/innobackupextest.xbstream -C /data/backup_qp/
 
 参数说明：
 
-* `-x < /data/backups/innobackupextest.xbstream` ：
-  * `-x` ：从标准输入流中提取文件内容并输出到当前磁盘路径中。
-  * `< /data/backups/innobackupextest.xbstream` ：通过输入重定向符将指定路径 xbstream 文件作为输入传递给 xbstream 命令。
-* `-C /data/backup_qp/` ：改变提取出的文件的磁盘输出路径。
+* `-x < /data/backups/innobackupextest.xbstream`：
+  * `-x`：从标准输入流中提取文件内容并输出到当前磁盘路径中。
+  * `< /data/backups/innobackupextest.xbstream`：通过输入重定向符将指定路径 xbstream 文件作为输入传递给 xbstream 命令。
+* `-C /data/backup_qp/`：改变提取出的文件的磁盘输出路径。
 
 **注意：** `-x`，除 `<` 输入重定向方式获取输入之外，还可以通过 `|` 重定向符，配置其他命令实现流文件输入，示例：
 
@@ -287,9 +287,9 @@ innobackupex --decompress --parallel=4 /data/backup_qp
 
 参数说明：
 
-* `--decompress` ：解压所有以 `.qp` 为后缀的压缩文件。
-* `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
-* `/data/backup_qp` ：待解压文件路径。
+* `--decompress`：解压所有以 `.qp` 为后缀的压缩文件。
+* `--parallel=4`：指定用于 data transfer 的 data copy thread 创建数量。
+* `/data/backup_qp`：待解压文件路径。
 
 **注意：** 以上解压操作不会自动删除原压缩文件，如需解压后删除原压缩文件，可添加 `--remove-original` 参数。额外的，如果后续使用 `--copy-back` 或 `--move-back` 参数，将仅会复制解压后的文件，原压缩文件是否删除不会产生影响。
 
@@ -301,8 +301,8 @@ innobackupex --apply-log /data/backup_qp --redo-only
 
 参数说明：
 
-* `--apply-log` ：通过应用同级目录下的 `xtrabackup_logfile` 事务日志文件来准备备份。
-* `--redo-only` ：如果该全量备份将作为后续增量备份的基础备份或者后续需要将某个增量备份应用到该全量备份，则需要该参数。该参数将强制 xtrabackup 跳过 “rollback” 阶段（回滚未提交事务），只执行 “redo” 阶段。
+* `--apply-log`：通过应用同级目录下的 `xtrabackup_logfile` 事务日志文件来准备备份。
+* `--redo-only`：如果该全量备份将作为后续增量备份的基础备份或者后续需要将某个增量备份应用到该全量备份，则需要该参数。该参数将强制 xtrabackup 跳过 “rollback” 阶段（回滚未提交事务），只执行 “redo” 阶段。
 
 #### Restoring a Backup
 
@@ -349,13 +349,13 @@ service mysqld start
 创建增量备份：
 
 ```bash
-innobackupex --user=root --password=MyNewPass4! --incremental --incremental-lsn=36434555441 --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest_inc.xbstream
+innobackupex --user=root --password=xxxxxxxx --incremental --incremental-lsn=36434555441 --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest_inc.xbstream
 ```
 
 参数说明：
 
-* `--incremental` ：表明将进行增量备份。
-* `--incremental-lsn=36434555441` ：指定增量备份使用的日志序列号（LSN）。
+* `--incremental`：表明将进行增量备份。
+* `--incremental-lsn=36434555441`：指定增量备份使用的日志序列号（LSN）。
   * 通过该参数可以在没有全量基备份的情况下，直接从某一 LSN 开始增量备份。
   * 若有对应的全量备份，想在该全量备份基础上进行增量备份，可以查看全量备份基地址的 `xtrabackup_checkpoints` 文件，该文件中的 `to_lsn` 值即为该全量备份结束时数据库的 LSN。
   * 若有对应的全量备份，也可以通过 `--incremental-basedir=name` 参数指定包含全量备份的目录并将其作为基备份，用于后续在此基础上的增量备份。

@@ -37,8 +37,8 @@ dd if=/dev/zero of=/swapfile bs=1k count=2048000
 
 参数说明：
 
-* `bs=1k` ：块大小
-* `count=2048000` ：块数量
+* `bs=1k`：块大小
+* `count=2048000`：块数量
 
 文件大小 = bs * count
 

@@ -33,12 +33,12 @@ bin/
 innobackupex 工具进行全量备份的命令示例如下：
 
 ```bash
-innobackupex --user=root --password=MyNewPass4! --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/innobackupextest.xbstream
+innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/innobackupextest.xbstream
 ```
 
 **参数说明：**
 
-* `--user=root` | `--password=MyNewPass4!` ：待备份数据库的登录用户名与密码。
+* `--user=root` | `--password=xxxxxxxx` ：待备份数据库的登录用户名与密码。
   由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加 MDL 锁、加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
 * `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
 * `--stream=xbstream` ：指定进行流备份的格式，一般选择 xbstream 格式。
