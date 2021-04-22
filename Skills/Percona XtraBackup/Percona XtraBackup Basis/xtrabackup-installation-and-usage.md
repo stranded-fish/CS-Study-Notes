@@ -240,7 +240,7 @@ bin/
 创建备份：
 
 ```bash
-innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest.xbstream
+innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-threads=4 /data/backups/ > /data/backups/innobackupextest.xbstream
 ```
 
 参数说明：
@@ -250,7 +250,7 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
 * `--parallel=4`：指定用于 data transfer 的 data copy thread 创建数量。
 * `--stream=xbstream`：指定进行流备份的格式，一般选择 xbstream 格式。
 * `--compress`：进行压缩备份。
-* `--compress-thread=4`：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
+* `--compress-threads=4`：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
 * `/data/backups/ > /data/backups/innobackupextest.xbstream`：指定保存目录路径以及流文件名称。
 
 #### Preparing a backup
@@ -349,7 +349,7 @@ service mysqld start
 创建增量备份：
 
 ```bash
-innobackupex --user=root --password=xxxxxxxx --incremental --incremental-lsn=36434555441 --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/backups/innobackupextest_inc.xbstream
+innobackupex --user=root --password=xxxxxxxx --incremental --incremental-lsn=36434555441 --parallel=4 --stream=xbstream --compress --compress-threads=4 /data/backups/ > /data/backups/innobackupextest_inc.xbstream
 ```
 
 参数说明：

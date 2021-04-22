@@ -149,7 +149,7 @@ if (innobackupex_mode) {
 ```cpp
 /* compress_init() : ds_compress.c */
 
-// 创建多个 compress 线程，线程数量 xtrabackup_compress_threads 由 --compress-threadss 参数指定
+// 创建多个 compress 线程，线程数量 xtrabackup_compress_threads 由 --compress-threads 参数指定
 threads = create_worker_threads(xtrabackup_compress_threads);
 if (threads == NULL) {
     msg("compress: failed to create worker threads.\n");
