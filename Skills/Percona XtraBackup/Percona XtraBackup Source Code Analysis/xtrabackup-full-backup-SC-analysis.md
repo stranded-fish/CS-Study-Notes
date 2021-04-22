@@ -1,17 +1,8 @@
 # Percona XtraBackup 全量备份过程源码解析
 
-Xrabackup 工具集包含以下可执行文件：
+本文主要介绍 `innobackupex` 命令，在设置参数 `--compress`、`--stream=xbstream` 情况下对数据进行压缩并转化为 xbstream 流格式备份的全过程源码解析。
 
-bin/
-├── innobackupex -> xtrabackup
-├── xtrabackup
-├── xbstream
-├── xbcrypt
-└── xbcloud
-
-本文主要介绍通过 innobackupex 命令，在设置参数 `--compress`、`--stream=xbstream` 情况下对数据进行压缩并转化为 xbstream 流格式备份的全过程源码解析。
-
-**注意：本文内容基于 percona-xtrabackup-2.4.8** 2.4.8 相较于旧版有较大改动：innobackupex 功能全部集成到了 xtrabackup 里，但考虑到兼容性，仍保留了 innobackupex 作为 xtrabackup 的一个软链接。
+**注意：本文内容基于 percona-xtrabackup-2.4.8。** 2.4.8 相较于旧版有较大改动：innobackupex 功能全部集成到了 xtrabackup 里，但考虑到兼容性，仍保留了 innobackupex 作为 xtrabackup 的一个软链接。
 
 目录：
 
@@ -27,10 +18,10 @@ bin/
 
 ## 备份命令
 
-innobackupex 工具进行全量备份的命令示例如下：
+`innobackupex` 工具进行全量备份的命令示例如下：
 
 ```bash
-innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-thread=4 /data/backups/ > /data/innobackupextest.xbstream
+innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --compress --compress-threads=4 /data/backups/ > /data/innobackupextest.xbstream
 ```
 
 **参数说明：**
@@ -39,8 +30,8 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
   由于 innobackupex 在备份过程中需要向 mysqld server 发送命令进行交互，如加 MDL 锁、加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等，故需要数据库登录信息。
 * `--parallel=4` ：指定用于 data transfer 的 data copy thread 创建数量。
 * `--stream=xbstream` ：指定进行流备份的格式，一般选择 xbstream 格式。
-* `--compress` ：进行压缩备份。
-* `--compress-thread=4` ：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
+* `--compress` ：指定进行压缩备份。
+* `--compress-threads=4` ：指定用于执行压缩任务的 xtrabackup compress thread 创建数量。
 * `/data/backups/ > /data/innobackupextest.xbstream` ：指定保存目录路径以及流文件名称。
 
 **命令作用：**
@@ -54,9 +45,9 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
 1. 由于 2.4.8 版本，`innobackupex` 仅作为 `xtrabackup` 的一个软链接，在 `xtrabackup` 启动后，在参数处理阶段会根据程序名执行不同的操作，从而将 `innobackupex` 参数适配成 `xtrabackup` 形式以兼容旧版。最终等价于直接运行 `xtrabackup` 命令。
 2. `xtrabackup` 首先将根据之前参数处理阶段获取到的参数，初始化对应的 datasink，由于选择了 `--compress` 压缩备份，故在此阶段会初始化 compress datasink，同时 **创建 `compress threads`（多线程）**。
 3. 完成 datasink 初始化后，`xtrabackup` 将首先 **创建 `io watching thread`（单线程）** 负责 io 节流。然后再 **创建 `log copying thread`（单线程）** 负责拷贝 redo 日志，`log copying thread` 将从当前最新的 checkpoint 点开始复制。最后 **创建 `data copying threads`（多线程）并等待**，`data copying threads` 主要负责获取待压缩文件指针以及压缩内容的地址信息并将其传递给 `compress threads`，然后通知其开始压缩。
-4. 待 InnoDB 数据备份完成，`xtrabackup` 将执行 `FLUSH TABLES WITH READ LOCK`（FTWRL），获取一致性位点，并强制 MyISAM 表缓存落盘，然后开始备份非 InnoDB 数据，这个过程与备份 InnoDB 数据类似，同样会经历压缩、序列化等步骤。
+4. 待 InnoDB 数据备份完成，`xtrabackup` 将 **执行 `FLUSH TABLES WITH READ LOCK`（FTWRL）**，获取一致性位点，并强制 MyISAM 表缓存落盘，然后开始备份非 InnoDB 数据，这个过程与备份 InnoDB 数据类似，同样会经历压缩、序列化等步骤。
 5. 当非 InnoDB 数据备份完成后，`log copying thread` 将停止拷贝 redo 日志。
-6. 日志拷贝停止后，`xtrabackup` 将会对数据库进行解锁，执行 `UNLOCK TABLES`，然后销毁 datasink 并停止 `io watching thread`。
+6. 日志拷贝停止后，`xtrabackup` 将会对数据库进行解锁，**执行 `UNLOCK TABLES`**，然后销毁 datasink 并停止 `io watching thread`。
 7. 最后 `xtrabackup` 将打印复制的事务日志 LSN 范围，并进行相关收尾工作。
 
 ## 调用关系
@@ -78,15 +69,15 @@ struct datasink_struct {
 
 /* 支持数据池类型 */
 typedef enum {
-    DS_TYPE_STDOUT,  // 标准输出数据池
-    DS_TYPE_LOCAL,  // 本地数据池
-    DS_TYPE_ARCHIVE, // 归档数据池
-    DS_TYPE_XBSTREAM,// xbstream 数据池
-    DS_TYPE_COMPRESS,// 压缩数据池
-    DS_TYPE_ENCRYPT,//  加密数据池
-    DS_TYPE_DECRYPT,// 解密数据池
-    DS_TYPE_TMPFILE,// 临时文件数据池
-    DS_TYPE_BUFFER// 缓冲数据池
+    DS_TYPE_STDOUT,   // 标准输出数据池
+    DS_TYPE_LOCAL,    // 本地数据池
+    DS_TYPE_ARCHIVE,  // 归档数据池
+    DS_TYPE_XBSTREAM, // xbstream 数据池
+    DS_TYPE_COMPRESS, // 压缩数据池
+    DS_TYPE_ENCRYPT,  //  加密数据池
+    DS_TYPE_DECRYPT,  // 解密数据池
+    DS_TYPE_TMPFILE,  // 临时文件数据池
+    DS_TYPE_BUFFER    // 缓冲数据池
 } ds_type_t;
 ```
 
@@ -134,9 +125,9 @@ typedef struct {
 
 自版本 2.3 起，`xtrabackup` \ `innobackupex` 命令入口均为 xtrabackup main 方法。
 
-**main : xtrabackup.cc**
-
 ```cpp
+/* main() : xtrabackup.cc */
+
 // 处理执行命令及参数
 handle_options(argc, argv, &client_defaults, &server_defaults);
 
@@ -156,7 +147,9 @@ if (innobackupex_mode) {
 **2\.** `ds_create()` 方法根据 `DS_TYPE_COMPRESS` 参数调用 `compress_init()` 方法创建 `xtrabackup_compress_threads` 线程；
 
 ```cpp
-// 创建多个 compress 线程，线程数量 xtrabackup_compress_threads 由 --compress-threads 参数指定
+/* compress_init() : ds_compress.c */
+
+// 创建多个 compress 线程，线程数量 xtrabackup_compress_threads 由 --compress-threadss 参数指定
 threads = create_worker_threads(xtrabackup_compress_threads);
 if (threads == NULL) {
     msg("compress: failed to create worker threads.\n");
@@ -181,9 +174,11 @@ return ctxt;
 **3\.** `xtrabackup_compress_threads` 线程创建后将进入死循环，等待后续创建的 `data_copy_thread` 线程调用 `compress_write` 方法进行解锁。
 
 ```cpp
+/* compress_write() : ds_compress.c */
+
 while (1) {
-    /* 信号量设置为 FALSE，此时 data_copy_thread 收到信号，
-    可以进一步将之前一次循环压缩完成的数据写入到下一管道 */
+    /* 信号量设置为 FALSE，同时发送 signal 使 data_copy_thread 收到信号停止阻塞，
+    并进行下一步将之前一次循环压缩完成的数据写入到下一管道 */
     thd->data_avail = FALSE;
     pthread_cond_signal(&thd->data_cond);
 
@@ -207,13 +202,15 @@ while (1) {
 }
 ```
 
-`xtrabackup_compress_threads` 线程数默认为 1，用户可通过参数 `--compress-thread` 设置。
+`xtrabackup_compress_threads` 线程数默认为 1，用户可通过参数 `--compress-threads` 设置。
 
 **Step 2\. data_copy_thread 创建**
 
 创建 `data_copy_thread`。
 
 ```cpp
+/* xtrabackup_backup_func() : xtrabackup.cc */
+
 // 根据并行线程数，分配线程执行所需内存，线程数量 xtrabackup_parallel 由 --parallel 参数指定
 data_threads = (data_thread_ctxt_t *) ut_malloc_nokey(sizeof(data_thread_ctxt_t) * xtrabackup_parallel);
 
@@ -238,12 +235,21 @@ for (i = 0; i < (uint) xtrabackup_parallel; i++) {
 
 **Step 3\. 线程协作**
 
-InnoDB 数据压缩备份过程：
+![线程协作模型](https://i.loli.net/2021/04/22/YqUdfTLQgpvC81J.png)
+
+**①** `main thread` 根据参数 **`--parallel`** 创建若干 `data copy threads`，并等待。
+**②** `data copy threads` 首先获取一个待压缩文件的指针，然后执行 `while` 循环，每次对一部分文件进行压缩（长度为 `len`），然后 `compress_write` 方法会 **尝试获取 `xtrabackup compress threads` 的 `ctrl mutex`**，并将该部分文件内容，再次分块（长度不超过由参数 **`--compress-chunk-size`** 设置的 `COMPRESS_CHUNK_SIZE`），并按地址顺序将每一块分配给一个 `xtrabackup compress thread` 进行压缩。（即，同一时刻，所有的 `xtrabackup compress threads` 将只能服务于一个 `data copy thread`）
+**③** `xtrabackup compress threads` 收到待压缩内容的起始地址、块大小以及解锁信号后，开始执行压缩任务，完成任务之后设置信号量、发送 `signal` 通知给他分配任务的 `data copy thread`。
+**④** `data copy thread` 会通过 `for` 循环按照顺序（之前分配压缩任务时的顺序）等待 `xtrabackup compress threads` 完成任务（即，如果压缩线程 2、3... 已完成压缩任务，但压缩线程 1 未完成，则只能等待压缩线程 1 完成后，才能继续下一步，因为要保证按照原始文件顺序写入压缩内容），收到完成信号之后，将该线程压缩后的内容写入到下一管道（buffer）中，**并释放该线程的 ctrl mutex**。待整个 `for` 循环完成后（即，表示当前 `data copy thread` 分配给 `xtrabackup compress threads` 的任务已经全部完成并按序写入下一管道），则由下一个获取到 `ctrl mutex` 的 `data copy thread` 重复步骤 **② - ④**。
+
+**源码实现：**
 
 **1\.** 首先根据用户 `--parallel` 参数，创建指定数量的 `data_copy_thread` 线程，并注册回调函数 `data_copy_thread_func`，然后主进程进入 wait 状态，等待所有的 `data_copy_thread` 线程执行完毕。
-**2\.** `data_copy_thread_func` 方法通过迭代器，遍历数据，并获取文件指针，直到迭代器返回 `NULL`，表示该线程的任务完成，退出循环，并尝试修改 `count` 计数，当 `count == 0` 时，表示所有线程均完成任务，主线程退出 wait 状态。
+**2\.** `data_copy_thread_func` 方法通过迭代器，遍历数据，并获取文件指针（即，处理单位为一个文件），直到迭代器返回 `NULL`，表示该线程的任务完成，退出循环，并尝试修改 `count` 计数，当 `count == 0` 时，表示所有线程均完成任务，主线程退出 wait 状态。
 
 ```cpp
+/* data_copy_thread_func() : xtrabackup.cc */
+
 /* 通过 datafile 迭代器获取文件指针
 多个 data_copy_threads 共用一个迭代器，通过互斥锁确保获取到不同文件指针 */
 while ((node = datafiles_iter_next(ctxt->it)) != NULL) {
@@ -267,8 +273,11 @@ mutex_exit(ctxt->count_mutex);  // 释放锁
 **3.1** `xtrabackup_copy_datafile` 最终会循环调用 `compress_write` 方法。
 
 ```cpp
+/* xtrabackup_copy_datafile() : xtrabackup.cc */
+
 /* The main copy loop */
 while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
+
     // 执行 compress_write : ds_compress.c 方法，传递压缩信息，解锁压缩线程，开始执行压缩任务
     if (!write_filter->process(&write_filt_ctxt, dstfile)) {
         goto error;
@@ -280,13 +289,16 @@ while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 **3.3** 获取到 `ctrl_mutex` 锁之后，会设置 `xtrabackup_compress_threads` 线程压缩的数据起始地址，总长度信息，**然后解锁该线程，由 `xtrabackup_compress_threads` 执行实际压缩任务**，待 `xtrabackup_compress_threads` 线程执行完毕后，修改文件剩余总字节数 `len`、以及下一次压缩的起始地址 `ptr`。
 
 ```cpp
+/* compress_write() : ds_compress.c */
+
 // 将待压缩数据信息传递给 compress thread 进行压缩
 for (i = 0; i < nthreads; i++) {
     size_t chunk_len;
 
+    // 按顺序遍历下一个线程
     thd = threads + i;
 
-    // 尝试获取线程 ctrl 互斥锁
+    // 尝试获取线程 ctrl 互斥锁（直到该线程压缩完成，并将压缩内容写入管道后才会解锁）
     pthread_mutex_lock(&thd->ctrl_mutex);
 
     /* 待压缩数据长度（最大不可超过 COMPRESS_CHUNK_SIZE）
@@ -303,8 +315,10 @@ for (i = 0; i < nthreads; i++) {
     // 解锁线程，准备执行 qlz_compress 压缩
     thd->data_avail = TRUE;
 
-    TODO
+    // 发送信号给 xtrabackup_compress_threads 使其脱离阻塞状态
     pthread_cond_signal(&thd->data_cond);
+
+    // 解锁线程 data 互斥锁
     pthread_mutex_unlock(&thd->data_mutex);
 
     // 总压缩字节数减去刚才压缩的长度
@@ -318,11 +332,7 @@ for (i = 0; i < nthreads; i++) {
 }
 ```
 
-**3.4** 压缩完成后，`data_copy_thread` 调用 `buffer_write` 尝试将 stream 数据写入 buffer，如果 buffer 已满则触发一次 flush 将数据输出到 STDOUT，清空 buffer。
-
-TODO 可能有变
-
-![线程模型](https://i.loli.net/2021/04/12/QnUq3dzLax8JsEF.png)
+**3.4** 压缩完成后，`data_copy_thread` 调用 `buffer_write` 尝试将 stream 数据写入 buffer，如果 buffer 已满则触发一次 flush。
 
 ### 数据落盘机制
 
@@ -331,6 +341,8 @@ TODO 可能有变
 **3\.** `data_copy_thread` 调用 `buffer_write` 方法将压缩数据写入到 buffer 中。
 
 ```cpp
+/* compress_write() : ds_compress.c */
+
 /* Reap and stream the compressed data */
 for (i = 0; i <= max_thread; i++) {
     thd = threads + i;
@@ -357,8 +369,9 @@ for (i = 0; i <= max_thread; i++) {
     return 1;
     }
 
-    TODO
     pthread_mutex_unlock(&threads[i].data_mutex);
+
+    // 完成压缩数据写入，释放该压缩线程的 ctrl_mutex
     pthread_mutex_unlock(&threads[i].ctrl_mutex);
 }
 ```
