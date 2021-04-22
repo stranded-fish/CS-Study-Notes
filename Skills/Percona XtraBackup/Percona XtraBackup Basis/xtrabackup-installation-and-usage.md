@@ -58,7 +58,7 @@ yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
 
 **Step 2.** 测试仓库
 
-确保可以从仓库中获取到所需安装包
+确保可以从仓库中获取到所需安装包。
 
 ```bash
 yum list | grep percona
