@@ -162,7 +162,7 @@ ctxt = (ds_ctxt_t *) my_malloc(PSI_NOT_INSTRUMENTED,
                 MYF(MY_FAE));
 
 compress_ctxt = (ds_compress_ctxt_t *) (ctxt + 1);
-compress_ctxt->threads = threads; // 线程环境变量
+compress_ctxt->threads = threads;                      // 线程环境变量
 compress_ctxt->nthreads = xtrabackup_compress_threads; // 线程数量
 
 ctxt->ptr = compress_ctxt;
@@ -174,7 +174,7 @@ return ctxt;
 **3\.** `xtrabackup_compress_threads` 线程创建后将进入死循环，等待后续创建的 `data_copy_thread` 线程调用 `compress_write` 方法进行解锁。
 
 ```cpp
-/* compress_write() : ds_compress.c */
+/* compress_worker_thread_func() : ds_compress.c */
 
 while (1) {
     /* 信号量设置为 FALSE，同时发送 signal 使 data_copy_thread 收到信号停止阻塞，
@@ -191,11 +191,10 @@ while (1) {
         break;
 
     /* 调用 qpress API 对块进行压缩
-     thd->from      待压缩数据起始地址
-     thd->to        压缩数据写入地址
-     thd->from_len  待压缩数据字节数
-     &thd->state    状态
-     */
+        thd->from      待压缩数据起始地址
+        thd->to        压缩数据写入地址
+        thd->from_len  待压缩数据字节数
+        &thd->state    状态 */
     thd->to_len = qlz_compress(thd->from, thd->to, thd->from_len, &thd->state);
 
     thd->adler = adler32(0x00000001, (uchar *) thd->to, thd->to_len);
@@ -254,7 +253,7 @@ for (i = 0; i < (uint) xtrabackup_parallel; i++) {
 多个 data_copy_threads 共用一个迭代器，通过互斥锁确保获取到不同文件指针 */
 while ((node = datafiles_iter_next(ctxt->it)) != NULL) {
 
-    /* copy the datafile */
+    // copy the datafile
     if(xtrabackup_copy_datafile(node, num)) {
         msg("[%02u] xtrabackup: Error: "
             "failed to copy datafile.\n", num);
@@ -275,7 +274,7 @@ mutex_exit(ctxt->count_mutex);  // 释放锁
 ```cpp
 /* xtrabackup_copy_datafile() : xtrabackup.cc */
 
-/* The main copy loop */
+// The main copy loop
 while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 
     // 执行 compress_write : ds_compress.c 方法，传递压缩信息，解锁压缩线程，开始执行压缩任务
@@ -302,8 +301,7 @@ for (i = 0; i < nthreads; i++) {
     pthread_mutex_lock(&thd->ctrl_mutex);
 
     /* 待压缩数据长度（最大不可超过 COMPRESS_CHUNK_SIZE）
-    COMPRESS_CHUNK_SIZE 由参数 --compress-chunk-size 设置
-    */
+    COMPRESS_CHUNK_SIZE 由参数 --compress-chunk-size 设置 */
     chunk_len = (len > COMPRESS_CHUNK_SIZE) ?
     COMPRESS_CHUNK_SIZE : len;    
     thd->from = ptr;  	          // 待压缩数据起始地址
@@ -343,7 +341,7 @@ for (i = 0; i < nthreads; i++) {
 ```cpp
 /* compress_write() : ds_compress.c */
 
-/* Reap and stream the compressed data */
+// 获取压缩后的数据，并将其转化为 stream 
 for (i = 0; i <= max_thread; i++) {
     thd = threads + i;
 
@@ -361,8 +359,7 @@ for (i = 0; i <= max_thread; i++) {
     comp_file->bytes_processed += threads[i].from_len;
 
     /* to: 压缩后的数据起始地址  to_len: 压缩后的数据长度
-    * 将压缩后的数据,写入下一个管道 (即:buffer 管道)
-    */
+    将压缩后的数据,写入下一个管道 (即:buffer 管道) */
     if (ds_write(dest_file, threads[i].to, threads[i].to_len)) {
     msg("compress: write to the destination stream "
         "failed.\n");
