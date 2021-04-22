@@ -291,7 +291,7 @@ innobackupex --decompress --parallel=4 /data/backup_qp
 * `--parallel=4`：指定用于 data transfer 的 data copy thread 创建数量。
 * `/data/backup_qp`：待解压文件路径。
 
-**注意：** 以上解压操作不会自动删除原压缩文件，如需解压后删除原压缩文件，可添加 `--remove-original` 参数。额外的，如果后续使用 `--copy-back` 或 `--move-back` 参数，将仅会复制解压后的文件，原压缩文件是否删除不会产生影响。
+**注意：** 以上解压操作不会删除原压缩文件，如需解压后删除原压缩文件，可添加 `--remove-original` 参数。额外的，如果后续使用 `--copy-back` 或 `--move-back` 参数，将仅会复制解压后的文件，原压缩文件是否删除不会产生影响。
 
 **Step 3.** 准备备份
 
