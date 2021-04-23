@@ -18,7 +18,6 @@
 - [Percona XtraBackup 全量恢复过程源码解析](#percona-xtrabackup-全量恢复过程源码解析)
   - [XBSTREAM 流提取](#xbstream-流提取)
   - [解压文件](#解压文件)
-    - [解压过程](#解压过程)
     - [调用关系](#调用关系)
     - [关键流程解析](#关键流程解析)
       - [多线程模型](#多线程模型)
@@ -72,36 +71,41 @@ innobackupex --decompress --parallel=4 /data/backup_qp
 
 **注意：** 该命令不会删除原压缩文件，如需解压后删除原压缩文件，可添加 `--remove-original` 参数。额外的，如果后续使用 `--copy-back` 或 `--move-back` 参数，将仅会复制解压后的文件，原压缩文件是否删除不会产生影响。
 
-### 解压过程
-
-TODO 时序图以及介绍
-
 ### 调用关系
 
-![innobackupex restore backup 调用关系图](https://i.loli.net/2021/04/22/VWlAY85hyLod9Gq.png)
+![innobackupex restore backup 调用关系图](https://i.loli.net/2021/04/23/m5ld1URI4TSaVy8.png)
 
 ### 关键流程解析
 
 #### 多线程模型
 
+**1\.** xtrabackup main 方法根据输入参数 `--decompress`，选择进行解压操作，并调用 `decrypt_decompress()` 方法。
+**2\.** `decrypt_decompress()` 又调用 `run_data_threads()` 方法创建执行解压任务的线程。创建数量由参数 `--parallel` 设置，默认为 1。
+
 ```cpp
+/* decrypt_decompress() : backup_copy.cc */
+
 ret = run_data_threads(it, decrypt_decompress_thread_func,
 		xtrabackup_parallel ? xtrabackup_parallel : 1);
 ```
 
 ```cpp
+/* run_data_threads() : backup_copy.cc */
+
 for (i = 0; i < n; i++) {
-    data_threads[i].it = it;
-    data_threads[i].n_thread = i + 1;
-    data_threads[i].count = &count;
-    data_threads[i].count_mutex = &count_mutex;
-    os_thread_create(func, data_threads + i, &data_threads[i].id);
+    data_threads[i].it = it;                                       // 设置文件迭代器（多线程共享）
+    data_threads[i].n_thread = i + 1;                              // 设置线程序号
+    data_threads[i].count = &count;                                // 设置线程计数（多线程共享）
+    data_threads[i].count_mutex = &count_mutex;                    // 设置计数互斥量（多线程共享）
+    os_thread_create(func, data_threads + i, &data_threads[i].id); // 创建线程
 }
 
-/* Wait for threads to exit */
+// 等待线程退出
 while (1) {
     os_thread_sleep(100000);
     mutex_enter(&count_mutex);
+
+    // 当线程计数为 0，即创建的所有线程均完成任务后，退出
     if (count == 0) {
         mutex_exit(&count_mutex);
         break;
@@ -127,6 +131,8 @@ return(ret);
 #### 执行解压
 
 ```cpp
+/* decrypt_decompress_file() : backup_copy.cc */
+
 // Step 1. cat 命令读取 filepath 文件，并输出到 STDOUT（标准输出）
 cmd << "cat " << filepath;
 
@@ -145,11 +151,12 @@ if (ends_with(filepath, ".xbcrypt") && opt_decrypt) {
     needs_action = true;
 }
 
-// 判断是否为以 .qp 结尾的压缩文件，若是则执行解压过程
+// 判断是否为以 .qp 或者 .qp.xbcrypt 结尾的压缩文件，若是则执行解压过程
 if (opt_decompress
     && (ends_with(filepath, ".qp")
     || (ends_with(filepath, ".qp.xbcrypt")
         && opt_decrypt))) {
+
     /* Step 2. 通过 | 重定向符将 cat 命令读取内容以标准输入方式传递给 qpress 程序，进行解压
     参数说明：
         -d 解压
@@ -188,4 +195,4 @@ innobackupex --apply-log /data/backup_qp --redo-only
 
 ## 恢复备份
 
-在数据文件准备好之后，停止数据库，并清空原数据库文件，将备份文件移动到 mysql 数据目录下，再修改文件权限，然后启动数据库即可恢复备份。
+在数据文件准备好之后，首先停止数据库服务，并清空原数据库文件，紧接着将备份文件移动到 mysql 数据目录下，再修改文件权限为 mysql，然后启动数据库即可恢复备份。

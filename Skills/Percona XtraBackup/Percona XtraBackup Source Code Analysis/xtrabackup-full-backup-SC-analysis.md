@@ -52,7 +52,7 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
 
 ## 调用关系
 
-![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/12/4GLpnjbJNh5mdfu.png)
+![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/23/TO2IDQokrVR79zP.png)
 
 ## 关键结构体定义
 
@@ -220,10 +220,10 @@ mutex_create(LATCH_ID_XTRA_COUNT_MUTEX, &count_mutex);
 
 // 创建并行数据复制线程
 for (i = 0; i < (uint) xtrabackup_parallel; i++) {
-    data_threads[i].it = it; 	                // 设置文件迭代器
+    data_threads[i].it = it; 	                // 设置文件迭代器（多线程共享）
     data_threads[i].num = i+1; 	                // 设置线程序号
-    data_threads[i].count = &count;             // 设置线程数
-    data_threads[i].count_mutex = &count_mutex; // 设置互斥锁
+    data_threads[i].count = &count;             // 设置线程计数（多线程共享）
+    data_threads[i].count_mutex = &count_mutex; // 设置互斥锁（多线程共享）
 
     // 线程 3 数据复制线程
     os_thread_create(data_copy_thread_func, data_threads + i, &data_threads[i].id);
