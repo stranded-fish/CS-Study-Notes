@@ -237,7 +237,7 @@ for (i = 0; i < (uint) xtrabackup_parallel; i++) {
 ![线程协作模型](https://i.loli.net/2021/04/22/YqUdfTLQgpvC81J.png)
 
 **①** `main thread` 根据参数 **`--parallel`** 创建若干 `data copy threads`，并等待。
-**②** `data copy threads` 首先获取一个待压缩文件的指针，然后执行 `while` 循环，每次对一部分文件进行压缩（长度为 `len`），然后 `compress_write` 方法会 **尝试获取 `xtrabackup compress threads` 的 `ctrl mutex`**（注意：一旦该 copy 线程获取到了 compress 线程的第一把锁，则会阻塞其他所有 copy 线程，后续的 compress 锁只能由该 copy 线程获取），并将该部分文件内容，再次分块（长度不超过由参数 **`--compress-chunk-size`** 设置的 `COMPRESS_CHUNK_SIZE`），并按地址顺序将每一块分配给一个 `xtrabackup compress thread` 进行压缩。（即，同一时刻，所有的 `xtrabackup compress threads` 将只能服务于一个 `data copy thread`）
+**②** `data copy threads` 首先获取一个待压缩文件的指针，然后执行 `while` 循环，每次对一部分文件进行压缩（长度为 `len`），然后 `compress_write` 方法会 **尝试获取 `xtrabackup compress threads` 的 `ctrl mutex`**（注意：一旦该 copy thread 获取到了 compress thread 的第一把锁，则会阻塞其他所有 copy thread，后续的 compress 锁（ctrl mutex）只能由该 copy thread 获取），并将该部分文件内容，再次分块（长度不超过由参数 **`--compress-chunk-size`** 设置的 `COMPRESS_CHUNK_SIZE`），并按地址顺序将每一块分配给一个 `xtrabackup compress thread` 进行压缩。（即，同一时刻，所有的 `xtrabackup compress threads` 将只能服务于一个 `data copy thread`）
 **③** `xtrabackup compress threads` 收到待压缩内容的起始地址、块大小以及解锁信号后，开始执行压缩任务，完成任务之后设置信号量、发送 `signal` 通知给他分配任务的 `data copy thread`。
 **④** `data copy thread` 会通过 `for` 循环按照顺序（之前分配压缩任务时的顺序）等待 `xtrabackup compress threads` 完成任务（即，如果压缩线程 2、3... 已完成压缩任务，但压缩线程 1 未完成，则只能等待压缩线程 1 完成后，才能继续下一步，因为要保证按照原始文件顺序写入压缩内容），收到完成信号之后，将该线程压缩后的内容写入到下一管道（buffer）中，**并释放该线程的 ctrl mutex**。待整个 `for` 循环完成后（即，表示当前 `data copy thread` 分配给 `xtrabackup compress threads` 的任务已经全部完成并按序写入下一管道），则由下一个获取到 `ctrl mutex` 的 `data copy thread` 重复步骤 **② - ④**。
 
@@ -299,7 +299,7 @@ for (i = 0; i < nthreads; i++) {
 
     /* 尝试获取线程 ctrl 互斥锁（直到该线程压缩完成，并将压缩内容写入管道后才会解锁）
     注意：一旦当前 copy thread 获取到了 compress 的第一把锁，则其他所有 copy thread 
-    均会阻塞，并且后续的 compress 锁只能由该 copy thread 获得 */
+    均会阻塞，并且后续的 compress 锁（ctrl mutex）只能由该 copy thread 获得 */
     pthread_mutex_lock(&thd->ctrl_mutex);
 
     /* 待压缩数据长度（最大不可超过 COMPRESS_CHUNK_SIZE）
