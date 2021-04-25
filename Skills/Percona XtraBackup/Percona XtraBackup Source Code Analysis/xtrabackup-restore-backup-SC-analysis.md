@@ -178,6 +178,8 @@ if (opt_decompress
 cmd << " > " << dest_filepath;
 ```
 
+**注意：** qpress 命令默认双线程，即如果执行 `innobackupex --decompress --parallel=4 /data/backup_qp` 命令，最终效果等价于：同时对 4 个不同文件调用 qpress 命令进行解压，然后每个 qpress 自身再采用双线程解压该文件。总线程数：12 = 4（xtrabackup decompress thread）+ 8（qpress decompress thread）。
+
 ## 准备备份
 
 ```bash
