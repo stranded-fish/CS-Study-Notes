@@ -269,7 +269,69 @@ mutex_exit(ctxt->count_mutex);  // 释放锁
 
 **3\.** `data_copy_thread` 线程执行具体 copy data 任务的方法 `xtrabackup_copy_datafile`：
 
-**3.1** `xtrabackup_copy_datafile` 最终会循环调用 `compress_write` 方法。
+**3.1** `xtrabackup_copy_datafile` 首先会循环调用 `xb_fil_cur_read` 方法，读取并验证源文件中的下一个块。
+
+```cpp
+/* xtrabackup_copy_datafile() : xtrabackup.cc */
+
+while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
+    ......
+}
+```
+
+```cpp
+/* Pages 的读缓冲区大小 (640 pages = 10M，在 page 大小为 16 K 的情况下) */
+#define XB_FIL_CUR_PAGES 640
+
+......
+
+// Step 1. 读取下一个 batch
+cursor->read_filter->get_next_batch(&cursor->read_filter_ctxt,
+					&offset, &to_read);
+
+// to_read：读取字节数，若为 0 则表示已读到文件结尾
+if (to_read == 0LL) {
+    return(XB_FIL_CUR_EOF);
+}
+
+/* Step 2. 判断是否大于 buf_size，若大于，则设置为 buf_size
+buf_size 大小在 xb_fil_cur_open 阶段确定
+buf_size = XB_FIL_CUR_PAGES * page_size */
+if (to_read > (ib_uint64_t) cursor->buf_size) {
+    to_read = (ib_uint64_t) cursor->buf_size;
+}
+
+// 合法性验证
+xb_a(to_read > 0 && to_read <= 0xFFFFFFFFLL);
+
+// Step 3. 判断 to_read 是否是 page_size 的整数倍，如果不是则通过添加 offset 使其为整数倍
+if (to_read % cursor->page_size != 0 &&
+    offset + to_read == (ib_uint64_t) cursor->statinfo.st_size) {
+
+    if (to_read < (ib_uint64_t) cursor->page_size) {
+        msg("[%02u] xtrabackup: Warning: junk at the end of "
+            "%s:\n", cursor->thread_n, cursor->abs_path);
+        msg("[%02u] xtrabackup: Warning: offset = %llu, "
+            "to_read = %llu\n",
+            cursor->thread_n,
+            (unsigned long long) offset,
+            (unsigned long long) to_read);
+
+        return(XB_FIL_CUR_EOF);
+    }
+
+    to_read = (ib_uint64_t) (((ulint) to_read) &
+                ~(cursor->page_size - 1));
+}
+
+// 验证 to_read 是否为 page_size 整数倍
+xb_a(to_read % cursor->page_size == 0);
+
+// Step 4. 根据 to_read 确定需要读取的 page 数
+npages = (ulint) (to_read >> cursor->page_size_shift);
+```
+
+**3.2** 在读取到源文件中的下一个块后，调用 `compress_write` 方法。
 
 ```cpp
 /* xtrabackup_copy_datafile() : xtrabackup.cc */
@@ -284,8 +346,8 @@ while ((res = xb_fil_cur_read(&cursor)) == XB_FIL_CUR_SUCCESS) {
 }
 ```
 
-**3.2** `compress_write` 方法会先获取执行压缩任务的 `xtrabackup_compress_threads` 线程，并尝试获取其 `ctrl_mutex` 锁。
-**3.3** 获取到 `ctrl_mutex` 锁之后，会设置 `xtrabackup_compress_threads` 线程压缩的数据起始地址，总长度信息，**然后解锁该线程，由 `xtrabackup_compress_threads` 执行实际压缩任务**，待 `xtrabackup_compress_threads` 线程执行完毕后，修改文件剩余总字节数 `len`、以及下一次压缩的起始地址 `ptr`。
+**3.3** `compress_write` 方法会先获取执行压缩任务的 `xtrabackup_compress_threads` 线程，并尝试获取其 `ctrl_mutex` 锁。
+**3.4** 获取到 `ctrl_mutex` 锁之后，会设置 `xtrabackup_compress_threads` 线程压缩的数据起始地址，总长度信息，**然后解锁该线程，由 `xtrabackup_compress_threads` 执行实际压缩任务**，待 `xtrabackup_compress_threads` 线程执行完毕后，修改文件剩余总字节数 `len`、以及下一次压缩的起始地址 `ptr`。
 
 ```cpp
 /* compress_write() : ds_compress.c */
@@ -332,7 +394,7 @@ for (i = 0; i < nthreads; i++) {
 }
 ```
 
-**3.4** 压缩完成后，`data_copy_thread` 调用 `buffer_write` 尝试将 stream 数据写入 buffer，如果 buffer 已满则触发一次 flush。
+**3.5** 压缩完成后，`data_copy_thread` 调用 `buffer_write` 尝试将 stream 数据写入 buffer，如果 buffer 已满则触发一次 flush。
 
 ### 数据落盘机制
 
