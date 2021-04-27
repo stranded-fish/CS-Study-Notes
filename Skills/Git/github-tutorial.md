@@ -25,7 +25,7 @@ your_email@youremail.com 为 Github 上绑定的邮箱，之后会要求输入�
 
 1. 进入 Github，选择 Settings -> SSH and GPG keys -> New SSH key;
 2. 输入自定义 Title；
-3. 将本地生成的 `id_rsa.pub` 内容复制到 Key 中，并完成添加。
+3. 将本地生成的 `id_rsa.pub` 内容（Linux: cat ~/.ssh/id_rsa.pub）复制到 Key 中，并完成添加。
 
 ![添加 SSH Key](https://i.loli.net/2021/02/14/hYLWAZydQDnRoKt.png)
 
@@ -37,7 +37,7 @@ your_email@youremail.com 为 Github 上绑定的邮箱，之后会要求输入�
 $ ssh -T git@github.com
 ```
 
-如果是第一次登录会提示是否 continue，输入 yes 或 第二次登录就会收到提示：You've successfully authenticated, but GitHub does not provide shell access 。这就表示已成功连上 Github。
+如果是第一次登录会提示是否 continue，输入 yes 或 第二次登录就会收到提示：`You've successfully authenticated, but GitHub does not provide shell access` 。这就表示已成功连上 Github。
 
 **Step 4.** 设置用户名/邮箱
 
