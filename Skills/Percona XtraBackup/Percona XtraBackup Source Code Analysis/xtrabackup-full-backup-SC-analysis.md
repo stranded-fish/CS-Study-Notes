@@ -234,7 +234,7 @@ for (i = 0; i < (uint) xtrabackup_parallel; i++) {
 
 **Step 3\. 线程协作**
 
-![线程协作模型](https://i.loli.net/2021/04/22/YqUdfTLQgpvC81J.png)
+![XtraBackup 压缩 - 线程协作模型](https://i.loli.net/2021/04/22/YqUdfTLQgpvC81J.png)
 
 **①** `main thread` 根据参数 **`--parallel`** 创建若干 `data copy threads`，并等待。
 **②** `data copy threads` 首先获取一个待压缩文件的指针，然后执行 `while` 循环，每次对一部分文件进行压缩（长度为 `len`），然后 `compress_write` 方法会 **尝试获取 `xtrabackup compress threads` 的 `ctrl mutex`**（注意：一旦该 copy thread 获取到了 compress thread 的第一把锁，则会阻塞其他所有 copy thread，后续的 compress 锁（ctrl mutex）只能由该 copy thread 获取），并将该部分文件内容，再次分块（长度不超过由参数 **`--compress-chunk-size`** 设置的 `COMPRESS_CHUNK_SIZE`），并按地址顺序将每一块分配给一个 `xtrabackup compress thread` 进行压缩。（即，同一时刻，所有的 `xtrabackup compress threads` 将只能服务于一个 `data copy thread`）
