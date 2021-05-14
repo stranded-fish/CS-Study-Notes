@@ -1,6 +1,6 @@
 # Linux 查看系统信息
 
-本文主要对 Linux 系统的相关信息的查看操作进行了总结。
+本文主要对 Linux 系统的 **版本信息** 和 **硬件信息** 的查看操作进行了总结。
 
 目录：
 
@@ -11,10 +11,9 @@
   - [查看硬件信息](#查看硬件信息)
     - [CPU](#cpu)
     - [内存](#内存)
-    - [磁盘](#磁盘)
+    - [硬盘](#硬盘)
     - [网卡](#网卡)
     - [其他](#其他)
-  - [查看开发环境](#查看开发环境)
   - [参考链接](#参考链接)
 
 ## 查看系统版本
@@ -77,7 +76,7 @@ NUMA node1 CPU(s):     18-35,54-71
 
 **2\. `cat /proc/cpuinfo` 查看每个 CPU 信息**
 
-以下仅为输出的第一个 CPU 信息，该命令会将所有 CPU 信息全部打印出来。
+该命令会将所有 CPU 信息全部打印出来，以下仅为输出的第一个 CPU 信息。
 
 ```bash
 processor	: 0
@@ -111,11 +110,9 @@ power management:
 
 ### 内存
 
-**1\. `dmidecode -t memory` 查看内存硬件信息**
+**`dmidecode -t memory` 查看内存硬件信息**
 
 ```bash
-# dmidecode -t memory
-# dmidecode 3.2
 Getting SMBIOS data from sysfs.
 SMBIOS 2.8 present.
 
@@ -153,62 +150,28 @@ Memory Device
 	Configured Voltage: Unknown
 ```
 
-**2\. `free` 查看内存使用概要情况**
+### 硬盘
 
-参数说明：
-
-* `-b`, --bytes         show output in bytes
-* `-k`, --kilo          show output in kilobytes
-* `-m`, --mega          show output in megabytes
-* `-g`, --giga          show output in gigabytes
-* `-h`, --human         show human-readable output
+**1\. `lsblk` 查看硬盘和分区分布**
 
 ```bash
-# free -h
-              total        used        free      shared  buff/cache   available
-Mem:           1.8G        338M        1.4G         96K        109M        1.3G
-Swap:          3.9G         76M        3.8G
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sr0     11:0    1 130.8M  0 rom  
+vda    253:0    0    60G  0 disk 
+└─vda1 253:1    0    60G  0 part /
 ```
 
-`Mem` 为内存的使用信息，`Swap` 为交换空间的使用信息。
+* `NAME`：设备名
+* `MAJ:MIN`：主:从 设备数量
+* `RM`：是否可移动设备
+* `SIZE`：设备大小
+* `RO`：是否只读设备
+* `TYPE`：设备类型
+* `MOUNTPOINT`：设备挂载点
 
-* `total`：系统总可用物理内存大小
-* `used`：已被使用的物理内存大小
-* `free`：未分配的内存
-* `shared`：被共享使用的内存
-* `buffers/cache`：被 buffer 和 cache 使用的物理内存大小
-* `available`：可用内存数
-
-**注意：** `free` 为真正未被使用的物理内存大小，`available` 为应用程序认为可用的内存数量，`available = free + buffer + cache`（理论情况），Linux 为了提升读写性能，会消耗一部分内存资源缓存磁盘数据，对于内核来说，buffer 和 cache 都属于已经被使用的内存。但当应用程序申请内存时，如果 free 内存不够，内核就会回收 buffer 和 cache 的内存来满足应用程序的请求。
-
-可以通过以下命令手动回收 `buff/cache`：
+**2\. `fdisk -l` 查看硬盘和分区详细信息**
 
 ```bash
-sysctl -w vm.drop_caches=1
-sysctl -w vm.drop_caches=2
-sysctl -w vm.drop_caches=3
-```
-
-**3\. `cat /proc/meminfo` 查看内存使用详细情况**
-
-```bash
-# cat /proc/meminfo
-MemTotal:        1882012 kB
-MemFree:         1388508 kB
-MemAvailable:    1382660 kB
-Buffers:            3956 kB
-Cached:           118592 kB
-SwapCached:         7932 kB
-Active:           213092 kB
-......
-```
-
-### 磁盘
-
-`fdisk -l` 查看磁盘硬件信息
-
-```bash
-# fdisk -l
 Disk /dev/vda: 64.4 GB, 64424509440 bytes, 125829120 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -222,21 +185,119 @@ Disk identifier: 0x0009ac89
 
 ### 网卡
 
-`lspci | grep -i 'eth'` 查看网卡硬件信息
+**1\. `lspci | grep -i 'eth'` 查看网卡硬件信息**
 
 ```bash
-# lspci | grep -i 'eth'
-
 08:00.0 Ethernet controller: Intel Corporation Device 37cc (rev 09)
 58:00.0 Ethernet controller: Intel Corporation Ethernet Controller XXV710 for 25GbE SFP28 (rev 02)
 58:00.1 Ethernet controller: Intel Corporation Ethernet Controller XXV710 for 25GbE SFP28 (rev 02)
 ```
 
+**2\. 查看系统所有网络接口**
+
+**eg 1.** `ifconfig -a`
+
+```bash
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.0.8.10  netmask 255.255.252.0  broadcast 10.0.11.255
+        inet6 fe80::5054:ff:fe8c:5ac0  prefixlen 64  scopeid 0x20<link>
+        ether 52:54:00:8c:5a:c0  txqueuelen 1000  (Ethernet)
+        RX packets 14759958  bytes 2237100423 (2.0 GiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 16041393  bytes 4194853634 (3.9 GiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 6239413  bytes 989573591 (943.7 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 6239413  bytes 989573591 (943.7 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+**eg 2.** `ip link show`
+
+```
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:8c:5a:c0 brd ff:ff:ff:ff:ff:ff
+```
+
+**3\. `ethtool eth0` 查看指定网络接口的详细信息**
+
+```bash
+Settings for eth0:
+	Supported ports: [ FIBRE ]
+	Supported link modes:   10000baseT/Full 
+	Supported pause frame use: Symmetric
+	Supports auto-negotiation: Yes
+	Supported FEC modes: Not reported
+	Advertised link modes:  10000baseT/Full 
+	Advertised pause frame use: No
+	Advertised auto-negotiation: Yes
+	Advertised FEC modes: Not reported
+	Speed: 10000Mb/s
+	Duplex: Full
+	Port: FIBRE
+	PHYAD: 0
+	Transceiver: external
+	Auto-negotiation: off
+	Supports Wake-on: d
+	Wake-on: d
+	Current message level: 0x0000000f (15)
+			       drv probe link timer
+	Link detected: yes
+```
+
 ### 其他
 
-`lspci` 查看 PCI 信息，即主板所有硬件槽信息。
+**1\. `lspci` 查看 PCI 信息，即主板所有硬件槽信息**
 
-## 查看开发环境
+```bash
+00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)
+00:01.0 ISA bridge: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II]
+00:01.1 IDE interface: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II]
+00:01.2 USB controller: Intel Corporation 82371SB PIIX3 USB [Natoma/Triton II] (rev 01)
+00:01.3 Bridge: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 03)
+00:02.0 VGA compatible controller: Cirrus Logic GD 5446
+00:03.0 PCI bridge: Red Hat, Inc. QEMU PCI-PCI bridge
+00:04.0 PCI bridge: Red Hat, Inc. QEMU PCI-PCI bridge
+00:05.0 Ethernet controller: Red Hat, Inc. Virtio network device
+00:06.0 SCSI storage controller: Red Hat, Inc. Virtio block device
+00:07.0 Unclassified device [00ff]: Red Hat, Inc. Virtio memory balloon
+```
+
+**2\. `dmidecode` 查看机器 DMI（Desktop Management Interface）信息**
+
+```bash
+BIOS Information
+	......
+
+System Information
+	......
+
+Chassis Information
+	......
+
+Processor Information
+	......
+
+Physical Memory Array
+	......
+
+Memory Device
+  ......
+Memory Array Mapped Address
+	......
+
+System Boot Information
+	......
+```
+
+若仅需单独查看某一设备信息，可通过加参数 `-t` + 设备名实现。如，查看系统 bios 信息，`dmidecode -t bios`。
 
 ## 参考链接
 
