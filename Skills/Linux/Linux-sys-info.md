@@ -42,7 +42,7 @@
 
 ### CPU
 
-**1\. `lscpu` 查看 CPU 统计信息**
+**1. `lscpu` 查看 CPU 统计信息**
 
 ```bash
 Architecture:          x86_64              # CPU 架构
@@ -74,7 +74,7 @@ NUMA node1 CPU(s):     18-35,54-71
 
 以上信息表明，该系统共插有两个物理 CPU，每个 CPU 为 18 核 36 线程，共计 72 线程。
 
-**2\. `cat /proc/cpuinfo` 查看每个 CPU 信息**
+**2. `cat /proc/cpuinfo` 查看每个 CPU 信息**
 
 该命令会将所有 CPU 信息全部打印出来，以下仅为输出的第一个 CPU 信息。
 
@@ -152,7 +152,7 @@ Memory Device
 
 ### 硬盘
 
-**1\. `lsblk` 查看硬盘和分区分布**
+**1. `lsblk` 查看硬盘和分区分布**
 
 ```bash
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -169,7 +169,7 @@ vda    253:0    0    60G  0 disk
 * `TYPE`：设备类型
 * `MOUNTPOINT`：设备挂载点
 
-**2\. `fdisk -l` 查看硬盘和分区详细信息**
+**2. `fdisk -l` 查看硬盘和分区详细信息**
 
 ```bash
 Disk /dev/vda: 64.4 GB, 64424509440 bytes, 125829120 sectors
@@ -185,7 +185,7 @@ Disk identifier: 0x0009ac89
 
 ### 网卡
 
-**1\. `lspci | grep -i 'eth'` 查看网卡硬件信息**
+**1. `lspci | grep -i 'eth'` 查看网卡硬件信息**
 
 ```bash
 08:00.0 Ethernet controller: Intel Corporation Device 37cc (rev 09)
@@ -193,7 +193,7 @@ Disk identifier: 0x0009ac89
 58:00.1 Ethernet controller: Intel Corporation Ethernet Controller XXV710 for 25GbE SFP28 (rev 02)
 ```
 
-**2\. 查看系统所有网络接口**
+**2. 查看系统所有网络接口**
 
 **eg 1.** `ifconfig -a`
 
@@ -226,7 +226,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
     link/ether 52:54:00:8c:5a:c0 brd ff:ff:ff:ff:ff:ff
 ```
 
-**3\. `ethtool eth0` 查看指定网络接口的详细信息**
+**3. `ethtool eth0` 查看指定网络接口的详细信息**
 
 ```bash
 Settings for eth0:
@@ -254,7 +254,7 @@ Settings for eth0:
 
 ### 其他
 
-**1\. `lspci` 查看 PCI 信息，即主板所有硬件槽信息**
+**1. `lspci` 查看 PCI 信息，即主板所有硬件槽信息**
 
 ```bash
 00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)
@@ -270,7 +270,7 @@ Settings for eth0:
 00:07.0 Unclassified device [00ff]: Red Hat, Inc. Virtio memory balloon
 ```
 
-**2\. `dmidecode` 查看机器 DMI（Desktop Management Interface）信息**
+**2. `dmidecode` 查看机器 DMI（Desktop Management Interface）信息**
 
 ```bash
 BIOS Information
