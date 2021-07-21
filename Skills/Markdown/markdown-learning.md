@@ -84,7 +84,7 @@ VS Code 快捷键：
 - 粗体：<kbd>Ctrl</kbd> + <kbd>B</kbd>
 - 粗斜体：<kbd>Ctrl</kbd> + <kbd>I</kbd> + <kbd>Ctrl</kbd> + <kbd>B</kbd>
   
-注：符号必须 **紧邻**，不能有空格。
+> 注意：符号必须 **紧邻**，不能有空格。
 
 ```markdown
 *斜体文本*
@@ -107,7 +107,7 @@ ___粗斜体文本___
 
 可以通过在一行中使用三个以上星号、减号、底线来实现一条分割线（行内可以有空格，但不能有其他东西）。
 
-注：减号 `-` 上方紧接上方内容时，将会被识别为标题符号，故需上方空行。
+> 注意：减号 `-` 上方紧接上方内容时，将会被识别为标题符号，故需上方空行。
 
 ```markdown
 ***
@@ -125,7 +125,7 @@ ___粗斜体文本___
 
 文字两端添加两个波浪线 ~~
 
-注：符号须 **紧邻**，不能有空格。
+> 注意：符号须 **紧邻**，不能有空格。
 
 ```markdown
 ~~test~~
@@ -365,7 +365,7 @@ eg 3:
 
 使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。
 
-注：无相关空格要求。
+>注意：无相关空格要求。
   
 ```markdown
 表格可以不用开头和结尾的 | 可以简单一点
@@ -402,7 +402,7 @@ eg 3:
 \<font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"\</font> | <font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"</font>
 \<table>\<tr>\<td bgcolor=orange>背景色是：orange\</td>\</tr>\</table>            | <table><tr><td bgcolor=orange>背景色是：orange</td></tr></table>
 篮球 \<br> 羽毛球                                                                | 篮球 <br> 羽毛球
-\<details>\<summary>展开\</summary>Answer\</details> | Question 1 ? <details><summary>展开</summary>Answer</details>
+\<details>\<summary>展开\</summary>Answer\</details>                             | Question 1 ? <details><summary>展开</summary>Answer</details>
 
 ### 转义
 
@@ -440,7 +440,7 @@ $$
 
 通过 `[TOC]` 自动生成目录。
 
-注：有些渲染器无法解析 `[TOC]`，故为了确保可移植性，可使用 Markdown All in One 插件来自动生成目录。
+>注意：有些渲染器无法解析 `[TOC]`，故为了确保可移植性，可使用 Markdown All in One 插件来自动生成目录。
 
 ### 自定义 CSS 样式
 
@@ -509,10 +509,10 @@ key                                                             | command
 
 key              | command
 :----------------|:---------------------
-create table ... | 创建表格
+create table ... | 创建目录
 export ...       | 打印为 pdf、html、png  ...
 
-注：在 markdown 源文件下操作，而不是预览模式。
+>注意：在 markdown 源文件下操作，而不是预览模式。
 
 ## 参考链接
 
