@@ -84,6 +84,8 @@ Enter | <kbd>Enter</kbd>（回车键）
 Escape（或 Esc） | </kbd>Esc</kbd>（退出键）
 Backspace（或 BS） | <kbd>Backspace</kbd>（退格键）
 
+部分常规按键需要 \` 符号进行转义，如：;（分号） ,（逗号） 等。
+
 **快捷键名称** 之间可通过 `&` 符号进行组合，形成自定义组合键。（**快捷键修饰符** 无需 `&` 连接，直接组合即可）
 
 > 完整快捷键修饰符列表 [中文](https://wyagd001.github.io/zh-cn/docs/Hotkeys.htm#Symbols) / [English](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols)。
