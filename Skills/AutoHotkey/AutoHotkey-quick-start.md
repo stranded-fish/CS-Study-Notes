@@ -168,6 +168,32 @@ Function(参数1, 参数2, 参数3)
 * 函数可以嵌套。
 * 文本前后需要添加双引号。
 
+**常用函数：**
+
+1\. `GetKeyState()`
+
+检查键盘、鼠标或操纵杆按键是否按下。
+
+```autohotkey
+; API
+KeyIsDown := GetKeyState(KeyName , Mode)
+
+; eg
+if GetKeyState("control") = 0 {
+      if GetKeyState("shift") = 0
+          Send, {Left}
+      else
+          Send, +{Left}
+      return
+  } else {
+      if GetKeyState("shift") = 0
+          Send, ^{Left}
+      else
+          Send, +^{Left}
+      return
+  }
+```
+
 > 完整命令和内置函数列表 [中文](https://wyagd001.github.io/zh-cn/docs/commands/index.htm) / [English](https://www.autohotkey.com/docs/commands/index.htm)。
 
 ## 参考链接
