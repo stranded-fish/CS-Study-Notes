@@ -492,6 +492,7 @@ key                                                             | command
 <kbd>Alt</kbd> + <kbd>S</kbd>                                   | 删除线
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>]</kbd>               | 当前标题升级
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>[</kbd>               | 当前标题降级
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>.</kbd>               | 聚焦到导航路径视图
 <kbd>Ctrl</kbd> + <kbd>L</kbd>                                  | 添加链接
 <kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>C</kbd>                   | 生成代码块 \``` ```
 <kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>I</kbd>                   | 生成行内代码块 \` `
