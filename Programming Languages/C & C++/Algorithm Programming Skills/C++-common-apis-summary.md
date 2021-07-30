@@ -23,6 +23,9 @@
     - [声明及初始化](#声明及初始化-2)
     - [遍历字符串](#遍历字符串)
     - [基本操作](#基本操作-1)
+    - [类型转换](#类型转换)
+      - [数值 转换为 string](#数值-转换为-string)
+      - [string 转换为 数值](#string-转换为-数值)
   - [队列](#队列)
     - [声明及初始化](#声明及初始化-3)
     - [基本操作](#基本操作-2)
@@ -143,7 +146,7 @@ for (auto p = begin(ia); p != end(ia); ++p) {
 sort(array, array + size);
 ```
 
-其中，`sort()` 方法包含在 `<algorithm>` 头文件中，并定义在 `std` 命令空间：
+其中，`sort()` 方法包含在 `<algorithm>` 头文件中，并定义在 `std` 命名空间：
 
 ```C++
 #include <algorithm>
@@ -379,6 +382,26 @@ if (s1 > s2) ......
 s1.compare(s2);
 ```
 
+### 类型转换
+
+使用以下转化方法时，需引入头文件 `<string>`，并使用 `std` 命名空间。
+
+#### 数值 转换为 string
+
+* `to_string`  : numerical value to string
+* `to_wstring` : numerical value to wide string
+
+#### string 转换为 数值
+
+* `stoi`   : string to integer
+* `stol`   : string to long int
+* `stoul`  : string to unsigned integer
+* `stoll`  : string to long long
+* `stoull` : string to unsigned long long
+* `stof`   : string to float
+* `stod`   : string to double
+* `stold`  : string to long double
+
 ## 队列
 
 ### 声明及初始化
@@ -563,3 +586,4 @@ size_type erase(const key_type& key);
 * [C++多维数组的遍历以及初始化](https://blog.csdn.net/anlian523/article/details/90549379)
 * [C++迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)
+* [C++ string Reference](http://www.cplusplus.com/reference/string/)
