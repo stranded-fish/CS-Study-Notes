@@ -27,19 +27,23 @@
       - [数值 转换为 string](#数值-转换为-string)
       - [string 转换为 数值](#string-转换为-数值)
   - [队列](#队列)
-    - [声明及初始化](#声明及初始化-3)
-    - [基本操作](#基本操作-2)
+    - [普通队列](#普通队列)
+      - [声明及初始化](#声明及初始化-3)
+      - [基本操作](#基本操作-2)
+    - [优先队列](#优先队列)
+      - [声明及初始化](#声明及初始化-4)
+      - [基本操作](#基本操作-3)
   - [堆栈](#堆栈)
-    - [声明及初始化](#声明及初始化-4)
-    - [基本操作](#基本操作-3)
-  - [集合](#集合)
     - [声明及初始化](#声明及初始化-5)
-    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-4)
-  - [哈希表](#哈希表)
+  - [集合](#集合)
     - [声明及初始化](#声明及初始化-6)
-    - [遍历哈希表](#遍历哈希表)
+    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-5)
+  - [哈希表](#哈希表)
+    - [声明及初始化](#声明及初始化-7)
+    - [遍历哈希表](#遍历哈希表)
+    - [基本操作](#基本操作-6)
   - [参考链接](#参考链接)
 
 ## 数组
@@ -404,9 +408,11 @@ s1.compare(s2);
 
 ## 队列
 
-### 声明及初始化
+使用队列 `queue` 或 优先队列 `priority_queue` 时，需引入头文件 `<queue>`。
 
-使用队列 `queue` 时，需引入头文件 `<queue>`。
+### 普通队列
+
+#### 声明及初始化
 
 ```C++
 #include <queue>
@@ -414,14 +420,14 @@ s1.compare(s2);
 queue<int> q;
 ```
 
-### 基本操作
+#### 基本操作
 
 ```C++
 // 返回队列是否为空
 bool empty();
 
 // 返回队列中元素的个数
-size_type  size();
+size_type size();
 
 // 将元素加入队尾
 void push(const value_type& val);
@@ -435,6 +441,55 @@ void pop();
 
 > **注意：** `pop()` 方法为 `void` 类型，不会返回被删除的元素，所以元素出队的一般做法为：
 > `int val = q.front(); q.pop();`
+
+### 优先队列
+
+#### 声明及初始化
+
+定义：`priority_queue<Type, Container, Functional>`
+
+* `Type`：数据类型
+* `Container`：容器类型（默认 vector）
+* `Functional`：比较方法
+
+```C++
+#include <queue>
+
+// 小顶堆 - 升序队列
+priority_queue<int, vector<int>, greater<int>> q;
+
+// 大顶堆 - 降序队列
+priority_queue<int, vector<int>, less<int>> q;
+```
+
+> **注意：** 一般只有在使用自定义的数据类型时，才需要传入这三个参数，使用基本数据类型时，只需传入数据类型，**默认为大顶堆 - 降序队列。**
+
+```C++
+/* 对于基础类型，默认为大顶堆 - 降序队列
+等价于 priority_queue<int, vector<int>, less<int>> q; */
+priority_queue<int> q; 
+```
+
+#### 基本操作
+
+```C++
+// 返回队列是否为空
+bool empty();
+
+// 返回队列中元素的个数
+size_type size();
+
+// 将元素加入队列，并排序
+void push(const value_type& val);
+
+// 返回队头元素的引用
+value_type& top();
+
+// 删除队头元素
+void pop();
+```
+
+> **注意：** 队列没有 vector 的 begin() 方法，故不能使用 基于范围的 for 循环遍历 和 基于迭代器的遍历。只能通过 while 判断 empty() 方法 或 根据 size() 大小进行 for 循环 来进行遍历。
 
 ## 堆栈
 
@@ -583,7 +638,8 @@ size_type erase(const key_type& key);
 
 * [C++ 数组](https://www.runoob.com/cplusplus/cpp-arrays.html)
 * [C++ 数组和vector的基本操作](https://www.cnblogs.com/HL-space/p/10546585.html)
-* [C++多维数组的遍历以及初始化](https://blog.csdn.net/anlian523/article/details/90549379)
-* [C++迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
+* [C++ 多维数组的遍历以及初始化](https://blog.csdn.net/anlian523/article/details/90549379)
+* [C++ 迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)
 * [C++ string Reference](http://www.cplusplus.com/reference/string/)
+* [C++ 优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886)
