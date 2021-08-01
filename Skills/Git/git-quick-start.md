@@ -193,6 +193,9 @@ $ git commit -v
 # 使用一次新的 commit，替代上一次提交
 # 如果代码没有任何新变化，则用来改写上一次 commit 的提交信息
 $ git commit --amend -m [message]
+
+# 自定义提交时间
+$ git commit -m [message] --date="May 7 9:05:20 2021 +0800"
 ```
 
 ## 分支管理
