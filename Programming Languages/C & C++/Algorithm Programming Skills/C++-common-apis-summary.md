@@ -313,6 +313,9 @@ void push_back(const value_type &val);
 
 // 删除数组尾部的那个元素
 void pop_back();
+
+// 清空容器
+void clear();
 ```
 
 ## 字符串
@@ -574,6 +577,9 @@ pair<iterator, bool> insert(const key_type& key);
 
 // 删除集合中的元素 key，如果删除成功则返回 1，否则返回 0
 size_type erase(const key_type& key);
+
+// 清空容器
+void clear();
 ```
 
 ## 哈希表
@@ -630,6 +636,9 @@ size_type count(const key_type& key);
 
 // 通过 key 删除哈希表中的键值对，如果删除成功则返回 1，否则返回 0
 size_type erase(const key_type& key);
+
+// 清空容器
+void clear();
 ```
 
 > **注意：** 用 `[]` 访问其中的键 `key` 时，如果 `key` 不存在，则会自动创建 `key`，对应的值为该值类型的默认值。
