@@ -68,7 +68,7 @@ double balance[5] = {1000.0, 2.0, 3.4, 7.0, 50.0};
 double balance[] = {1000.0, 2.0, 3.4, 7.0, 50.0}; 
 
 // 数组值初始化为全 0
-int array[10] = {0};
+int array[10] = {};
 ```
 
 #### 遍历数组
@@ -399,7 +399,10 @@ s1.compare(s2);
 #### 数值 转换为 string
 
 * `to_string`  : numerical value to string
-* `to_wstring` : numerical value to wide string
+
+```C++
+string to_string (numeric_type val);
+```
 
 #### string 转换为 数值
 
@@ -411,6 +414,10 @@ s1.compare(s2);
 * `stof`   : string to float
 * `stod`   : string to double
 * `stold`  : string to long double
+
+```C++
+numeric_type sto* (const string& str, [...]);
+```
 
 ## 队列
 
