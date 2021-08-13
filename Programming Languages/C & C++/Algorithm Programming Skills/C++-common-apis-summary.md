@@ -11,14 +11,13 @@
       - [遍历数组](#遍历数组)
         - [一维数组](#一维数组)
         - [二维数组](#二维数组)
-      - [数组排序](#数组排序)
     - [动态数组 - vector](#动态数组---vector)
       - [声明及初始化](#声明及初始化-1)
       - [遍历数组](#遍历数组-1)
         - [一维数组](#一维数组-1)
         - [二维数组](#二维数组-1)
-      - [数组排序](#数组排序-1)
       - [基本操作](#基本操作)
+    - [数组排序](#数组排序)
   - [字符串](#字符串)
     - [声明及初始化](#声明及初始化-2)
     - [遍历字符串](#遍历字符串)
@@ -30,6 +29,7 @@
     - [普通队列](#普通队列)
       - [声明及初始化](#声明及初始化-3)
       - [基本操作](#基本操作-2)
+    - [双端队列](#双端队列)
     - [优先队列](#优先队列)
       - [声明及初始化](#声明及初始化-4)
       - [基本操作](#基本操作-3)
@@ -96,7 +96,7 @@ for(int &item : a)
 ```C++
 // 此处 auto p 等价于 int *p
 for (auto p = a; p != a + size; ++p) {
-  cout << *p;
+    cout << *p;
 }
 ```
 
@@ -107,9 +107,9 @@ for (auto p = a; p != a + size; ++p) {
 ```C++
 int a[3][4] = {1,2,3,4,5,6,7,8};
 for (int i = 0; i < 3; ++i) {
-  for (int j = 0; j < 4; ++j) {
-    cout << a[i][j] << endl;
-  }
+    for (int j = 0; j < 4; ++j) {
+        cout << a[i][j] << endl;
+    }
 }
 ```
 
@@ -117,9 +117,9 @@ for (int i = 0; i < 3; ++i) {
 
 ```C++
 for (auto &p : a) {
-  for (auto &q : p) {
-    cout << q << endl;
-  }
+    for (auto &q : p) {
+        cout << q << endl;
+    }
 }
 ```
 
@@ -132,33 +132,19 @@ int ia[3][4] = {1,2,3,4,5,6,7,8};
 
 // 此处 auto p 等价于 int (*p)[4]
 for (auto p = ia; p != ia + 3; ++p) {
-  for (auto q = *p; q != *p + 4; ++q) {
-    cout << *q << endl;
-  }
+    for (auto q = *p; q != *p + 4; ++q) {
+        cout << *q << endl;
+    }
 }
 
 for (auto p = begin(ia); p != end(ia); ++p) {
-  for (auto q = begin(*p); q != end(*p); ++q) {
-    cout << *q << endl;
-  }
+    for (auto q = begin(*p); q != end(*p); ++q) {
+        cout << *q << endl;
+    }
 }
 ```
 
 > **注意：** 多维数组，除最外层循环外，其余循环均需要对指针进行解引用。
-
-#### 数组排序
-
-```C++
-// 参数 1 - 待排序数组的首地址，参数 2 - 待排序数组的尾地址，参数 3 - 排序方法，默认升序
-sort(array, array + size);
-```
-
-其中，`sort()` 方法包含在 `<algorithm>` 头文件中，并定义在 `std` 命名空间：
-
-```C++
-#include <algorithm>
-using namespace std;
-```
 
 ### 动态数组 - vector
 
@@ -259,9 +245,9 @@ for (vector<int>::iterator i = vec.begin(); i != vec.end(); ++i) {
 
 ```C++
 for (int i = 0; i < vec.size(); ++i) {
-  for(int j = 0; j < vec[0].size(); ++j) {
-      cout << vec[i][j] << " ";
-  }
+    for(int j = 0; j < vec[0].size(); ++j) {
+        cout << vec[i][j] << " ";
+    }
 }
 ```
 
@@ -269,9 +255,9 @@ for (int i = 0; i < vec.size(); ++i) {
 
 ```C++
 for (auto &p : vec) {
-  for (auto &q : p) {
-      cout << q << "  ";
-  }
+    for (auto &q : p) {
+        cout << q << "  ";
+    }
 }
 ```
 
@@ -279,24 +265,18 @@ for (auto &p : vec) {
 
 ```C++
 for (vector<vector<int>>::iterator i = vec.begin(); i != vec.end(); ++i) {
-  for (vector<int>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-      cout << *j << " ";
-  }
-  cout << endl;
+    for (vector<int>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+        cout << *j << " ";
+    }
+    cout << endl;
 }
 
 // 可使用 auto 关键字简化
 for (auto p = vec.begin(); p != vec.end(); ++p) {
-  for (auto q = (*p).begin(); q != (*p).end(); ++q) {
-      cout << *q << "  ";
-  }
+    for (auto q = (*p).begin(); q != (*p).end(); ++q) {
+        cout << *q << "  ";
+    }
 }
-```
-
-#### 数组排序
-
-```C++
-sort(v.begin(), v.end());
 ```
 
 #### 基本操作
@@ -321,6 +301,73 @@ void pop_back();
 void clear();
 ```
 
+### 数组排序
+
+`sort()` 方法能够对容器或普通数组中 `[first, last)` 范围内的元素进行排序，默认进行升序排序。
+
+该方法包含在 `<algorithm>` 头文件，并定义在 `std` 命名空间：
+
+```C++
+#include <algorithm>
+using namespace std;
+```
+
+`sort()` 函数原型如下：
+
+```C++
+default (1)	
+  void sort (RandomAccessIterator first, RandomAccessIterator last);
+custom  (2)	
+  void sort (RandomAccessIterator first, RandomAccessIterator last, Compare comp);
+```
+
+* `first` - 待排序数组的首地址
+* `last`  - 待排序数组的尾地址
+* `comp`  - 排序方法，缺省为升序
+
+其中 `custom (2)` 自定义排序，可使用 C++ 内置排序方法：
+
+* `less<data-type>()`：升序
+* `greater<data-type>()`：降序
+
+也可以使用自定义排序方法：
+
+```C++
+bool comp(const Type1 &a, const Type2 &b);
+
+// 示例：升序排序
+bool comp(const int &a, const int &b) {
+    return a < b;
+}
+
+vector<int> nums;
+sort(nums.begin(), nums.end(), comp);
+```
+
+其中自定义排序方法，比较入参 `a` 和 `b`：
+
+* 升序：定义当 `a < b` 时，返回 `true`；
+* 降序：定义当 `a > b` 时，返回 `true`；
+
+> **注意：** 该函数不得修改其任何参数，故需要用 `const` 限定符加以限定。
+
+**eg 1. 静态数组排序**
+
+```C++
+// arrays - 数组名（首地址），size - 数组大小
+sort(arrays, arrays + size);                 // 默认升序排序
+sort(arrays, arrays + size, less<int>());    // 升序排序
+sort(arrays, arrays + size, greater<int>()); // 降序排序
+```
+
+**eg 2. 动态数组排序**
+
+```C++
+sort(v.begin(), v.end());                 // 默认升序排序
+sort(v.begin(), v.end(), less<int>());    // 升序排序
+sort(v.begin(), v.end(), greater<int>()); // 降序排序
+```
+
 ## 字符串
 
 ### 声明及初始化
@@ -337,7 +384,7 @@ string s2 = "abc";
 
 ### 遍历字符串
 
-**eg 1.1 下标 for 循环遍历**
+**eg 1. 下标 for 循环遍历**
 
 ```C++
 for (int i = 0; i < a.size(); ++i) {
@@ -345,7 +392,7 @@ for (int i = 0; i < a.size(); ++i) {
 }
 ```
 
-**eg 1.2 基于范围的 for 循环遍历**
+**eg 2. 基于范围的 for 循环遍历**
 
 ```C++
 for (char c : a) {
@@ -353,7 +400,7 @@ for (char c : a) {
 }
 ```
 
-**eg 1.3 基于迭代器遍历**
+**eg 3. 基于迭代器遍历**
 
 ```C++
 // 可用 auto 关键字简化 auto i = a.begin();
@@ -454,6 +501,10 @@ void pop();
 
 > **注意：** `pop()` 方法为 `void` 类型，不会返回被删除的元素，所以元素出队的一般做法为：
 > `int val = q.front(); q.pop();`
+
+### 双端队列
+
+TODO
 
 ### 优先队列
 
@@ -661,4 +712,5 @@ void clear();
 * [C++ 迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)
 * [C++ string Reference](http://www.cplusplus.com/reference/string/)
+* [C++ algorithm Reference](http://www.cplusplus.com/reference/algorithm/sort/)
 * [C++ 优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886)
