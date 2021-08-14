@@ -30,20 +30,22 @@
       - [声明及初始化](#声明及初始化-3)
       - [基本操作](#基本操作-2)
     - [双端队列](#双端队列)
-    - [优先队列](#优先队列)
       - [声明及初始化](#声明及初始化-4)
       - [基本操作](#基本操作-3)
+    - [优先队列](#优先队列)
+      - [声明及初始化](#声明及初始化-5)
+      - [基本操作](#基本操作-4)
   - [堆栈](#堆栈)
-    - [声明及初始化](#声明及初始化-5)
-    - [基本操作](#基本操作-4)
-  - [集合](#集合)
     - [声明及初始化](#声明及初始化-6)
-    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-5)
-  - [哈希表](#哈希表)
+  - [集合](#集合)
     - [声明及初始化](#声明及初始化-7)
-    - [遍历哈希表](#遍历哈希表)
+    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-6)
+  - [哈希表](#哈希表)
+    - [声明及初始化](#声明及初始化-8)
+    - [遍历哈希表](#遍历哈希表)
+    - [基本操作](#基本操作-7)
   - [参考链接](#参考链接)
 
 ## 数组
@@ -504,7 +506,42 @@ void pop();
 
 ### 双端队列
 
-TODO
+#### 声明及初始化
+
+```C++
+#include <deque>
+
+deque<int> dq;
+```
+
+#### 基本操作
+
+```C++
+// 返回队列是否为空
+bool empty();
+
+// 返回队列中元素的个数
+size_type size();
+
+// 添加元素
+void push_back(const value_type& val);
+void push_front(const value_type& val);
+void emplace_back(Args&&... args);
+void emplace_front(Args&&... args);
+
+// 返回元素引用
+reference back();
+reference front();
+
+// 删除元素
+void pop_back();
+void pop_front();
+
+// 清空队列
+void clear();
+```
+
+`deque` 拥有 `begin()`、`end()` 方法，可以通过迭代器进行遍历。
 
 ### 优先队列
 
@@ -706,11 +743,10 @@ void clear();
 
 ## 参考链接
 
+* [C++ Reference](http://www.cplusplus.com/reference/)
 * [C++ 数组](https://www.runoob.com/cplusplus/cpp-arrays.html)
 * [C++ 数组和vector的基本操作](https://www.cnblogs.com/HL-space/p/10546585.html)
 * [C++ 多维数组的遍历以及初始化](https://blog.csdn.net/anlian523/article/details/90549379)
 * [C++ 迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)
-* [C++ string Reference](http://www.cplusplus.com/reference/string/)
-* [C++ algorithm Reference](http://www.cplusplus.com/reference/algorithm/sort/)
 * [C++ 优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886)
