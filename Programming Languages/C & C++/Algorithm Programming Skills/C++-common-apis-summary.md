@@ -18,34 +18,38 @@
         - [二维数组](#二维数组-1)
       - [基本操作](#基本操作)
     - [数组排序](#数组排序)
-  - [字符串](#字符串)
+  - [列表](#列表)
     - [声明及初始化](#声明及初始化-2)
-    - [遍历字符串](#遍历字符串)
+    - [遍历列表](#遍历列表)
     - [基本操作](#基本操作-1)
+  - [字符串](#字符串)
+    - [声明及初始化](#声明及初始化-3)
+    - [遍历字符串](#遍历字符串)
+    - [基本操作](#基本操作-2)
     - [类型转换](#类型转换)
       - [数值 转换为 string](#数值-转换为-string)
       - [string 转换为 数值](#string-转换为-数值)
   - [队列](#队列)
     - [普通队列](#普通队列)
-      - [声明及初始化](#声明及初始化-3)
-      - [基本操作](#基本操作-2)
-    - [双端队列](#双端队列)
       - [声明及初始化](#声明及初始化-4)
       - [基本操作](#基本操作-3)
-    - [优先队列](#优先队列)
+    - [双端队列](#双端队列)
       - [声明及初始化](#声明及初始化-5)
       - [基本操作](#基本操作-4)
+    - [优先队列](#优先队列)
+      - [声明及初始化](#声明及初始化-6)
+      - [基本操作](#基本操作-5)
   - [堆栈](#堆栈)
-    - [声明及初始化](#声明及初始化-6)
-    - [基本操作](#基本操作-5)
-  - [集合](#集合)
     - [声明及初始化](#声明及初始化-7)
-    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-6)
-  - [哈希表](#哈希表)
+  - [集合](#集合)
     - [声明及初始化](#声明及初始化-8)
-    - [遍历哈希表](#遍历哈希表)
+    - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-7)
+  - [哈希表](#哈希表)
+    - [声明及初始化](#声明及初始化-9)
+    - [遍历哈希表](#遍历哈希表)
+    - [基本操作](#基本操作-8)
   - [参考链接](#参考链接)
 
 ## 数组
@@ -301,6 +305,15 @@ void pop_back();
 
 // 清空容器
 void clear();
+
+// 插入单个元素
+iterator insert(const_iterator position, const value_type& val);
+
+// 填充 n 个元素
+iterator insert(const_iterator position, size_type n, const value_type& val);
+
+// 插入 [first,last) 范围内的所有元素
+iterator insert(const_iterator position, InputIterator first, InputIterator last);
 ```
 
 ### 数组排序
@@ -368,6 +381,92 @@ sort(arrays, arrays + size, greater<int>()); // 降序排序
 sort(v.begin(), v.end());                 // 默认升序排序
 sort(v.begin(), v.end(), less<int>());    // 升序排序
 sort(v.begin(), v.end(), greater<int>()); // 降序排序
+```
+
+## 列表
+
+### 声明及初始化
+
+使用 `list (STL list)` 时，需引入头文件 `<list>`。
+
+```C++
+#include <list>
+
+/* eg 1 initialize */
+
+// 初始化一个 int 类型的空列表 nums
+list<int> nums;
+
+// 初始化一个大小为 n 的列表 nums，列表中的值默认都为 0
+list<int> nums(10);
+
+// 初始化一个大小为 n 的列表 nums，其值全都为 2
+list<int> nums(n, 2);
+
+/* eg 2 make a copy */
+list<int> list_1(list_2.begin(), list_2.end());
+list<int> list_1(list_2);
+
+/* eg 3 cast an array to a list */
+int a[5] = {0, 1, 2, 3, 4};
+list<int> nums(a, *(&a + 1));
+```
+
+### 遍历列表
+
+**eg 1. 基于范围的 for 循环遍历**
+
+```C++
+for (int &val : my_list) {
+    cout << val << endl;
+}
+```
+
+**eg 2. 基于迭代器遍历**
+
+```C++
+// 可用 auto 关键字简化 auto i = my_list.begin()
+for (auto i = my_list.begin(); i != my_list.end(); ++i) {
+    cout << *i << endl;
+}
+```
+
+> **注意：** `list` 容器不支持随机访问，未提供下标操作符 `[]` 和 `at()` 成员函数，也没有提供 `data()` 成员函数，不能通过下标循环遍历。
+
+### 基本操作
+
+```C++
+// 返回队列是否为空
+bool empty();
+
+// 返回队列中元素的个数
+size_type size();
+
+// 添加元素
+void push_back(const value_type& val);
+void push_front(const value_type& val);
+void emplace_back(Args&&... args);
+void emplace_front(Args&&... args);
+
+// 返回元素引用
+reference back();
+reference front();
+
+// 删除元素
+void pop_back();
+void pop_front();
+
+// 清空队列
+void clear();
+
+// 插入单个元素
+iterator insert(const_iterator position, const value_type& val);
+
+// 填充 n 个元素
+iterator insert(const_iterator position, size_type n, const value_type& val);
+
+// 插入 [first,last) 范围内的所有元素
+iterator insert(const_iterator position, InputIterator first, InputIterator last);
 ```
 
 ## 字符串
