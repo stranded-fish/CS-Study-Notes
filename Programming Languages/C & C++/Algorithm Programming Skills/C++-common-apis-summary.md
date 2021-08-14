@@ -429,12 +429,12 @@ for (int &val : my_list) {
 
 ```C++
 // 可用 auto 关键字简化 auto i = my_list.begin()
-for (auto i = my_list.begin(); i != my_list.end(); ++i) {
+for (list<int>::iterator i = my_list.begin(); i != my_list.end(); ++i) {
     cout << *i << endl;
 }
 ```
 
-> **注意：** `list` 容器不支持随机访问，未提供下标操作符 `[]` 和 `at()` 成员函数，也没有提供 `data()` 成员函数，不能通过下标循环遍历。
+> **注意：** `list` 容器未提供下标操作符 `[]` 和 `at()` 成员函数，也没有提供 `data()` 成员函数，故不支持随机访问，不能通过下标循环遍历。
 
 ### 基本操作
 
@@ -727,6 +727,8 @@ void pop();
 
 ## 集合
 
+TODO set multiset
+
 ### 声明及初始化
 
 使用集合 `unordered_set` 时，需引入头文件 `<unordered_set>`。
@@ -783,6 +785,8 @@ void clear();
 ```
 
 ## 哈希表
+
+TODO map multimap
 
 ### 声明及初始化
 
