@@ -302,6 +302,7 @@ reference back();
 
 // 在数组尾部插入一个元素 val
 void push_back(const value_type &val);
+void emplace_back(Args&&... args);
 
 // 删除数组尾部的那个元素
 void pop_back();
@@ -309,14 +310,36 @@ void pop_back();
 // 清空容器
 void clear();
 
+// 交换两个 vector
+newArray.swap(oldArray);
+
+/* 数组拷贝 */
+
+vector<int> oldArray{1, 2, 3};
+vector<int> newArray;
+
+// eg 1 - 赋值运算符 深拷贝
+newArray = oldArray;
+
+// eg 2 - assign() 清空并深拷贝
+newArray.assign(oldArray.begin(), oldArray.end());
+
+/* 插入元素 */
+
+vector<int> array{1, 2};
+
 // 插入单个元素
 iterator insert(const_iterator position, const value_type& val);
+array.insert(array.begin() + 1, 3); // {1,3,2}
 
 // 填充 n 个元素
 iterator insert(const_iterator position, size_type n, const value_type& val);
+array.insert(array.end(), 2, 5); // {1,2,5,5}
 
 // 插入 [first,last) 范围内的所有元素
 iterator insert(const_iterator position, InputIterator first, InputIterator last);
+vector<int> test{7,8,9};
+array.insert(array.end(), test.begin(), test.end()); // {1,2,7,8,9}
 ```
 
 ### 数组排序
@@ -542,6 +565,15 @@ s1.append(s2);
 if (s1 > s2) ......
 s1.compare(s2);
 ```
+
+**处理 string 对象中的字符**
+
+* `isalpha(c)` 当 c 是字母时为真
+* `isdigit(c)` 当 c 是数字时为真
+* `islower(c)` 当 c 是小写字母时为真
+* `isupper(c)` 当 c 是大写字母时为真
+* `tolower(c)` 如果 c 是大写字母，返回对应的小写字母；否则原样返回 c
+* `toupper(c)` 如果 c 是小写字母，返回对应的大写字母；否则原样返回 c
 
 ### 类型转换
 
