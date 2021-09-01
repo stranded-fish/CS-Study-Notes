@@ -26,6 +26,9 @@
     - [声明及初始化](#声明及初始化-3)
     - [遍历字符串](#遍历字符串)
     - [基本操作](#基本操作-2)
+    - [扩展操作](#扩展操作)
+      - [处理 string 对象中的字符](#处理-string-对象中的字符)
+      - [字符串分割](#字符串分割)
     - [类型转换](#类型转换)
       - [数值 转换为 string](#数值-转换为-string)
       - [string 转换为 数值](#string-转换为-数值)
@@ -566,7 +569,9 @@ if (s1 > s2) ......
 s1.compare(s2);
 ```
 
-**处理 string 对象中的字符**
+### 扩展操作
+
+#### 处理 string 对象中的字符
 
 * `isalpha(c)` 当 c 是字母时为真
 * `isdigit(c)` 当 c 是数字时为真
@@ -574,6 +579,77 @@ s1.compare(s2);
 * `isupper(c)` 当 c 是大写字母时为真
 * `tolower(c)` 如果 c 是大写字母，返回对应的小写字母；否则原样返回 c
 * `toupper(c)` 如果 c 是小写字母，返回对应的大写字母；否则原样返回 c
+
+#### 字符串分割
+
+C++ 中没有直接的 `split` 函数，字符串分割可借助以下方法实现：
+
+**eg 1. 利用 C `strtok` 函数**
+
+利用 `strtok` 函数实现字符串分割时，需引入 C 头文件 `<string.h>`。该函数原型如下：
+
+```C
+char* strtok(char *str, const char *delim);
+```
+
+返回值：从 `str` 开头开始的一个个被分割的串。当 `str` 中的字符查找到末尾时，返回 `NULL`，如果查找不到 `delim` 中的字符时，则返回当前 `strtok` 中的字符串的指针。
+
+在首次调用 `strtok` 时，需传递字符串参数 `str`，往后的调用则将参数 `str` 设置成 `NULL`。注意，由于当 `strtok` 发现对应分隔符时，会将该字符改为 `\0` 字符，即传入 `str` 参数会被修改。故在调用该方法前，需要将字符串复制一份再传入。
+
+```C++
+vector<string> split(const string &str, const char *delim) {
+    vector<string> res;
+    char *buffer = new char[str.size() + 1]; // 定义 C 风格字符串，用于修改
+    strcpy(buffer, str.c_str());             // 复制字符串
+    char *p = strtok(buffer, delim);         // 首次调用，传入复制字符串
+
+    while (p) {
+        res.emplace_back(p);
+        p = strtok(NULL, delim);             // 再次调用，修改 str 参数为 NULL
+    }
+
+    delete buffer;
+    return res;
+}
+
+int main() {
+    string test = "a,b,c,d,e";
+    vector<string> res = split(test,  ',');
+    for (auto &val : res) {
+        cout << val << " "; // 输出：a b c d e
+    }
+    return 0;
+}
+```
+
+**eg 2. 利用 C++ 流**
+
+利用 `stringstream` + `getline` 方法实现字符串分割时，需引入头文件 `<sstream>`。
+
+```C++
+vector<string> split(const string &str, const char delim) {
+    vector<string> res;
+    stringstream ss(str); // 读取 str 到字符串流中
+    string tmp;
+
+    /* 使用 getline 方法从字符串流中读取，当读取到分隔符时停止
+    注意：getline 默认可以读取空格 */
+    while (getline(ss, tmp, delim)) {
+        res.emplace_back(tmp);
+    }
+
+    return res;
+}
+
+int main() {
+    string test = "a,b,c,d,e";
+    vector<string> res = split(test,  ',');
+    for (auto &val : res) {
+        cout << val << " "; // 输出：a b c d e
+    }
+    return 0;
+}
+```
 
 ### 类型转换
 
@@ -929,3 +1005,4 @@ pair 对象重载了 <、<=、>、>=、==、!= 运算符，其运算规则是：
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)
 * [C++ 优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886)
 * [C++ STL pair用法详解](http://c.biancheng.net/view/7169.html)
+* [C++ 中实现类似split()的字符串分割函数](https://guopengzhen.com/%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8319/)
