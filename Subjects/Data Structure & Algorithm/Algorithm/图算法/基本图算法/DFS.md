@@ -1,54 +1,204 @@
-# DFS 深度优先搜索算法
+# 深度优先搜索
 
-Flood fill 思想
+深度优先搜索算法 (Depth-First-Search，DFS) 是一种用于遍历或搜索树或图数据结构的算法。该算法从根节点开始（在图的情况下选择某个任意节点作为根节点）并在回溯之前沿着每个分支尽可能深的探索。
 
-### 地图、网格图相关
+深度优先搜索主要适用于以下场景：
 
-TODO 
+* 地图、网格图相关
 
-阅读典型例题的相关题解，并进行总结和学习
+目录：
 
-重刷过程中，先从回溯角度进行思考，判断递归之后是否需要状态重置（回溯），如果不需要总结不需要的情况。
+- [深度优先搜索](#深度优先搜索)
+  - [算法模板](#算法模板)
+    - [基本框架](#基本框架)
+  - [常见题型](#常见题型)
+    - [网格问题](#网格问题)
+  - [参考链接](#参考链接)
+
+## 算法模板
+
+### 基本框架
+
+**eg 1. 递归写法**
+
+```C++
+res = []
+void dfs(node, visited) {
+
+    // 1. 判断节点合法性
+    if (node not meets requirements) return;
+
+    // 2. 标记当前节点已被访问
+    visited.add(node);
+    
+    // 3. 处理当前节点信息
+    ...
+
+    // 4. 遍历选择列表
+    for (choice in selectList) {
+
+        // 5. 递归，进入下一层决策树
+        dfs(path, selectList);
+    }
+}
+```
+
+**eg 2. 非递归写法**
+
+```C++
+void dfs(node, visited) {
+    stack = [];
+    stack.push(node);
+    while (!stack.empty()) {
+        node = stack.pop();
+
+        // 1. 判断节点合法性
+        if (node not meets requirements) continue;
+
+        // 2. 标记当前节点已被访问
+        visited.add(node);
+
+        // 3. 处理当前节点信息
+        ...
+
+        // 4. 遍历选择列表
+        for (next_node in node.selectList) {
+
+            // 5. 递归，进入下一层决策树
+            stack.push(next_node);
+        }
+    }
+}
+```
+
+* `node`：当前节点信息。
+* `visited`：标记数组，用于记录已访问节点。
+
+**深度优先遍历与回溯算法的关联**
+
+> 回溯算法可视为一种更通用的算法，而深度优先遍历则可视为回溯算法的一种特别形式。—— [What's the difference between backtracking and depth first search?](https://stackoverflow.com/questions/1294720/whats-the-difference-between-backtracking-and-depth-first-search)
+
+故深度优先遍历框架也可以视为回溯算法的一种特别形式。
+
+回溯算法入参的一般形式扩展为：`backtrack(path, selectList, constraint, target);`
+
+而一般的深度优先搜索不需要显性维护完整 `path` 记录，仅传递当前节点信息，同时传递 visited 数组防止重复访问。
+
+```C++
+path -> node = path.back()
+visited = con
+void dfs(node = path.back(), visited = constraint);
+```
+
+其中由于深度优先 path
+
+dfs() 入参细化（可扩展为回溯算法的入参方式）：
 
 
+TODO DFS 与回溯的一些联系和代码上的等价思考
 
-涉及到地图、网格图相关的问题，
+## 常见题型
 
-1. 通常可以将其求解结构抽象为树型，然后可以使用回溯算法进行求解
-2. 
+### 网格问题
 
-**网格的方向数组 tip**
+网格问题是指在 $m$ $\times$ $n$ 个小方格组成的一个网格图中进行某种搜索的问题，其中每个小方格与其上下左右（和对角线）四（八）个方格被认为是相邻的。
 
-const int dir[4][2] = {};
+常见的网格问题有岛屿问题。在岛屿问题中，每个格子中的数字可能是 `0` 或者 `1`。其中数字为 `0` 的格子看成海洋格子，数字为 `1` 的格子看成陆地格子，这样相邻的陆地格子就连接成一个岛屿。然后在该设定下，求解关于岛屿的各种问题，如：岛屿的数量、面积、周长等。
 
-**回溯算法和DFS的区别**
+**网格相关问题的遍历，本质上可视为图的遍历**，同样可利用 DFS 遍历二叉树或图时的思想，来对该网格进行遍历。
 
-两者可以统一起来
+**DFS 二叉树遍历**
 
-回溯算法是一种更通用的算法，DFS是回溯的一种特例，
+```C++
+void traverse(TreeNode node) {
+    // 判断 base case
+    if (node == null) return;
+    
+    // 对当前节点执行操作 ...
+    
+    // 访问两个相邻结点：左子结点、右子结点
+    traverse(node.left);
+    traverse(node.right);
+}
+```
 
-DFS缺少回溯（状态重置）的步骤
+**DFS 网格遍历**
 
-回溯算法也可以通过复制传递，省略回溯步骤，变成DFS
+网格遍历，可在基础的二叉树遍历上进行扩展。其中：
 
-**针对使用回溯框架的思考：**
+* base case 扩展为判断当前节点坐标是否合法;
+* 相邻节点扩展为其上下左右邻接点。
 
-* **分支如何产生？也即节点的可选择列表 `selectList` 如何产生？**
-  1. 针对网格图，选择列表为其 上下左右的邻接点
-  2. 针对地图，选择列表为其该起点的邻接点（地图的表示）
+```C++
+void dfs(int row, int col, vector<vector<int>> grid) {
+    // 判断 base case
+    if (!isValid(row, col, grid)) return;
 
-* **题目所需要的解的产生位置？叶子节点？非叶子节点？从根节点到叶子节点的路径？**
-  1. 可能不会由回溯算法直接产生所需解，回溯算法只是找到可行解的一种手段
-  2. 
+    // 注意：避免重复遍历
+    if (grid[r][c] != 1) return; // 当格子不符合要求时返回（如：发生重复）
+    grid[r][c] = 2;              // 将格子标记为 - 已遍历
 
-* **哪些分支是重复的？总共可归纳为哪几类剪枝的情景？**
-  1. 针对网格图，首先是 检查边界条件进行剪枝
-  2. 针对网格图，如果不能重复（不能走回头路）则设置 visited 数组进行标记
+    // 对当前节点执行操作 ...
 
+    // 访问上、下、左、右四个相邻结点
+    dfs(row - 1, col, grid);
+    dfs(row + 1, col, grid);
+    dfs(row, col - 1, grid);
+    dfs(row, col + 1, grid);
+}
+
+// 判断坐标 (r, c) 是否在网格中
+boolean isValid(int row, int col, vector<vector<int>> grid) {
+    return row >= 0 && row < grid.length
+            && col >= 0 && col < grid[0].length;
+}
+```
+
+**注意：避免出现重复遍历**
+
+由于网格结构本质上是一个图，我们可以把每个格子看成图中的结点，而每个结点有向上下左右的四条双向边。故在图中遍历时，自然可能遇到重复遍历结点。
+
+可通过以下方式来避免重复遍历：
+
+* 设置单独的 `visited` 集合
+
+```C++
+// 初始化 m*n 大小的 visited 数组为 false，表示当前地图的所有节点均未被访问
+vector<vector<bool>> visited(grid.size(), vector<bool>(grid[0].size(), false));
+
+// 标记坐标 [x,y] 的方格已被访问
+visited[x][y] = true;
+```
+
+* 修改原地图作为标记
+
+以岛屿问题为例，我们需要在所有值为 `1` 的陆地格子上做遍历。每走过一个陆地格子，就把格子的值改为 `2`，这样当我们遇到 `2` 的时候，就知道这是遍历过的格子了。即，格子的可能取值变为：
+
+* `0` —— 海洋格子
+* `1` —— 陆地格子（未遍历过）
+* `2` —— 陆地格子（已遍历过）
+
+> **Tips:**
+>
+> 在对网格结构进行遍历时，由于每个节点的选择列表均相同（均为其邻接方格），故可以设置一个 dir 数组方便搜索。
+>
+> ```C++
+> // 上下左右
+> const int dir[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+> 
+> // 上下左右与对角线方向
+> const int dir[8][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1},
+>                       {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+> 
+> int next_x, next_y;
+> for (int i = 0; i < 4 or 8; ++i) {
+>     next_x = x + dir[i][0];
+>     next_y = y + dir[i][1];
+>     ...
+> }
+> ```
 
 典型例题：
-
-网格：
 
 * [733. 图像渲染](https://leetcode-cn.com/problems/flood-fill/)
 * [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
@@ -58,6 +208,7 @@ DFS缺少回溯（状态重置）的步骤
 * [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
 * [827. 最大人工岛](https://leetcode-cn.com/problems/making-a-large-island/)
 
-地图：
+## 参考链接
 
-* [797. 所有可能的路径](https://leetcode-cn.com/problems/all-paths-from-source-to-target/)
+* [深度优先搜索](https://zh.wikipedia.org/wiki/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2)
+* [岛屿类问题的通用解法、DFS 遍历框架](https://leetcode-cn.com/problems/number-of-islands/solution/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/)
