@@ -10,6 +10,7 @@
 	
 	// 用于设置当前工作区调用的程序路径
 	"settings": {
+		"editor.minimap.enabled": false
 	}
 
 }
