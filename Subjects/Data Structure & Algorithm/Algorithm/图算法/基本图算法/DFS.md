@@ -139,15 +139,14 @@ void dfs(node) {
 **DFS 二叉树遍历**
 
 ```C++
-void traverse(TreeNode node) {
-    // 判断 base case
-    if (node == null) return;
-    
-    // 对当前节点执行操作 ...
-    
-    // 访问两个相邻结点：左子结点、右子结点
-    traverse(node.left);
-    traverse(node.right);
+void dfs(node) {
+    if (node == nullptr) return;
+
+    // 处理当前节点信息
+    ...
+
+    dfs(node.left);
+    dfs(node.right);
 }
 ```
 
@@ -155,7 +154,7 @@ void traverse(TreeNode node) {
 
 网格遍历，可在基础的二叉树遍历上进行扩展。其中：
 
-* base case 扩展为判断当前节点坐标是否合法;
+* `base case` 扩展为判断当前节点坐标是否合法;
 * 相邻节点扩展为其上下左右邻接点。
 
 ```C++
