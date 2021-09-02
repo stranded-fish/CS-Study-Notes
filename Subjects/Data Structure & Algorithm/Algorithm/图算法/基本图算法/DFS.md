@@ -4,7 +4,7 @@
 
 深度优先搜索主要适用于以下场景：
 
-* 地图、网格图相关
+* 网格问题
 
 目录：
 
@@ -50,21 +50,23 @@ void dfs(node, visited) {
     stack = [];
     stack.push(node);
     while (!stack.empty()) {
+        
+        // 1. 节点出栈
         node = stack.pop();
 
-        // 1. 判断节点合法性
+        // 2. 判断节点合法性
         if (node not meets requirements) continue;
 
-        // 2. 标记当前节点已被访问
+        // 3. 标记当前节点已被访问
         visited.add(node);
 
-        // 3. 处理当前节点信息
+        // 4. 处理当前节点信息
         ...
 
-        // 4. 遍历选择列表
+        // 5. 遍历选择列表
         for (next_node in node.selectList) {
 
-            // 5. 递归，进入下一层决策树
+            // 6. 节点入栈
             stack.push(next_node);
         }
     }
@@ -78,24 +80,51 @@ void dfs(node, visited) {
 
 > 回溯算法可视为一种更通用的算法，而深度优先遍历则可视为回溯算法的一种特别形式。—— [What's the difference between backtracking and depth first search?](https://stackoverflow.com/questions/1294720/whats-the-difference-between-backtracking-and-depth-first-search)
 
-故深度优先遍历框架也可以视为回溯算法的一种特别形式。
+故而深度优先遍历框架也可以视为回溯算法的一种特别形式。
 
-回溯算法入参的一般形式扩展为：`backtrack(path, selectList, constraint, target);`
+**DFS 入参细化：**
 
-而一般的深度优先搜索不需要显性维护完整 `path` 记录，仅传递当前节点信息，同时传递 visited 数组防止重复访问。
+回溯算法入参的一般形式为：`backtrack(path, selectList, constraint, target);`
+
+而一般的深度优先搜索不需要显性维护完整 `path` 记录，仅需要当前节点信息以及 `visited` 数组防止重复访问。
 
 ```C++
-path -> node = path.back()
-visited = con
-void dfs(node = path.back(), visited = constraint);
+/* node -> path.back() 访问路径 path 的当前节点信息
+visited -> constraint 约束条件 */
+void dfs(node, visited);
 ```
 
-其中由于深度优先 path
+特定的，二叉树的遍历，同样可看作由一般回溯算法变形而来：
 
-dfs() 入参细化（可扩展为回溯算法的入参方式）：
+```C++
+void dfs(node) {
+    if (node == nullptr) return;
 
+    // 处理当前节点信息
+    ...
 
-TODO DFS 与回溯的一些联系和代码上的等价思考
+    dfs(node.left);
+    dfs(node.right);
+}
+```
+
+`path`：二叉树遍历通常不需要记录遍历过程中的完整 `path`，故只需要保留当前 `node` 节点信息，用于递归遍历即可；
+`selectList`：二叉树的访问列表总是当前节点的左右孩子节点，故不需要显性的 `selectList` 入参；
+`constraint`：二叉树不用担心重复访问，仅需要对节点合法性做一定判断，故也不需要 `constraint` 相关的入参；
+`target`：视题目要求添加相应的 `target` 入参。
+
+**剪枝时机：**
+
+**DFS 算法更多地强调遍历**，也就是进一步递归搜索的步骤，故通常情况下，在遍历选择列表时，不判断节点合法性，而是在递归一开始进行判断，类似于 **先污染，后治理**。这种处理思路，可以在最大程度上强调递归步骤，同时提升程序简洁性。
+
+但值得注意的是，先污染，后治理的处理方法，在选择列表较多的情景下，可能会产生较大的空间消耗，特别是针对非递归形式，会增加额外的无效出入队列操作，故最终还是建议视情况灵活选择剪枝时机。
+
+**选择框架的思考：**
+
+总体而言，大多数情况下，同一个问题运用这两种算法思想均能够解决，具体使用哪一种应该由问题所强调的方向决定：
+
+* **强调状态回溯，需要完整的 `path` 记录，则考虑回溯的一般形式；**
+* **强调遍历过程，不需要完整的 `path` 记录，则考虑形式更简单的 DFS。**
 
 ## 常见题型
 
