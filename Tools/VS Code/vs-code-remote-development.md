@@ -9,6 +9,7 @@
 - [VS Code 远程开发环境配置](#vs-code-远程开发环境配置)
   - [远程服务器配置](#远程服务器配置)
   - [本地主机配置](#本地主机配置)
+  - [配置免密码登录](#配置免密码登录)
   - [远程调试](#远程调试)
   - [参考链接](#参考链接)
 
@@ -74,7 +75,7 @@ VS Code 应用商店搜索 Remote - SSH 插件，并安装
 
 登录完成后，同本地访问一样，正常打开远程服务器工程文件即可。
 
-**注意：** VS Code 上方会弹出输入框提示输入密码。可通过 **设置公钥认证实现免密码登录。**
+**注意：** VS Code 上方会弹出输入框提示输入密码。可通过 [设置公钥认证实现免密码登录](#配置免密码登录)。
 
 **Step 3.** VS Code 配置 C/C++ 插件
 
@@ -132,6 +133,88 @@ VS Code 应用商店搜索 C/C++ 插件，并选择在 `SSH: ***.***.***.***` �
 * `"args": ["arg1", "arg2", "arg3", "arg4"]` 程序运行参数。多个参数以 json 数组形式表示。
 * `"miDebuggerServerAddress": "***.***.***.***:2333"` 远程服务器主机 IP 与 gdbserver 监听端口号。
 
+## 配置免密码登录
+
+SSH 以非对称加密实现身份验证。身份验证有多种途径：
+
+* 其中一种方法是使用自动生成的公钥 - 私钥对来简单地加密网络连接，随后使用密码认证进行登录；
+* 另一种方法是人工生成一对公钥和私钥，通过生成的密钥进行认证，这样就可以在不输入密码的情况下登录。
+
+任何人都可以自行生成密钥。公钥需要放在待访问的电脑之中，而对应的私钥需要由用户自行保管。认证过程基于生成出来的私钥，但整个认证过程中私钥本身不会传输到网络中。
+
+**VS Code 配置免密码登录服务器的步骤如下：**
+
+**Step 1.** 生成密钥对
+
+在本地电脑或者远程服务器输入以下命令生成密匙对：
+
+```bash
+ssh-keygen
+
+# 输入保存文件名，直接 Enter 则为默认密钥名 id_rsa
+Enter file in which to save the key (C:\Users\*****/.ssh/id_rsa): my_id_rsa # Windows
+
+# 输入密码，直接 Enter 留空
+Enter passphrase (empty for no passphrase):
+
+# 再次输入密码，直接 Enter 留空
+Enter same passphrase again:
+
+# 生成公钥与私钥
+Your identification has been saved in my_id_rsa. # 私钥
+Your public key has been saved in my_id_rsa.pub. # 公钥
+```
+
+生成成功后，可在 `C:\Users\*****/.ssh/` 文件夹下（此为 Windows 系统，Linux 系统一般为 `/root/.ssh/`）找到生成的公钥（.pub）与私钥。
+
+**Step 2.** 服务器上安装公钥
+
+* 若选择在本地电脑生成密钥，则先将生成的 `my_id_rsa.pub` 公钥，上传到服务器；
+* 然后将其添加到 `authorized_keys` 文件中。
+
+```bash
+cat ~/my_id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+**Step 3.** 配置密钥登录功能
+
+1\. 打开 SSH 配置文件
+
+```bash
+sudo vim /etc/ssh/sshd_config
+```
+
+2\. 确认以下两项配置
+
+```bash
+RSAAuthentication yes
+PubkeyAuthentication yes
+```
+
+> 默认不需要修改配置
+
+3\. 禁用密码登录
+
+```bash
+PasswordAuthentication no
+```
+
+> **注意：** 该项设置需在密钥登录成功后修改，是否禁止密码登录根据个人需要而定。
+
+4\. 重启 SSH
+
+```bash
+sudo service sshd restart
+```
+
+**Step 4.** VS Code 指定私钥
+
+* <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开命令面板；
+* 输入 remote-ssh；
+* 选择 Remote-SSH: Open SSH Configuration File...；
+* 打开保存远程服务器信息的 config 文件；
+* 在指定远程服务器下，添加 `IdentityFile C:\Users\*****\.ssh\my_id_rsa` 指定私钥路径。
+
 ## 远程调试
 
 **Step 1.** 远程服务器准备
@@ -149,10 +232,11 @@ gdbserver :2333 program_name arg1 arg2 arg3 arg4
 
 ![调试截图](https://i.loli.net/2021/04/04/Q2nsV6gxr1KNobl.png)
 
+> **注意：** debug 时必须要打开对应的源代码文件，若调试的程序和打断点的代码不是同一个工程的话，会导致部分步骤无法显示，同时，每次修改源程序或是添加注释更改程序行号后，均需要重新编译、debug，否则断点会显示错行。
+
 ## 参考链接
 
 * [使用 VSCode 远程访问代码以及远程 GDB 调试](https://warmgrid.github.io/2019/05/21/remote-debug-in-vscode-insiders.html)
 * [VS Code远程调试Linux C指南](https://zhuanlan.zhihu.com/p/98801522)
-
-
-TODO 注意：remote debug 的时候，要注意，一定要打开对应的源码进行单步调试，如果运行的程序和调试的代码不是同一个的话，可能部分步骤无法跳转，并且，断点是根据行号来的，如果加了注释或者其他东西之后，再在那个源码上加断点，会错位，最终显示也会错位
+* [Secure Shell](https://zh.wikipedia.org/wiki/Secure_Shell)
+* [vscode远程开发及公钥配置（告别密码登录）](https://blog.csdn.net/u010417914/article/details/96918562)
