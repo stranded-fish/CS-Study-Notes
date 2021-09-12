@@ -844,7 +844,11 @@ TODO set multiset
 ```C++
 #include <unordered_set>
 
+// 初始化一个空的 set
 unordered_set<int> set;
+
+// 通过初始化列表中的元素，对其进行初始化
+unordered_set<char> s{'a', 'b', 'c', 'd', 'e', 'f', 'g'};
 ```
 
 ### 遍历集合
@@ -903,7 +907,15 @@ TODO map multimap
 ```C++
 #include <unordered_map>
 
+// 初始化一个空的 map
 unordered_map<int, int> mapping;
+
+// 通过初始化列表中的键值对，对其进行初始化
+unordered_map<char, char> pairs = {
+    {')', '('},
+    {']', '['},
+    {'}', '{'}
+};
 ```
 
 ### 遍历哈希表
