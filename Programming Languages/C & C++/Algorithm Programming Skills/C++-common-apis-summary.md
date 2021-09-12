@@ -293,6 +293,8 @@ for (auto p = vec.begin(); p != vec.end(); ++p) {
 
 #### 基本操作
 
+**基础操作：**
+
 ```C++
 // 返回数组是否为空
 bool empty();
@@ -315,9 +317,11 @@ void clear();
 
 // 交换两个 vector
 newArray.swap(oldArray);
+```
 
-/* 数组拷贝 */
+**数组拷贝：**
 
+```C++
 vector<int> oldArray{1, 2, 3};
 vector<int> newArray;
 
@@ -326,9 +330,11 @@ newArray = oldArray;
 
 // eg 2 - assign() 清空并深拷贝
 newArray.assign(oldArray.begin(), oldArray.end());
+```
 
-/* 插入元素 */
+**插入元素：**
 
+```C++
 vector<int> array{1, 2};
 
 // 插入单个元素
@@ -344,6 +350,34 @@ iterator insert(const_iterator position, InputIterator first, InputIterator last
 vector<int> test{7,8,9};
 array.insert(array.end(), test.begin(), test.end()); // {1,2,7,8,9}
 ```
+
+**调整容量：**
+
+* `reserver` 调整容器预分配存储区大小，即 capacity 值，但并不进行初始化：
+
+```C++
+void reserve(const size_t _Newcapacity)
+```
+
+> **注意：** reserve 的参数 n 是推荐预分配内存的大小，实际分配的可能等于或大于这个值，即 n 大于 capacity 的值，就会 reallocate 内存，capacity 的值会大于或者等于 n 。这样，当容器调用 push_back 函数使得 size 超过原来的默认分配的 capacity 值时，就能避免内存重分配开销。
+>
+> 同时，reserve 函数分配出来的内存空间，只是表示 vector 可以利用这部分内存，但由于该部分内存还未进行初始化，故不能有效地访问这些内存空间，访问的时候会出现越界现象，导致程序崩溃。
+
+* `resize` 调整容器大小，并且创建对象：
+
+```C++
+// 调整容器大小，使其包含 n 个元素，如果有新增元素，则将新元素进行默认初始化
+void resize (size_type n); 
+
+// 调整容器大小，使其包含 n 个元素，如果有新增元素，则将新元素初始化为 val 的副本
+void resize (size_type n, const value_type& val);
+```
+
+* 如果 n 小于当前容器的大小，则将内容减少到其前 n 个元素，并删除超出范围的元素（并销毁它们）。
+* 如果 n 大于当前容器的大小，则通过在末尾插入所需数量的元素来扩展内容，以达到 n 的大小。如果指定了 val，则将新元素初始化为 val 的副本，否则将对它们进行值初始化。
+* 如果 n 也大于当前容器容量，将自动重新分配已分配的存储空间。
+
+> **注意：** 该函数通过插入或擦除容器中的元素来更改容器的实际内容。
 
 ### 数组排序
 
