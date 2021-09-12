@@ -4,6 +4,9 @@
 
 深度优先搜索主要适用于以下场景：
 
+* 检测有环图
+* 路径查找
+* 拓扑排序
 * 网格问题
 
 目录：
@@ -226,6 +229,50 @@ visited[x][y] = true;
 > }
 > ```
 
+**扩展：Flood fill**
+
+Flood fill 算法是从一个区域中提取若干个连通的点与其他相邻区域区分开（或分别染成不同颜色）的经典算法。因为其思路类似洪水从一个区域扩散到所有能到达的区域而得名。
+
+该算法最简单的实现方法是采用深度优先搜索的递归方法，同时也可以采用广度优先搜索的迭代来实现。
+
+**eg 1. 先递归，后判断：**
+
+```C++
+void flood_fill(int x, int y, int color) {
+        // 1. 坐标不合法
+    if (x >= grid.size() || x < 0 || y >= grid[0].size() || y < 0 
+
+        // 2. 表示该点已访问过（可通过单独的 visited 数组记录，也可通过修改原数组记录）
+        // || visited[row][col] = true;
+        
+        // 3. 该点不等于连通变量，不可访问  
+        || grid[x][y] != originColor) return;
+
+    // 染色
+    grid[x][y] = color;
+
+    // 递归
+    flood_fill(x - 1, y, color);
+    flood_fill(x, y - 1, color);
+    flood_fill(x + 1, y, color);
+    flood_fill(x, y + 1, color);
+}
+```
+
+**eg 2. 先判断，后递归：**
+
+```C++
+void flood_fill(int x, int y, int color) {
+    grid[x][y] = color;
+    if(x > 0 && grid[x-1][y] == originColor) flood_fill(x - 1, y, color);
+    if(y > 0 && grid[x][y-1] == originColor) flood_fill(x, y - 1, color);
+    if(x < MAX_X && grid[x+1][y] == originColor) flood_fill(x + 1, y, color);
+    if(y < MAX_Y && grid[x][y+1] == originColor) flood_fill(x, y + 1, color);
+}
+```
+
+该算法思想除了用来解决 [733. 图像渲染](https://leetcode-cn.com/problems/flood-fill/) 等典型问题外，还可以进一步扩展用来简化相关网格、图像遍历问题，如：[1254. 统计封闭岛屿的数目](https://leetcode-cn.com/problems/number-of-closed-islands/) [1905. 统计子岛屿](https://leetcode-cn.com/problems/count-sub-islands/) 等，这类问题，均需要对网格进行多次遍历，而为了避免出现重复遍历和修改原图像后带来的错误遍历结果，可以采用 Flood fill 思想，将每次遍历的节点所连通的所有节点全部 “染色” 或称为 “沉岛”（即使已经判断出结果），以简化后续遍历操作。
+
 典型例题：
 
 * [733. 图像渲染](https://leetcode-cn.com/problems/flood-fill/)
@@ -235,6 +282,8 @@ visited[x][y] = true;
 * [463. 岛屿的周长](https://leetcode-cn.com/problems/island-perimeter/)
 * [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
 * [827. 最大人工岛](https://leetcode-cn.com/problems/making-a-large-island/)
+* [1254. 统计封闭岛屿的数目](https://leetcode-cn.com/problems/number-of-closed-islands/)
+* [1905. 统计子岛屿](https://leetcode-cn.com/problems/count-sub-islands/)
 
 ## 参考链接
 
