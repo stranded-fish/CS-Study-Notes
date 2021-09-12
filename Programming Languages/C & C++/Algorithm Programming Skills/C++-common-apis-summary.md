@@ -856,10 +856,13 @@ unordered_set<char> s{'a', 'b', 'c', 'd', 'e', 'f', 'g'};
 **eg 1. 基于范围的 for 循环遍历**
 
 ```C++
+// type val
 for (auto val : set) {
     cout << val << endl;
 }
 ```
+
+> **注意：** 不能通过基于范围的 for 循环遍历修改集合元素，即使采用 for (auto &val : set) 形式，set 返回的将是 const type &val，即指向常量的引用，同样不能修改。
 
 **eg 2. 基于迭代器遍历**
 
@@ -920,29 +923,21 @@ unordered_map<char, char> pairs = {
 
 ### 遍历哈希表
 
-**eg 1. 下标 for 循环遍历**
+**eg 1. 基于范围的 for 循环遍历**
 
 ```C++
-for (int i = 0; i < mapping.size(); ++i) {
-    cout << i << " " << mapping[i] << endl;
-}
-```
-
-**eg 2. 基于范围的 for 循环遍历**
-
-```C++
+// pair<const type, type> item
 for (auto item : mapping) {
     cout << item.first << " " << item.second << endl;
 }
 ```
 
-**eg 3. 基于迭代器遍历**
+**eg 2. 基于迭代器遍历**
 
 ```C++
 // 可用 auto 关键字简化 auto iter = mapping.begin()
 for (unordered_map<int, string>::iterator iter = mapping.begin(); iter != mapping.end(); ++iter) {
-    cout << iter->first << endl;
-    cout << iter->second << endl;
+    cout << iter->first << " " << iter->second << endl;
 }
 ```
 
