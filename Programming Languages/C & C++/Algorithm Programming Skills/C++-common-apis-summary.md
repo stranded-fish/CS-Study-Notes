@@ -312,8 +312,8 @@ void emplace_back(Args&&... args);
 // 删除数组尾部的那个元素
 void pop_back();
 
-// 清空容器
-void clear();
+// 将数组 size 设置为 0，但 capacity 不变（注意：不能用于清空数组）
+void clear(); 
 
 // 交换两个 vector
 newArray.swap(oldArray);
@@ -519,7 +519,7 @@ reference front();
 void pop_back();
 void pop_front();
 
-// 清空队列
+// 将列表 size 设置为 0，但 capacity 不变（注意：不能用于清空列表）
 void clear();
 
 // 插入单个元素
@@ -781,7 +781,7 @@ reference front();
 void pop_back();
 void pop_front();
 
-// 清空队列
+// 将队列 size 设置为 0，但 capacity 不变（注意：不能用于清空队列）
 void clear();
 ```
 
@@ -929,7 +929,7 @@ pair<iterator, bool> insert(const key_type& key);
 // 删除集合中的元素 key，如果删除成功则返回 1，否则返回 0
 size_type erase(const key_type& key);
 
-// 清空容器
+// 将集合 size 设置为 0，但 capacity 不变（注意：不能用于清空集合）
 void clear();
 ```
 
@@ -990,7 +990,7 @@ size_type count(const key_type& key);
 // 通过 key 删除哈希表中的键值对，如果删除成功则返回 1，否则返回 0
 size_type erase(const key_type& key);
 
-// 清空容器
+// 将哈希表 size 设置为 0，但 capacity 不变（注意：不能用于清空哈希表）
 void clear();
 ```
 
