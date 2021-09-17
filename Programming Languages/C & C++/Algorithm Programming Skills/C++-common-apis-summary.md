@@ -27,6 +27,7 @@
     - [遍历字符串](#遍历字符串)
     - [基本操作](#基本操作-2)
     - [扩展操作](#扩展操作)
+      - [字符串逆转](#字符串逆转)
       - [处理 string 对象中的字符](#处理-string-对象中的字符)
       - [字符串分割](#字符串分割)
     - [类型转换](#类型转换)
@@ -319,6 +320,23 @@ void clear();
 newArray.swap(oldArray);
 ```
 
+**数组逆转：**
+
+使用 `reverse()` 函数时，需引入头文件 `<algorithm>`。
+
+```C++
+#include <algorithm>
+void reverse<_BidIt>(const _BidIt _First, const _BidIt _Last);
+
+vector<int> test{1, 2, 3};
+
+// 逆转整个数组
+reverse(test.begin(), test.end()); // test{3, 2, 1}
+
+// 逆转部分数组
+reverse(test.begin(), test.begin() + 2); // test{2, 1, 3}
+```
+
 **数组拷贝：**
 
 ```C++
@@ -604,6 +622,23 @@ s1.compare(s2);
 ```
 
 ### 扩展操作
+
+#### 字符串逆转
+
+使用 `reverse()` 函数时，需引入头文件 `<algorithm>`。
+
+```C++
+#include <algorithm>
+void reverse<_BidIt>(const _BidIt _First, const _BidIt _Last);
+
+string str = "hello world";
+
+// 逆转整个字符串
+reverse(str.begin(), str.end()); // dlrow olleh
+
+// 逆转部分字符串
+reverse(str.begin(), str.begin() + 5); // olleh world
+```
 
 #### 处理 string 对象中的字符
 
