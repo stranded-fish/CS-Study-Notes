@@ -446,13 +446,33 @@ sort(nums.begin(), nums.end(), comp);
 * 降序：定义当 `a > b` 时，返回 `true`；
 
 > **注意：**
-> ① 该函数不得修改其任何参数，故需要用 `const` 限定符加以限定。
-> ② 当在类中使用自定义 `comp` 方法进行排序时，不能直接调用类中定义的非静态 `comp` 方法（如：LeetCode 核心代码模式）。因为非静态的成员函数必须要被绑定到一个类的对象或者指针上，才能得到被调用对象的 `this` 指针，为了区分是谁调用了成员函数，就必须要有 `this` 指针，`this` 指针是隐式添加到函数参数列表中的，而这就使得与所需 `comp` 方法入参不匹配。
+> **①** 该函数不得修改其任何参数，故需要用 `const` 限定符加以限定。
+>
+> **②** 当在类中使用自定义 `comp` 方法进行排序时，不能直接调用类中定义的非静态 `comp` 方法（如：LeetCode 核心代码模式）。
+>
+> 因为非静态的成员函数必须要被绑定到一个类的对象或者指针上，才能得到被调用对象的 `this` 指针，为了区分是谁调用了成员函数，就必须要有 `this` 指针，`this` 指针是隐式添加到函数参数列表中的，而这就使得与所需 `comp` 方法入参不匹配。
 >
 > 解决方法：
 >
 > 1. 通过 `static` 修饰自定义排序方法 `comp`。由于类的静态成员不依赖于具体对象，所有实例化对象都共享同一个静态成员，故也就没有 `this` 指针的概念。
 > 2. 将该方法定义到类外部，即定义为全局普通函数。
+>
+>
+> **③** Effective STL no.21：总是让比较函数在等值情况下返回 false。
+>
+> sort 函数为了最大程度的提高效率，结合了快排、堆排和插入排序等多种排序方法，分为 std::__introsort_loop 和 std::__final_insertion_sort 两个阶段。
+>
+> 第一阶段使用 “快排+堆排” 的方法，第二阶段使用 “插入排序”，当元素个数小于等于 _S_threshold（enum {_S_threshold = 16 }）时，执行普通的插入排序，当大于 _S_threshold 时，执行两次的 “插入” 排序操作，首先使用普通的插入排序来排 [first,_S_threshold) 这个范围的元素，然后使用无保护的插入排序，完成 [_S_threshold, last) 这个范围的排序。
+>
+> 而最后使用的无保护的插入排序，为了提升效率，省略了越界的检查。如果在比较元素相等的情况下返回 true 会导致遍历无法停止，最终造成访问越界，程序崩溃。
+>
+> 解决方法，遵循自定义 [Compare 实现要求](https://en.cppreference.com/w/cpp/named_req/Compare)：
+>
+> 1. 对于任意元素 a，需满足 comp(a, a) == true；
+> 2. 对于任意两个元素 a 和 b，若 comp(a, b) == true 则要满足 comp(b, a) == false；
+> 3. 对于任意三个元素 a、b 和 c，若 comp(a, b) == true 且 comp(b, c) == true 则需要满足 comp(a, c) == true。
+>
+> 综上：如果定义两个元素相等时返回 true，将无法满足条件 2，故总是需要让比较函数在等值情况下返回 false。
 
 **eg 1. 静态数组排序**
 
@@ -1083,6 +1103,7 @@ pair 对象重载了 <、<=、>、>=、==、!= 运算符，其运算规则是：
 * [C++ Reference](http://www.cplusplus.com/reference/)
 * [C++ 数组](https://www.runoob.com/cplusplus/cpp-arrays.html)
 * [C++ 数组和vector的基本操作](https://www.cnblogs.com/HL-space/p/10546585.html)
+* [C++ 中使用std::sort自定义排序规则时要注意的崩溃问题](https://blog.csdn.net/albertsh/article/details/119523587)
 * [C++ 多维数组的遍历以及初始化](https://blog.csdn.net/anlian523/article/details/90549379)
 * [C++ 迭代器（STL迭代器）iterator详解](http://c.biancheng.net/view/338.html)
 * [C++ string类（C++字符串）完全攻略](http://c.biancheng.net/view/400.html)

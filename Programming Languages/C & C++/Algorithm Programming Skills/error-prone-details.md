@@ -52,9 +52,28 @@ TODO
 
 ## 语言特性
 
+1
 vector.size() 返回的数据类型非负，不能执行减法，
 
 需要 int n = vector.size();
+
+2
+Effective STL no.21：总是让比较函数在等值情况下返回 false。
+
+C++ 自定义排序 sort comp 方法，若两个元素相等需要返回 false，否则将导致访问越界，程序崩溃。
+
+```C++
+static bool cmp(const string &str1, const string &str2) {
+    if (str1.size() != str2.size()) return str1.size() > str2.size();
+    else {
+        int n = str1.size();
+        for (int i = 0; i < n; ++i) {
+            if (str1[i] != str2[i]) return str1[i] > str2[i];
+        }
+        return false; // 两个字符串完全相等时返回 false 注意！！！
+    }
+}
+```
 
 TODO
 
