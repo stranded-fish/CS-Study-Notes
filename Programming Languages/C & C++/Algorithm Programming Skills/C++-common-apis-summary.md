@@ -43,6 +43,7 @@
     - [优先队列](#优先队列)
       - [声明及初始化](#声明及初始化-6)
       - [基本操作](#基本操作-5)
+      - [自定义排序](#自定义排序)
   - [堆栈](#堆栈)
     - [声明及初始化](#声明及初始化-7)
     - [基本操作](#基本操作-6)
@@ -869,7 +870,10 @@ priority_queue<int, vector<int>, greater<int>> q;
 priority_queue<int, vector<int>, less<int>> q;
 ```
 
-> **注意：** 一般只有在使用自定义的数据类型时，才需要传入这三个参数，使用基本数据类型时，只需传入数据类型，**默认为大顶堆 - 降序队列。**
+> **注意：**
+> **①** 一般只有在使用自定义的数据类型时，才需要传入这三个参数，使用基本数据类型时，只需传入数据类型，**默认为大顶堆 - 降序队列。**
+>
+> **②** 自定义排序的比较与 sort 方法相反。
 
 ```C++
 /* 对于基础类型，默认为大顶堆 - 降序队列
@@ -897,6 +901,30 @@ void pop();
 ```
 
 > **注意：** 队列没有 vector 的 begin() 方法，故不能使用 基于范围的 for 循环遍历 和 基于迭代器的遍历。只能通过 while 判断 empty() 方法 或 根据 size() 大小进行 for 循环 来进行遍历。
+
+#### 自定义排序
+
+**eg 1. 重载仿函数 ()**
+
+```C++
+struct cmp {
+    bool operator () (ListNode* a, ListNode* b) {
+        return a->val > b->val; // 升序，小顶堆
+    }
+};
+
+priority_queue<ListNode*, vector<ListNode*>, cmp> pq; 
+```
+
+**eg 2. 重载 operator <**
+
+```C++
+bool operator < (ListNode a, ListNode b){
+    return a.val < b.val; // 降序，大顶堆
+}
+
+priority_queue<ListNode> pq; 
+```
 
 ## 堆栈
 
