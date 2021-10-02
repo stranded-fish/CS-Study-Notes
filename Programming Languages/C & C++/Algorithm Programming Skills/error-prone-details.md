@@ -75,6 +75,17 @@ static bool cmp(const string &str1, const string &str2) {
 }
 ```
 
+3
+涉及到最大最小值的边界判断时，不能直接将 int 类型的 INT_MIN INT_MAX，看作无穷小和无穷大，测试用例可能会卡极限。
+
+如果测试输入为 int 类型的话，建议使用更大的
+
+```C++
+long val = LONG_MIN / LONG_MAX;
+long long val = LLONG_MIN / LLONG_MAX;
+```
+
+作为边界条件进行比较。
 TODO
 
 ## 参考链接
