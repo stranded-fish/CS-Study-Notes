@@ -48,6 +48,10 @@ TreeNode*  recursion(TreeNode* node, vector<int> &nums, int start, int end) {
 
 ## 溢出检查
 
+通常输入参数为 int 时，此时如果涉及到 * 10 + 等操作，可能会溢出，此时建议直接在程序一开始，将其转化为 long long 类型的变量，特别是负数，负数 如果为 INT_MIN 的话，直接转化为正数会溢出，涉及到负数转化为 正数的情况都要事先考虑一下是否会出现 INT_MIN这种情况的负数，如果会的话，建议先将其转化为 long long 类型。
+
+166. 分数到小数
+
 TODO
 
 ## 语言特性
