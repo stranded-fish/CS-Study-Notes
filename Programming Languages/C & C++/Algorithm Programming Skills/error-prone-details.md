@@ -92,4 +92,7 @@ long long val = LLONG_MIN / LLONG_MAX;
 作为边界条件进行比较。
 TODO
 
+4
+string 字符串只能和同为 string 字符串的变量 或是 字符字面值 'c' 和字符串字面值 "hello" 相加，不能直接和 int 等数值类型相加（需要先用  to_string 方法进行类型转化）。
+
 ## 参考链接
