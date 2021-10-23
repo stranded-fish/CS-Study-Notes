@@ -31,15 +31,17 @@
 ```C++
 // 计算从起点 start 到终点 target 的最近距离
 int BFS(Node *start, Node *target) {
-    queue<Node*> q;               // 核心数据结构
-    unordered_set<Node*> visited; // 避免重复访问
+    if (start == nullptr) return -1; // 注意 1. 特例判断
+
+    queue<Node*> q;                  // 核心数据结构
+    unordered_set<Node*> visited;    // 避免重复访问
     
-    q.push(start);                // 起点入队
-    visited.insert(start);        // 标记起点
-    int step = 0;                 // 记录扩散的步数
+    q.push(start);                   // 起点入队
+    visited.insert(start);           // 标记起点
+    int step = 0;                    // 记录扩散的步数
 
     while (q not empty) {
-        int size = q.size();      // 注意 1. 提前保存队列中的元素个数
+        int size = q.size();         // 注意 2. 提前保存队列中的元素个数
 
         // 将当前队列中的所有节点（同一层）向四周扩散
         while (size--) {
@@ -47,11 +49,11 @@ int BFS(Node *start, Node *target) {
 
             if (cur is target) return step; // 判断是否找到目标
 
-            // 注意 2. 将 cur 的相邻 非空节点 加入队列
+            // 注意 3. 将 cur 的相邻 非空节点 加入队列
             for (Node *x : cur->adj()) {
                 if (x not in visited) {     // 防止重复访问
                     q.push(x);
-                    visited.insert(x);      // 注意 3. 节点加入队列后，立即标记为「已经访问」
+                    visited.insert(x);      // 注意 4. 节点加入队列后，立即标记为「已经访问」
                 }
             }
         }
@@ -67,8 +69,10 @@ int BFS(Node *start, Node *target) {
 
 **注意：**
 
+* 通常在不进行额外判断的情况下，不能向队列中加入空节点，因为空节点在访问其邻接节点时，会出现 `runtime error: member access within null pointer` 访问空指针的错误，故需要特别注意以下两点：
+  * 判断初始起点 `Node *start` 是否为空，如果为空则直接返回结果。
+  * 将 `cur` 的相邻节点加入队列时，除判断是否重复以外，还要检查其是否为空，只有在非空的情况下才入队。
 * 遍历当前队列中的所有节点时，不能直接用 `q.size()` 作循环判断条件，因为 `q.size()` 在循环中是变量，正确的做法是：遍历队列时提前保存队列中的元素的个数 `int size = q.size();`。
-* 将 `cur` 的相邻节点加入队列时，除判断是否重复以外，还要检查其是否为空，只有在非空的情况下才入队。
 * 广度优先遍历作用于图论问题的时候，将节点加入队列后，需要立即将其标记为「已经访问」（即添加到 `visited` 标记集合中），否则可能导致相同节点重复入队（如：同一层的多个节点含有相同邻接点的情况）。
 
 **运用框架的思考：**
