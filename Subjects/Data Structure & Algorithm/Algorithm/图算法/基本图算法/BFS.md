@@ -91,7 +91,7 @@ int BFS(Node *start, Node *target) {
 * 剪枝条件：哪些分支是重复的或无效的？总共可归纳为哪几类剪枝的情景？即阻止节点入队的条件。
   * 树型图中通常会判断节点是否为空来避免空节点入队；
   * 无向图中通常有 `visited` 数组来避免节点重复入队；
-  * 二维平面中通常会判断坐标合法性以避免越界坐标入队；
+  * 二维平面中除了有 `visited` 数组以外，通常还会判断坐标合法性以避免越界坐标入队；
 * 解的产生：题目所需要的解的产生位置？叶子节点？非叶子节点？从根节点到叶子节点的路径？即算法终止的条件。
   * 通常为找到题目所需目标，此时的解可能是广度优先遍历的步数，即达到目标的最短距离。
 
@@ -99,9 +99,102 @@ int BFS(Node *start, Node *target) {
 
 ### 双向 BFS
 
+在朴素的 BFS 实现中，算法空间的瓶颈主要取决于搜索空间中的最大宽度。为了在保证搜索到目标结果的同时，降低搜索空间的最大宽度，以进一步突破瓶颈，可以采用双向 BFS 进行优化。
+
+双向 BFS 适用于目标节点已知的情况。同时从起点和终点两个方向开始搜索，一旦在两个扩展方向上出现同一个结点，就意味着找到了一条联通起点和终点的最短路径，搜索结束。
+
+基本实现思路：
+
+* 创建「两个队列」分别用于两个方向的搜索；
+* 创建「两个哈希集合」用于「解决相同节点重复搜索」；
+* 为了尽可能让两个搜索方向「均衡」，每次从队列中取值进行扩展时，先判断哪个队列容量较少，优先选择较小的集合进行扩展；
+* 如果在搜索过程中「搜索到另一个方向搜索过的节点」，说明找到了最短路径。
+
+代码模板 1：
+
+```C++
+// q1、q2 为两个方向的队列
+// m1、m2 为两个方向的哈希表 
+    
+while(!q1.empty() && !q2.empty()) {
+    if (q1.size() < q2.size()) {
+        update(q1, m1, m2);
+    } else {
+        update(q2, m2, m1);
+    }
+}
+
+// update 为从队列 d 中取出一个元素进行「一次完整扩展」的逻辑
+void update(queue d, Map cur, Map other) {}
+```
+
+代码模板 2：
+
+```C++
+// 创建「两个队列」分别用于两个方向的搜索
+queue<string> q1, q2;
+q1.push(start); // q1 代表从起点 s 开始搜索（正向）
+q2.push(end);   // q2 代表从结尾 t 开始搜索（反向）
+
+// 创建「两个哈希集合」用于「解决相同节点重复搜索」
+unordered_set<string> visited1, visited2;
+visited1.insert(start);
+visited2.insert(end);
+
+// 统计正反扩展步数
+int step = 0;
+
+/* 只有当两个队列都不为空时，才继续搜索
+当其中一个队列为空，则说明该方向无法搜索到另外一个方向搜索过的节点，
+即两个方向之间没有交集，s 到 t 之间没有最短路 */
+while (!q1.empty() && !q2.empty()) {
+
+    // 优化：每次都选择较小的队列进行扩散
+    if (q1.size() > q2.size()) {
+        swap(q1, q2);
+        swap(visited1, visited2);
+    }
+
+    // 整体逻辑同朴素 BFS
+    int size = q1.size();
+    while (size--) {
+        auto cur = q1.front(); q1.pop();
+
+        /* 当某一个方向搜索过程中「搜索到另一个方向搜索过的节点」，
+        说明找到了最短路径，搜索结束 */
+        if (visited2.count(cur)) return step;
+
+        for (Node *x : cur->adj()) {
+            if (x not in visited1) {
+                q1.push(x);
+                visited1.insert(x);
+            }
+        }
+    }
+    ++step;
+}
+
+return -1;
+```
+
+> **Tips:** 可利用 `swap()` 方法高效地交换容器，从而避免对 `q1`、`q2` 大小关系的额外处理，简化编码。
+
+典型例题：
+
+* [127. 单词接龙](https://leetcode-cn.com/problems/word-ladder/)
+* [433. 最小基因变化](https://leetcode-cn.com/problems/minimum-genetic-mutation/)
+* [752. 打开转盘锁](https://leetcode-cn.com/problems/open-the-lock/)
+
 ### 多源 BFS
 
 TODO
+
+542. 01 矩阵
+
+
+543. 最短的桥
+
+1162. 地图分析  多源 BFS 逆向思路：如果正向很麻烦，我们可以将「源点/起点」和「汇点/终点」进行反转：
 
 ## 常见题型
 
@@ -128,3 +221,4 @@ TODO
 * [广度优先搜索](https://zh.wikipedia.org/wiki/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2)
 * [宽度优先搜索](https://baike.baidu.com/item/%E5%AE%BD%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/5224802)
 * [LeetBook - 广度优先搜索](https://leetcode-cn.com/leetbook/detail/bfs/)
+* [双向 BFS 基本思路（含模板）以及两种「启发式搜索」算法](https://juejin.cn/post/6977640016436527117)
