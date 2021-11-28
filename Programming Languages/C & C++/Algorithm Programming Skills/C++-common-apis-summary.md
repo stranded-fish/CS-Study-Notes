@@ -631,6 +631,9 @@ size_t size();
 // 判断字符串是否为空
 bool empty();
 
+// 返回字符串最后一个字符的引用（可修改）
+char &std::string::back();
+
 // 在字符串尾部插入一个字符 c
 void push_back(char c);
 
