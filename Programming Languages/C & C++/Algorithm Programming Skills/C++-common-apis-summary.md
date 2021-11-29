@@ -423,7 +423,7 @@ custom  (2)
 
 * `first` - 待排序数组的首地址
 * `last`  - 待排序数组的尾地址
-* `comp`  - 排序方法，缺省为升序
+* `comp`  - 比较方法，传递可调用对象（包含：函数、函数指针、重载了函数调用运算符的类、lambda 表达式），缺省为升序
 
 其中 `custom (2)` 自定义排序，可使用 C++ 内置排序方法：
 
@@ -432,16 +432,43 @@ custom  (2)
 
 也可以使用自定义排序方法：
 
+**eg 1. 函数**
+
 ```C++
-bool comp(const Type1 &a, const Type2 &b);
-
-// 示例：升序排序
-bool comp(const int &a, const int &b) {
-    return a < b;
-}
-
-vector<int> nums;
+bool comp(const int &a, const int &b) { return a < b; }
 sort(nums.begin(), nums.end(), comp);
+```
+
+**eg 2. 函数指针**
+
+```C++
+bool comp(const int &a, const int &b) { return a < b; }
+auto pf = &comp;
+sort(nums.begin(), nums.end(), pf);
+```
+
+**eg 3. 重载函数调用运算符 ()**
+
+```C++
+struct compare {
+    bool operator () (int a, int b) {
+        return a < b;
+    }
+};
+compare cmp;
+sort(arr.begin(), arr.end(), cmp);
+```
+
+**eg 4. lambda 表达式**
+
+```C++
+/* eg 4.1 */
+sort(nums.begin(), nums.end(),
+    [](const int &a, const int &b) { return a < b; });
+
+/* eg 4.2 */
+auto comp_2 = [](const int &a, const int &b) { return a < b; };
+sort(nums.begin(), nums.end(), comp_2);
 ```
 
 其中自定义排序方法，比较入参 `a` 和 `b`：
@@ -875,10 +902,14 @@ void clear();
 
 * `Type`：数据类型
 * `Container`：容器类型（默认 vector）
-* `Functional`：比较方法
+* `Functional`：比较方法的指针类型
 
 ```C++
 #include <queue>
+
+/* 对于基础类型，默认为大顶堆 - 降序队列
+等价于 priority_queue<int, vector<int>, less<int>> q; */
+priority_queue<int> q; 
 
 // 小顶堆 - 升序队列
 priority_queue<int, vector<int>, greater<int>> q;
@@ -890,13 +921,11 @@ priority_queue<int, vector<int>, less<int>> q;
 > **注意：**
 > **①** 一般只有在使用自定义的数据类型时，才需要传入这三个参数，使用基本数据类型时，只需传入数据类型，**默认为大顶堆 - 降序队列。**
 >
-> **②** 自定义排序的比较与 sort 方法相反。
-
-```C++
-/* 对于基础类型，默认为大顶堆 - 降序队列
-等价于 priority_queue<int, vector<int>, less<int>> q; */
-priority_queue<int> q; 
-```
+> **②** 自定义排序的大小比较与 sort 方法相反，同时需要对 sort 与 priority_queue 的自定义排序实现加以区分。
+>
+> * sort(arr.begin(), arr.end(), cmp) 方法的第三个参数 cmp 为可调用对象，即函数、函数指针、重载了函数调用运算符的类和 lambda 表达式。
+> * 而 priority_queue<Type, Container, Functional> 中 Functional 为比较函数的指针类型，而非函数对象。可以通过 decltype(cmp)* 方法，声明函数指针类型，然后在构造函数中传递函数对象。即：
+> `priority_queue<int, vector<int>, decltype(cmp)*> q(cmp);`
 
 #### 基本操作
 
@@ -921,7 +950,27 @@ void pop();
 
 #### 自定义排序
 
-**eg 1. 重载仿函数 ()**
+**eg 1. 函数指针**
+
+```C++
+bool cmp (ListNode *a, ListNode *b) { return a->val < b->val; }
+
+/* eg 1.1 */
+priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)*> q(cmp);
+
+/* eg 1.2 */
+auto pf = &cmp;
+priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> q(cmp);
+```
+
+**eg 2. lambda 表达式**
+
+```C++
+auto cmp = [](ListNode *a, ListNode *b) { return a->vl > b->val; };
+priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> q(cmp);
+```
+
+**eg 3. 重载函数调用运算符 ()**
 
 ```C++
 struct cmp {
@@ -933,7 +982,7 @@ struct cmp {
 priority_queue<ListNode*, vector<ListNode*>, cmp> pq; 
 ```
 
-**eg 2. 重载 operator <**
+**eg 4. 重载 operator <**
 
 ```C++
 bool operator < (ListNode a, ListNode b){
@@ -1228,3 +1277,4 @@ int sum = accumulate(arr.begin(), arr.end(), 0); // sum = 10
 * [C++ 优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886)
 * [C++ STL pair用法详解](http://c.biancheng.net/view/7169.html)
 * [C++ 中实现类似split()的字符串分割函数](https://guopengzhen.com/%E7%A8%8B%E5%BA%8F%E7%8C%BF%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8319/)
+* [C++ lambda表达式\prority_queue\decltype](https://www.shuzhiduo.com/A/RnJWBblwzq/)
