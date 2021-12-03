@@ -863,6 +863,9 @@ void pop();
 #include <deque>
 
 deque<int> dq;
+
+// 范围构造函数 - 按序插入 [first,last) 范围内的元素
+deque<int> dq(arr.begin(), arr.end());
 ```
 
 #### 基本操作
@@ -916,6 +919,10 @@ priority_queue<int, vector<int>, greater<int>> q;
 
 // 大顶堆 - 降序队列
 priority_queue<int, vector<int>, less<int>> q;
+
+// 范围构造函数 - 插入 [first,last) 范围内的元素，并通过 make_heap 排序
+vector<int> nums;
+priority_queue<int, vector<int>, less<int>> q(nums.begin(), nums.end());
 ```
 
 > **注意：**
@@ -1039,6 +1046,9 @@ unordered_set<int> set;
 
 // 通过初始化列表中的元素，对其进行初始化
 unordered_set<char> s{'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+
+// 范围构造函数 - 插入 [first,last) 范围内的元素
+unordered_set<int> s(arr.begin(), arr.end());
 ```
 
 ### 遍历集合
@@ -1109,6 +1119,10 @@ unordered_map<char, char> pairs = {
     {']', '['},
     {'}', '{'}
 };
+
+// 范围构造函数 - 插入 [first,last) 范围内的元素
+vector<pair<int, int>> arr = {{1, 2}, {3, 4}};
+unordered_map<int, int> mappings(arr.begin(), arr.end());
 ```
 
 ### 遍历哈希表
@@ -1223,11 +1237,8 @@ int a = 1, b = -2, c = 3;
 max(a,b); // a: 1
 
 // custom (2)
+bool comp(const int a, const int b) { return a < b * b; }
 max(a, b, comp) // b: -2
-
-bool comp(const int a, const int b) {
-    return a < b * b;
-}
 
 // initializer list (3) 
 max({a, b, c}); // c: 3
