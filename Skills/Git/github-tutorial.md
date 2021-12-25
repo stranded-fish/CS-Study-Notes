@@ -57,13 +57,16 @@ $ git config --get user.email
 
 在 Github web 端新建仓库，并记录 SSH 地址 `git@github.com:yourName/yourRepo.git`。
 
-命令行添加远程仓库：
+命令行添加远程仓库 `git remote add [shortname] [url]`，其中：
+
+* `[shortname]` 为远程仓库自定义别名；
+* `[url]` 为远程仓库地址；
 
 ```git
 $ git remote add origin git@github.com:yourName/yourRepo.git
 ```
 
-yourname 和 yourRepo 表示 Github 用户名 和 仓库名，origin 表示远程仓库别名，添加完成之后，在本地 config 文件中，会新增 `[remote "origin"]` 内容，用于记录之前添加的内容。也可以通过修改该文件，重新配置远程地址。
+`yourname` 和 `yourRepo` 表示 Github 用户名 和 仓库名，添加完成之后，在本地 `config` 文件中，会新增 `[remote "origin"]` 内容，用于记录之前添加的内容。也可以通过修改该文件，重新配置远程地址。
 
 **Step 6.** 推送至远程仓库
 

@@ -420,7 +420,7 @@ $ git push origin --delete serverfix
 ## 远程同步
 
 ```git
-# 增加一个新的远程仓库，并命名
+# 增加一个新的远程仓库，并命名（同一仓库，可添加多个不同的远程仓库，并将不同分支提交到不同仓库）
 $ git remote add [shortname] [url]
 
 # 显示所有远程仓库
