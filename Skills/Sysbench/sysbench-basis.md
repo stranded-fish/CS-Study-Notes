@@ -75,7 +75,7 @@ sysbench /usr/share/sysbench/oltp_read_write.lua --tables=5 --table_size=100 --m
 
 测试结果：
 
-![测试结果](https://i.loli.net/2021/04/19/dpy8N3acCiE5uqg.png)
+![测试结果](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145835.png)
 
 关键信息：
 

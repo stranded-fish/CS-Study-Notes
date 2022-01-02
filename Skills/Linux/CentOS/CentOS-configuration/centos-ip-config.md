@@ -4,8 +4,8 @@ VMware vSphere CentOS 7 虚拟机安装完成后，默认配置文件没有激�
 
 默认情况：
 
-![ping baidu](https://i.loli.net/2020/12/07/3FrV2JLdeKIQMzG.png)
-![yum upgrade](https://i.loli.net/2020/12/07/QzlOFMiD1qSweyY.png)
+![ping baidu](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144628.png)
+![yum upgrade](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144639.png)
 
 目录：
 

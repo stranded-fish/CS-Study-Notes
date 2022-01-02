@@ -26,7 +26,7 @@ Xshell 是一款功能强大的终端模拟器，支持 SSH2，SSH3，SFTP，TEL
 * 当前会话指当前选定的连接会话，修改后，之后新建的该连接会话都会应用修改属性。
 * 默认会话指系统默认终端会话，即通过点击标签栏 + 号直接新建的会话。
 
-![修改字体与大小](https://i.loli.net/2020/12/07/GhLimfkjS1W6wJY.png)
+![修改字体与大小](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150514.png)
 
 ### 个性化配色
 
@@ -64,7 +64,7 @@ Xshell 是一款功能强大的终端模拟器，支持 SSH2，SSH3，SFTP，TEL
 
 Solarized Dark 配色效果展示：
 
-![Solarized Dark 配色效果展示](https://i.loli.net/2020/12/07/T7c2lCmpIsWjr5Z.png)
+![Solarized Dark 配色效果展示](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150541.png)
 
 ## 常用快捷键
 

@@ -5,13 +5,13 @@
 最终效果：
 
 Windows Terminal:
-![Windows Terminal](https://i.loli.net/2021/03/05/Gx6pEW93RUcNBmu.png)
+![Windows Terminal](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145721.png)
 
 VS Code:
-![VS Code](https://i.loli.net/2021/03/05/K2srmN1EInipUOJ.png)
+![VS Code](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145736.png)
 
 IDEA:
-![IDEA](https://i.loli.net/2021/03/05/qViEkN531TfDAFm.png)
+![IDEA](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145748.png)
 
 目录：
 
@@ -188,7 +188,7 @@ $sl.Colors.AccentColor = [System.ConsoleColor]::DarkGray
 
 主题效果：
 
-![VS Code 效果展示](https://i.loli.net/2021/03/05/OHRcZ6v8h31F7fq.png)
+![VS Code 效果展示](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145804.png)
 
 主题特点：
 

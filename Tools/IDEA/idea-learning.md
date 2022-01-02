@@ -31,7 +31,7 @@ TODO 背景颜色、字体、同步主题等设置
 3. 左侧 Files 选择 Class；
 4. 在右侧编辑框中添加相应注释。
 
-![设置类注释模板](https://i.loli.net/2021/01/03/amJZTQjBOE3nH8X.png)
+![设置类注释模板](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145908.png)
 
 类注释模板示例：
 
@@ -65,8 +65,8 @@ public class ${NAME} {
 3. 点击最右侧加号，在选定组中新建 Live Template；
 4. 设置代码缩写 Abbreviation，模板描述 Description，模板内容 Template text，编辑变量 Edit variables，模板作用范围以及触发方式（Tab）。
 
-![设置代码模板](https://i.loli.net/2021/01/03/lHhZa6Nq7vPF91V.png)
-![设置模板变量](https://i.loli.net/2021/01/03/95yRadsDTeG7VCt.png)
+![设置代码模板](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145925.png)
+![设置模板变量](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145936.png)
 
 方法注释模板示例：
 
@@ -90,16 +90,16 @@ public class ${NAME} {
 1\. 打开设置 Settings；
 
 2\. 设置 Connection；
-![Connection](https://i.loli.net/2021/03/10/BxUjFvhE9cePIwS.png)
+![Connection](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145952.png)
 
 3\. 设置 Mappings；
-![Mappings](https://i.loli.net/2021/03/10/D3FXf5LhrBAYgxb.png)
+![Mappings](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150003.png)
 
 4\. 部署。
 
 选择要部署的内容 -> 右键 -> Deployment -> Upload to serverName。
 
-![部署到远程服务器](https://i.loli.net/2021/03/10/A9BNjkMV7rf28GK.png)
+![部署到远程服务器](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150018.png)
 
 ## 快捷键
 

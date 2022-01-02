@@ -44,7 +44,7 @@
 
 打开方式：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>  输入 `settings.json`，最后选择不同级别的配置文件。
 
-![settings.json](https://i.loli.net/2021/07/21/JQyIlUnrF48wez7.png)
+![settings.json](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150108.png)
 
 其中用户设置（首选项：打开设置(json)）、文件夹设置（首选项：打开文件夹设置(JSON)） 的配置文件均为 `settings.json`，分别对应了不同位置的配置文件：
 
@@ -55,7 +55,7 @@
 
 点击 VS Code 左下角齿轮图标，并选择设置。
 
-![设置-图形化界面](https://i.loli.net/2021/07/21/28GmYhCDVvFdfIt.png)
+![设置-图形化界面](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150132.png)
 
 ### 设置同步
 
@@ -142,7 +142,7 @@ VS Code 工作区（workspace）是在 VS Code 窗口（实例）中打开的一
 2. type Shortcuts；
 3. 点击右上方图标，打开 `keybindings.json`。
 
-![打开 keybindings.json](https://i.loli.net/2021/07/21/KpTi3hfI8tD5oCQ.png)
+![打开 keybindings.json](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150157.png)
 
 #### 图形化界面
 

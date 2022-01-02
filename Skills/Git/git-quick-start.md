@@ -240,15 +240,15 @@ $ git branch -d [branch-name]
 
 **本地分支：`master` 跟踪 远程分支 `origin/master`。**
 
-![克隆之后的服务器与本地仓库](https://i.loli.net/2021/02/15/rCe1VdqI24hlDL6.png)
+![克隆之后的服务器与本地仓库](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144248.png)
 
 **本地 `master` 分支 与 远程分支 `origin/master` 分支互不影响。** 如果在本地 `master` 分支做了一些工作，在同一时间有其他人推送到 Git 服务器并更新了 `master` 分支。即，提交历史已走向不同的方向。即便这样，只要自身不与 `origin` 服务器连接（并拉取数据），本地 `origin/master` 指针就不会移动。
 
-![本地与远程的工作可以交叉](https://i.loli.net/2021/02/15/wUO5uFt8WqcaLYX.png)
+![本地与远程的工作可以交叉](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144305.png)
 
 **通过 `git fetch <remote>` 命令与给定的远程仓库同步数据。** 该命令会查找 “origin” 对应的服务器，并从中抓取本地没有的数据，并更新本地数据库，移动 `origin/master` 指针到更新后的位置。
 
-![git fetch 更新你的远程跟踪分支](https://i.loli.net/2021/02/15/tRHIPosSD1MqVyl.png)
+![git fetch 更新你的远程跟踪分支](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144320.png)
 
 ### 推送
 
@@ -352,7 +352,7 @@ $ git pull [remote] [branch]
 
 当待合并的两个分支都分别有新的提交时，如下图所示：
 
-![冲突分支](https://i.loli.net/2021/02/15/iuJQ2YhpIDXoSTk.png)
+![冲突分支](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144345.png)
 
 Git 无法快速合并，只能试图将各自修改合并起来，但这种合并就可能会有冲突：
 
@@ -407,7 +407,7 @@ $ git commit -m "conflict fixed"
 
 最终分支状态变为：
 
-![合并分支](https://i.loli.net/2021/02/15/R75DSAduGvhp69P.png)
+![合并分支](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144358.png)
 
 ### 删除远程分支
 
@@ -445,7 +445,7 @@ $ git push [remote] --force
 $ git push [remote] --all
 ```
 
-![图解](https://i.loli.net/2021/02/09/uCTdrBA3w6l12qD.png)
+![图解](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144432.png)
 
 ## 标签设置
 
@@ -535,7 +535,7 @@ $ git show [commit]:[file]
 
 ### 查看差异
 
-![状态差异查看](https://i.loli.net/2021/02/11/pzGtnFD2y36PZ4e.png)
+![状态差异查看](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144448.png)
 
 ```git
 # 显示 工作区 和 暂存区 的差异

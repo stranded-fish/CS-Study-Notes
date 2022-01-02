@@ -165,7 +165,7 @@ cmake -DBUILD_CONFIG=xtrabackup_release -DWITH_MAN_PAGES=OFF
 
 **注意：** 在执行上述命令时，可能发生如下错误：
 
-![cmake 报错](https://i.loli.net/2021/04/18/OuJyXdrav9mUitA.png)
+![cmake 报错](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145326.png)
 
 **解决方法：**
 

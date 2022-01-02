@@ -51,18 +51,18 @@ yum install gdb-gdbserver
 
 VS Code 应用商店搜索 Remote - SSH 插件，并安装
 
-![搜索 Remote - SSH 插件](https://i.loli.net/2021/04/04/XWPHTxrwUMR5Il6.png)
+![搜索 Remote - SSH 插件](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150236.png)
 
 **Step 1.2** 新建 SSH Host
 
 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开命令面板；
 * 输入 remote-ssh；
 * 选择 Remote-SSH: Add New SSH Host；
-  ![选择 Remote-SSH: Add New SSH Host](https://i.loli.net/2021/04/04/x3dHBuiUQtPK9qC.png)
+  ![选择 Remote-SSH: Add New SSH Host](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150250.png)
 * 输入 SSH Host 信息；
-  ![输入 SSH Host](https://i.loli.net/2021/04/04/Q9voeXxGMspiqRw.png)
+  ![输入 SSH Host](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150313.png)
 * 将新增 SSH Host 信息更新到本地 `config` 文件。
-  ![更新本地 config 文件](https://i.loli.net/2021/04/04/tHzan76DejMmcSf.png)
+  ![更新本地 config 文件](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150327.png)
 
 如需修改之前新建的 SSH Host 信息，可打开之前保存更新的本地 `config` 文件，并进行修改即可。
 
@@ -230,7 +230,7 @@ gdbserver :2333 program_name arg1 arg2 arg3 arg4
 * VS Code 点击 debug 窗口中的绿色三角型 或 快捷键 <kbd>F5</kbd>，启动调试;
 * 连接成功后，即可在本地 VS Code 使用调试功能，调试远端程序。
 
-![调试截图](https://i.loli.net/2021/04/04/Q2nsV6gxr1KNobl.png)
+![调试截图](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150345.png)
 
 > **注意：** debug 时必须要打开对应的源代码文件，若调试的程序和打断点的代码不是同一个工程的话，会导致部分步骤无法显示，同时，每次修改源程序或是添加注释更改程序行号后，均需要重新编译、debug，否则断点会显示错行。
 

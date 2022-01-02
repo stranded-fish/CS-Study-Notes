@@ -73,7 +73,7 @@ innobackupex --decompress --parallel=4 /data/backup_qp
 
 ### 调用关系
 
-![innobackupex restore backup 调用关系图](https://i.loli.net/2021/04/23/m5ld1URI4TSaVy8.png)
+![innobackupex restore backup 调用关系图](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145628.png)
 
 ### 关键流程解析
 
@@ -180,7 +180,7 @@ cmd << " > " << dest_filepath;
 
 **注意：** qpress 命令默认双线程，即如果执行 `innobackupex --decompress --parallel=4 /data/backup_qp` 命令，最终效果等价于：同时对 4 个不同文件调用 qpress 命令进行解压，然后每个 qpress 自身再采用双线程解压该文件。总线程数：12 = 4（xtrabackup decompress thread）+ 4 * 2（qpress decompress thread）。
 
-![xtrabackup 解压 - 线程协作模型](https://i.loli.net/2021/04/27/hR4bDzAESPeVufw.png)
+![xtrabackup 解压 - 线程协作模型](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/hR4bDzAESPeVufw.png)
 
 ## 准备备份
 

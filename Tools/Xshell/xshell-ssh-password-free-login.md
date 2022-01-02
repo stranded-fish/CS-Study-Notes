@@ -76,19 +76,19 @@ sudo service sshd restart
 
 **Step 1.** 打开 Xshell，选择 文件 > 新建
 
-![文件 > 新建](https://i.loli.net/2021/09/08/bu3SikAfZXtc4GK.png)
+![文件 > 新建](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150615.png)
 
 **Step 2.** 填写名称、主机等信息
 
-![填写信息](https://i.loli.net/2021/09/08/MHk9bodDWCF7zcn.png)
+![填写信息](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150628.png)
 
 **Step 3.** 选择 Public Key 方式验证
 
-![选择验证方法](https://i.loli.net/2021/09/08/78y9juPBwfKWbUT.png)
+![选择验证方法](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150645.png)
 
 **Step 4.** 指定私钥路径
 
-![指定私钥路径](https://i.loli.net/2021/09/08/Bd6o8m3WFD29rRq.png)
+![指定私钥路径](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102150708.png)
 
 ## 参考链接
 

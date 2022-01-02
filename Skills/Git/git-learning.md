@@ -52,7 +52,7 @@
 
 工作原理：在硬盘上保存补丁集（补丁是指文件修订前后的变化）；通过应用所有的补丁，可以重新计算出各个版本的文件内容
 
-  <!-- ![Figure 1. 本地版本控制系统](https://i.loli.net/2020/10/23/dCBQAt2wk7jNTga.png) -->
+  ![Figure 1. 本地版本控制系统](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102143925.png)
   常见本地版本控制系统：RCS
 
 ### 集中式版本控制系统
@@ -60,7 +60,7 @@
 Centralized Version Control Systems, CVCS
 
 通过单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新
-<!-- ![Figure 2. 集中式版本控制系统](https://i.loli.net/2020/10/23/gKz1HpPVRut9QWJ.png) -->
+![Figure 2. 集中式版本控制系统](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102143945.png)
 
 * 优点：
   * 文件夹级权限控制，权限控制粒度较小，并可轻易控制单个开发者权限
@@ -79,7 +79,7 @@ Centralized Version Control Systems, CVCS
 Distributed Version Control System, DVCS
 
  客户端并不只提取最新版本的文件快照， 而是把代码仓库完整地镜像下来，包括完整的历史记录。 这么一来，任何一处协同工作用的服务器发生故障，事后都可以用任何一个镜像出来的本地仓库恢复。 因为每一次的克隆操作，实际上都是一次对代码仓库的完整备份
-<!-- ![Figure 3. 分布式版本控制系统](https://i.loli.net/2020/10/23/bUKuC7wsE2WvHBo.png) -->
+![Figure 3. 分布式版本控制系统](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144007.png)
 
 * 优点：
   * 版本库本地化，版本库的完整克隆，包括标签、分支、版本记录等，任何一处协同工作用的服务器发生故障，都可以用任何一个镜像的本地仓库进行恢复
@@ -144,7 +144,7 @@ Git 目录下的文件，只有两种状态：**已跟踪** 或 **未跟踪**
   * 已修改 Modified：自上次提交后，对文件做出了修改
   * 已暂存 Staged：可以在工作中，选择性的将修改后的文件放入到暂存区
 
-![文件状态周期变化](https://i.loli.net/2020/11/13/SvuGiMEtO5wUpHx.png)
+![文件状态周期变化](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144114.png)
 
 * 未跟踪：既未存在上次快照的记录中，也没被放入到暂存区
 

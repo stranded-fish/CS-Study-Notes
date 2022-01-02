@@ -40,7 +40,7 @@ cmake -DBUILD_CONFIG=xtrabackup_release -DWITH_MAN_PAGES=OFF
 
 **注意：** 在执行上述命令时，可能发生如下错误：
 
-![cmake 报错](https://i.loli.net/2021/04/18/OuJyXdrav9mUitA.png)
+![cmake 报错](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144726.png)
 
 **解决方法：**
 
@@ -76,7 +76,7 @@ innobackupex --version
 
 输出应如下：
 
-![xtrabackup 安装验证](https://i.loli.net/2021/04/28/5nJoBpaO8Yzx1SR.png)
+![xtrabackup 安装验证](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144751.png)
 
 ## 安装 zstd & pzstd
 
@@ -106,7 +106,7 @@ zstd --version
 
 输出应如下：
 
-![zstd 验证1](https://i.loli.net/2021/04/28/xroy2HlXqWwmGEV.png)
+![zstd 验证1](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144811.png)
 
 **验证 2：**
 
@@ -116,7 +116,7 @@ ll /usr/local/lib | grep libzstd.a
 
 输出应如下：
 
-![zstd 验证2](https://i.loli.net/2021/04/28/Sphyj8vNQ7FKGI1.png)
+![zstd 验证2](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144829.png)
 
 **验证 3：**
 
@@ -126,7 +126,7 @@ cat /usr/local/lib/pkgconfig/libzstd.pc
 
 输出应如下：
 
-![zstd 验证3](https://i.loli.net/2021/04/28/eJRYCqSKlWu2ifB.png)
+![zstd 验证3](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144840.png)
 
 **Step 4.** 安装 pzstd
 
@@ -148,4 +148,4 @@ pzstd --version
 
 输出应如下：
 
-![pzstd 验证](https://i.loli.net/2021/04/28/MRdfpZK91Im4ULt.png)
+![pzstd 验证](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144852.png)

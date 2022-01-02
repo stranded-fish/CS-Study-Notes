@@ -4,7 +4,7 @@
 
 修改后样式：
 
-![修改后样式](https://i.loli.net/2021/03/03/15QLkZEi4mdhKGI.png)
+![修改后样式](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102143842.png)
 
 目录：
 

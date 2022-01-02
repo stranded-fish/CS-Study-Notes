@@ -27,7 +27,7 @@ your_email@youremail.com 为 Github 上绑定的邮箱，之后会要求输入�
 2. 输入自定义 Title；
 3. 将本地生成的 `id_rsa.pub` 内容（Linux: cat ~/.ssh/id_rsa.pub）复制到 Key 中，并完成添加。
 
-![添加 SSH Key](https://i.loli.net/2021/02/14/hYLWAZydQDnRoKt.png)
+![添加 SSH Key](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102144600.png)
 
 **Step 3.** 验证 SSH Key
 

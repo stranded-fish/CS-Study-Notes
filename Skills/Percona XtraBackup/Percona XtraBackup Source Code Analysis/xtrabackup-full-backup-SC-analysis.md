@@ -40,7 +40,7 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
 
 ## 备份过程
 
-![innobackupex full backup 时序图](https://i.loli.net/2021/04/10/JZkwHeO2v1f567D.png)
+![innobackupex full backup 时序图](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/JZkwHeO2v1f567D.png)
 
 1. 由于 2.4.8 版本，`innobackupex` 仅作为 `xtrabackup` 的一个软链接，在 `xtrabackup` 启动后，在参数处理阶段会根据程序名执行不同的操作，从而将 `innobackupex` 参数适配成 `xtrabackup` 形式以兼容旧版。最终等价于直接运行 `xtrabackup` 命令。
 2. `xtrabackup` 首先将根据之前参数处理阶段获取到的参数，初始化对应的 datasink，由于选择了 `--compress` 压缩备份，故在此阶段会初始化 compress datasink，同时 **创建 `compress threads`（多线程）**。
@@ -52,7 +52,7 @@ innobackupex --user=root --password=xxxxxxxx --parallel=4 --stream=xbstream --co
 
 ## 调用关系
 
-![innobackupex full backup 调用关系图](https://i.loli.net/2021/04/23/TO2IDQokrVR79zP.png)
+![innobackupex full backup 调用关系图](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/20220102145426.png)
 
 ## 关键结构体定义
 
@@ -117,7 +117,7 @@ typedef struct {
 
 通过 `ds_file_t->ptr` 指针获取具体数据文件，再通过数据文件 `dest_file` 指针定位到下一个管道：
 
-![数据流图](https://i.loli.net/2021/04/12/BbPwzFmi9qOMWCG.png)
+![数据流图](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/BbPwzFmi9qOMWCG.png)
 
 ## 关键流程解析
 
@@ -234,7 +234,7 @@ for (i = 0; i < (uint) xtrabackup_parallel; i++) {
 
 **Step 3\. 线程协作**
 
-![XtraBackup 压缩 - 线程协作模型](https://i.loli.net/2021/04/22/YqUdfTLQgpvC81J.png)
+![XtraBackup 压缩 - 线程协作模型](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/YqUdfTLQgpvC81J.png)
 
 **①** `main thread` 根据参数 **`--parallel`** 创建若干 `data copy threads`，并等待。
 **②** `data copy threads` 首先获取一个待压缩文件的指针，然后执行 `while` 循环，每次对一部分文件进行压缩（长度为 `len`），然后 `compress_write` 方法会 **尝试获取 `xtrabackup compress threads` 的 `ctrl mutex`**（注意：一旦该 copy thread 获取到了 compress thread 的第一把锁，则会阻塞其他所有 copy thread，后续的 compress 锁（ctrl mutex）只能由该 copy thread 获取），并将该部分文件内容，再次分块（长度不超过由参数 **`--compress-chunk-size`** 设置的 `COMPRESS_CHUNK_SIZE`），并按地址顺序将每一块分配给一个 `xtrabackup compress thread` 进行压缩。（即，同一时刻，所有的 `xtrabackup compress threads` 将只能服务于一个 `data copy thread`）
