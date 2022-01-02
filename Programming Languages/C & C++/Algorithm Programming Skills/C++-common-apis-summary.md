@@ -52,12 +52,18 @@
     - [遍历集合](#遍历集合)
     - [基本操作](#基本操作-7)
   - [哈希表](#哈希表)
-    - [声明及初始化](#声明及初始化-9)
-    - [遍历哈希表](#遍历哈希表)
-    - [基本操作](#基本操作-8)
+    - [map](#map)
+      - [声明及初始化](#声明及初始化-9)
+      - [遍历哈希表](#遍历哈希表)
+      - [基本操作](#基本操作-8)
+    - [multimap](#multimap)
+    - [unordered_map](#unordered_map)
+      - [声明及初始化](#声明及初始化-10)
+      - [遍历无序哈希表](#遍历无序哈希表)
+      - [基本操作](#基本操作-9)
   - [pair](#pair)
-    - [声明及初始化](#声明及初始化-10)
-    - [基本操作](#基本操作-9)
+    - [声明及初始化](#声明及初始化-11)
+    - [基本操作](#基本操作-10)
   - [其他操作](#其他操作)
     - [max / min](#max--min)
     - [accumulate](#accumulate)
@@ -844,6 +850,7 @@ size_type size();
 
 // 将元素加入队尾
 void push(const value_type& val);
+void emplace(Args&&... args);
 
 // 返回队头元素的引用
 value_type& front();
@@ -945,6 +952,7 @@ size_type size();
 
 // 将元素加入队列，并排序
 void push(const value_type& val);
+void emplace(Args&&... args);
 
 // 返回队头元素的引用
 value_type& top();
@@ -1101,16 +1109,95 @@ void clear();
 
 ## 哈希表
 
-TODO map multimap
+### map
 
-### 声明及初始化
+#### 声明及初始化
 
-使用哈希表 `unordered_map` 时，需引入头文件 `<unordered_map>`。
+使用哈希表 `map` 时，需引入头文件 `<map>`。
+
+```C++
+#include <map>
+
+// 初始化一个空的 map
+map<int, int> mappings;
+
+// 通过初始化列表中的键值对，对其进行初始化
+map<char, char> pairs = {
+    {')', '('},
+    {']', '['},
+    {'}', '{'}
+};
+
+// 范围构造函数 - 插入 [first,last) 范围内的元素
+vector<pair<int, int>> arr = {{1, 2}, {3, 4}};
+map<int, int> mappings(arr.begin(), arr.end());
+```
+
+#### 遍历哈希表
+
+**eg 1. 基于范围的 for 循环遍历**
+
+```C++
+// pair<const type, type> item
+for (auto item : mappings) {
+    cout << item.first << " " << item.second << endl;
+}
+```
+
+**eg 2. 基于迭代器遍历**
+
+```C++
+// 可用 auto 关键字简化 auto iter = mappings.begin()
+for (map<int, int>::iterator iter = mappings.begin(); iter != mappings.end(); ++iter) {
+    cout << iter->first << " " << iter->second << endl;
+}
+```
+
+#### 基本操作
+
+```C++
+// 返回哈希表中的键值对个数
+size_type size();
+
+// 返回哈希表是否为空，如果不为空返回 1，否则返回 0
+bool empty();
+
+// 如果 key 存在返回 1，否则返回 0
+size_type count(const key_type& key);
+
+// 返回指向头元素的迭代器指针，访问形式 mappings.begin()->first
+iterator begin() noexcept;
+
+// 返回指向尾元素的迭代器指针，访问形式 mappings.end()->first
+iterator end() noexcept;
+
+// 通过 key 或 迭代器指针删除哈希表中的键值对，如果删除成功则返回 1，否则返回 0
+size_type erase(const key_type& key);
+iterator  erase (const_iterator position);
+iterator  erase (const_iterator first, const_iterator last);
+
+// 将哈希表 size 设置为 0，但 capacity 不变（注意：不能用于清空哈希表）
+void clear();
+```
+
+> **注意：** `begin()`，`end()` 方法返回的迭代器指向类型为 `pair<const type, type>`
+>
+> 由于 `map` 内部以 `key` 为关键值排序，故可以通过 `begin()` 关键字修改头元素，并 `mappings.erase(mappings.begin())` 实现删除 `map` 头元素的功能，以实现等价于 优先队列 + 哈希计数 的效果。
+
+### multimap
+
+TODO
+
+### unordered_map
+
+#### 声明及初始化
+
+使用无序哈希表 `unordered_map` 时，需引入头文件 `<unordered_map>`。
 
 ```C++
 #include <unordered_map>
 
-// 初始化一个空的 map
+// 初始化一个空的 unordered_map
 unordered_map<int, int> mapping;
 
 // 通过初始化列表中的键值对，对其进行初始化
@@ -1125,7 +1212,7 @@ vector<pair<int, int>> arr = {{1, 2}, {3, 4}};
 unordered_map<int, int> mappings(arr.begin(), arr.end());
 ```
 
-### 遍历哈希表
+#### 遍历无序哈希表
 
 **eg 1. 基于范围的 for 循环遍历**
 
@@ -1145,7 +1232,7 @@ for (unordered_map<int, string>::iterator iter = mapping.begin(); iter != mappin
 }
 ```
 
-### 基本操作
+#### 基本操作
 
 ```C++
 // 返回哈希表中的键值对个数
