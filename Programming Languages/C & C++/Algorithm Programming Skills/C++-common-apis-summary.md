@@ -699,6 +699,14 @@ str.insert(p, n, t);
 str.insert(p, b, e);
 ```
 
+> **Tips:** 在部分需要用到栈 `stack` 处理字符串的地方，通常可以直接使用 `string` 充当栈结构，以简化操作。
+>
+> `stack<char> stk <-> string str;`
+>
+> * `stack.push(c) <-> str.push_back(c)`
+> * `stack.pop()   <-> str.pop_back()`
+> * `stack.top()   <-> str.back()`
+
 ### 扩展操作
 
 #### 字符串逆转
