@@ -429,7 +429,7 @@ custom  (2)
 
 * `first` - 待排序数组的首地址
 * `last`  - 待排序数组的尾地址
-* `comp`  - 比较方法，传递可调用对象（包含：函数、函数指针、重载了函数调用运算符的类、lambda 表达式），缺省为升序
+* `comp`  - 比较方法，传递可调用对象（包含：函数、函数指针、重载了函数调用运算符的类对象、lambda 表达式），缺省为升序
 
 其中 `custom (2)` 自定义排序，可使用 C++ 内置排序方法：
 
@@ -461,7 +461,7 @@ struct compare {
         return a < b;
     }
 };
-compare cmp;
+compare cmp; // 注意：需传递类对象
 sort(arr.begin(), arr.end(), cmp);
 ```
 
@@ -945,7 +945,7 @@ priority_queue<int, vector<int>, less<int>> q(nums.begin(), nums.end());
 >
 > **②** 自定义排序的大小比较与 sort 方法相反，同时需要对 sort 与 priority_queue 的自定义排序实现加以区分。
 >
-> * sort(arr.begin(), arr.end(), cmp) 方法的第三个参数 cmp 为可调用对象，即函数、函数指针、重载了函数调用运算符的类和 lambda 表达式。
+> * sort(arr.begin(), arr.end(), cmp) 方法的第三个参数 cmp 为可调用对象，即函数、函数指针、重载了函数调用运算符的类对象和 lambda 表达式。
 > * 而 priority_queue<Type, Container, Functional> 中 Functional 为比较函数的指针类型，而非函数对象。可以通过 decltype(cmp)* 方法，声明函数指针类型，然后在构造函数中传递函数对象。即：
 > `priority_queue<int, vector<int>, decltype(cmp)*> q(cmp);`
 
@@ -1002,6 +1002,7 @@ struct cmp {
     }
 };
 
+// 注意：与 sort 方法相区分，此处传递的是类，而非实例化对象
 priority_queue<ListNode*, vector<ListNode*>, cmp> pq; 
 ```
 
