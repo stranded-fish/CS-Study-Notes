@@ -788,9 +788,9 @@ vector<string> split(const string &str, const char delim) {
     string tmp;
 
     /* 使用 getline 方法从字符串流中读取，当读取到分隔符时停止
-    注意：getline 默认可以读取空格 */
+    注意：getline 默认可以读取空格，并且多个分隔符相邻时会读取到空字符串 */
     while (getline(ss, tmp, delim)) {
-        res.emplace_back(tmp);
+        if (!tmp.empty()) res.emplace_back(tmp);
     }
 
     return res;
