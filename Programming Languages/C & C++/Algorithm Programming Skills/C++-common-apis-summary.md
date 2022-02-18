@@ -452,6 +452,15 @@ void resize (size_type n);
 
 // 调整容器大小，使其包含 n 个元素，如果有新增元素，则将新元素初始化为 val 的副本
 void resize (size_type n, const value_type& val);
+
+/* 应用：调整多维数组容器大小 */
+vector<int> tmp1(k + 1, -1);
+vector<vector<int>> tmp2(n, tmp1);
+vector<vector<vector<int>>> arr;
+arr.resize(n, tmp2);
+
+// 等价形式
+vector<vector<vector<int>>> arr(n, vector<vector<int>>(n, vector<int>(k + 1, -1)));
 ```
 
 * 如果 n 小于当前容器的大小，则将内容减少到其前 n 个元素，并删除超出范围的元素（并销毁它们）。
