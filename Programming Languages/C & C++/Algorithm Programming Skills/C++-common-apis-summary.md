@@ -38,6 +38,7 @@
     - [类型转换](#类型转换)
       - [数值 转换为 string](#数值-转换为-string)
       - [string 转换为 数值](#string-转换为-数值)
+      - [char 转化为 string](#char-转化为-string)
   - [队列](#队列)
     - [普通队列](#普通队列)
       - [声明及初始化](#声明及初始化-4)
@@ -686,8 +687,20 @@ iterator insert(const_iterator position, InputIterator first, InputIterator last
 #include <iostream>
 #include <string>
 
-string s1;
-string s2 = "abc";
+string s1;              // 初始化为空串
+string s2 = "abc";      // 初始化为 "abs"
+string s3(s2);          // 用 s2 初始化 s3
+string s4(s3, pos, num) // 从 s3 中的第 pos 个位置开始，拷贝 num 个字符
+string s5(num, ch)      // 拷贝 num 个 ch 字符
+
+/* 构造函数将 char 数组转化为 string */
+char chs[] = {'a', 'b', 'c'}; // form 1
+const char *chs = "abc";      // form 2
+string str(chs);
+
+/* 使用 new 分配内存，注意：返回的是 string * 类型，且使用后需要通过 delete 释放内存 */
+string *str = new string("abc");
+delete(str);
 ```
 
 ### 遍历字符串
@@ -735,15 +748,17 @@ void push_back(char c);
 // 删除字符串尾部的字符
 void pop_back();
 
-// 返回从索引 pos 开始，长度为 len 的子字符串
+// 返回从索引 pos 开始，长度为 len 的子字符串，省略参数 len 返回从 pos 到末尾的所有字符
 string substr(size_t pos, siez_t len);
 
-// 查找子串（返回 str2 在 str1 中的下标位置，如果没有找到，则返回 npos（int 型））
+// 查找子串（返回 str2 在 str1 中的下标位置，如果没有找到，则返回 string::npos（int 型））
 str1.find(str2);
+if (str1.find(str2) == string::npos) cout << "Not find!";
 
-// string 连接
+// 连接 字符串 或 num 个字符 ch
 s1 = s1 + s2;
 s1.append(s2);
+s1.append(num, ch);
 
 // string 比较（相等时返回 0；s1 > s2 返回 1，s1 < s2 返回 -1）
 if (s1 > s2) ......
@@ -894,6 +909,20 @@ string to_string (numeric_type val);
 ```C++
 numeric_type sto* (const string& str, [...]);
 ```
+
+#### char 转化为 string
+
+由于字符串拼接操作，要求运算符两侧至少有一个 `string` 类型，故在字符串拼接中，有时候需要将 `char` 类型转化为 `string` 类型。
+
+```C++
+// 使用 string 的构造函数
+const char c = 'a';
+string s(1, c);
+```
+
+> **注意：** 不能使用 `to_string` 方法将 `char` 转化为 `string`，使用 `to_string` 方法会将 `char` 转化为对应的 `ASCll` 码。`to_string` 只接受 `numerical` 数值形参数，所以传入 `char` 型字符，实际上是先将 `char` 转化为 `int` 型的 `ASCll` 码，然后再转变为 `string`。
+>
+> `cout << to_string('a') << endl; // 输出：97`
 
 ## 队列
 
