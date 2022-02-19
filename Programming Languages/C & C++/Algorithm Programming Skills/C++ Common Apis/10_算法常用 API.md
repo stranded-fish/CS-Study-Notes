@@ -9,7 +9,7 @@
   - [统计](#统计)
     - [accumulate](#accumulate)
     - [count / count_if](#count--count_if)
-    - [__builtin_clz、__builtin_popcount](#__builtin_clz__builtin_popcount)
+    - [__builtin](#__builtin)
   - [搜索](#搜索)
     - [upper_bound() lower_bound()](#upper_bound-lower_bound)
   - [参考链接](#参考链接)
@@ -140,7 +140,18 @@ cout << count_if(arr.begin(), arr.end(),  // 输出奇数元素的数量
         [](const int &val){ return val % 2; });
 ```
 
-### __builtin_clz、__builtin_popcount
+### __builtin
+
+* `int __builtin_popcount (unsigned int x)`
+  * 返回二进制中 `1` 的个数。
+* `int __builtin_clz (unsigned int x)`
+  * 返回前导 `0` 的个数。
+* `int __builtin_ctz (unsigned int x)`
+  * 返回后导 `0` 的个数，和 `__builtin_clz` 相对。
+* `int __builtin_ffs (unsigned int x)`
+  * 返回 `x` 的最后一位 `1` 的倒序位置，比如 7368（1110011001000）返回 4。
+
+以上函数均有相应的 `usigned long` 和 `usigned long long` 版本，只需要在函数名后面加上 `l` 或 `ll`，如 `int __builtin_clzll`。
 
 ## 搜索
 
@@ -150,3 +161,5 @@ cout << count_if(arr.begin(), arr.end(),  // 输出奇数元素的数量
 ## 参考链接
 
 * [C++ Reference](http://www.cplusplus.com/reference/)
+* [高效位运算 __builtin_系列函数
+](https://blog.csdn.net/yuer158462008/article/details/46383635?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0.pc_relevant_paycolumn_v3&spm=1001.2101.3001.4242.1&utm_relevant_index=2)
