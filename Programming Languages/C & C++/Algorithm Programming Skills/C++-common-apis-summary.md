@@ -54,19 +54,24 @@
     - [声明及初始化](#声明及初始化-7)
     - [基本操作](#基本操作-6)
   - [集合](#集合)
-    - [声明及初始化](#声明及初始化-8)
-    - [遍历集合](#遍历集合)
-    - [基本操作](#基本操作-7)
+    - [set](#set)
+      - [元素访问](#元素访问)
+    - [unordered_set](#unordered_set)
+      - [声明及初始化](#声明及初始化-8)
+      - [遍历集合](#遍历集合)
+      - [基本操作](#基本操作-7)
+    - [multiset](#multiset)
   - [哈希表](#哈希表)
     - [map](#map)
       - [声明及初始化](#声明及初始化-9)
       - [遍历哈希表](#遍历哈希表)
       - [基本操作](#基本操作-8)
-    - [multimap](#multimap)
+      - [元素访问](#元素访问-1)
     - [unordered_map](#unordered_map)
       - [声明及初始化](#声明及初始化-10)
       - [遍历无序哈希表](#遍历无序哈希表)
       - [基本操作](#基本操作-9)
+    - [multimap](#multimap)
   - [pair](#pair)
     - [声明及初始化](#声明及初始化-11)
     - [基本操作](#基本操作-10)
@@ -367,9 +372,6 @@ bool empty();
 // 返回数组的元素个数
 size_type size();
 
-// 返回数组最后一个元素的引用
-reference back();
-
 // 在数组尾部插入一个元素 val
 void push_back(const value_type &val);
 void emplace_back(Args&&... args);
@@ -382,6 +384,35 @@ void clear();
 
 // 交换两个 vector
 newArray.swap(oldArray);
+```
+
+**元素访问：**
+
+```C++
+/* 返回数组 首个/末尾 元素的引用（type &）*/
+      reference front();
+const_reference front() const;
+      reference back();
+const_reference back() const;
+
+// 示例
+int &val = v.back(); // 定义末尾元素的引用
+v.back()++;          // 末尾元素 + 1
+v.back() -= 1;       // 末尾元素 - 1
+
+/* 返回指向数组 首个/ past-the-end 元素的 iterator 指针
+注意：past-the-end 不指向任何元素，故不能被解引用 */
+      iterator begin() noexcept;
+const_iterator begin() const noexcept;
+      iterator end() noexcept;
+const_iterator end() const noexcept;
+
+/* 类似 vector 之类的序列式容器能够实现随机访问（Random Access），
+故其迭代器及其指针能够使用 + - += -= ++ -- 等运算符，示例如下： */
+auto it = v.begin();        // 声明指向数组首个元素的 iterator 指针
+cout << *(--v.end());       // 输出数组最后一个元素
+cout << *(v.end() - 2);     // 输出数组倒数第 2 个元素
+cout << (*(v.end() - 2))++; // 输出数组倒数第 2 个元素，并使其 + 1
 ```
 
 **数组逆转：**
@@ -1140,9 +1171,24 @@ void pop();
 
 ## 集合
 
-TODO set multiset
+### set
 
-### 声明及初始化
+TODO
+
+#### 元素访问
+
+```C++
+/* 注意：set 为关联式容器，不能像 vector 之类的序列式容器那样实现随机访问（Random Access），
+故其迭代器不能使用 +=、-= 、- 、+ 运算符，只能使用 ++、-- */
+cout << *(--ss.end()) << endl;            // 输出 set 最后一个元素
+auto it = ss.end();
+--it; --it;
+cout << *it << endl;                      // 输出 set 倒数第 2 个元素
+```
+
+### unordered_set
+
+#### 声明及初始化
 
 使用集合 `unordered_set` 时，需引入头文件 `<unordered_set>`。
 
@@ -1159,7 +1205,7 @@ unordered_set<char> s{'a', 'b', 'c', 'd', 'e', 'f', 'g'};
 unordered_set<int> s(arr.begin(), arr.end());
 ```
 
-### 遍历集合
+#### 遍历集合
 
 **eg 1. 基于范围的 for 循环遍历**
 
@@ -1185,7 +1231,7 @@ for (unordered_set<int>::iterator iter = set.begin(); iter != set.end(); ++iter)
 }
 ```
 
-### 基本操作
+#### 基本操作
 
 ```C++
 // 返回集合中的元素个数
@@ -1206,6 +1252,10 @@ size_type erase(const key_type& key);
 // 将集合 size 设置为 0，但 capacity 不变（注意：不能用于清空集合）
 void clear();
 ```
+
+### multiset
+
+TODO
 
 ## 哈希表
 
@@ -1280,13 +1330,21 @@ iterator  erase (const_iterator first, const_iterator last);
 void clear();
 ```
 
+#### 元素访问
+
+```C++
+/* 注意：map 为关联式容器，不能像 vector 之类的序列式容器那样实现随机访问（Random Access），
+故其迭代器不能使用 +=、-= 、- 、+ 运算符，只能使用 ++、-- */
+cout << (--mappings.end())->first << " "  // 输出 map 最后一个元素
+     << (--mappings.end())->second;
+auto it = mappings.end();
+--it; --it;
+cout << it->first << " " << it->second;   // 输出 map 倒数第 2 个元素
+```
+
 > **注意：** `begin()`，`end()` 方法返回的迭代器指向类型为 `pair<const type, type>`
 >
 > 由于 `map` 内部以 `key` 为关键值排序，故可以通过 `begin()` 关键字修改头元素，并 `mappings.erase(mappings.begin())` 实现删除 `map` 头元素的功能，以实现等价于 优先队列 + 哈希计数 的效果。
-
-### multimap
-
-TODO
 
 ### unordered_map
 
@@ -1352,6 +1410,10 @@ void clear();
 ```
 
 > **注意：** 用 `[]` 访问其中的键 `key` 时，如果 `key` 不存在，则会自动创建 `key`，对应的值为该值类型的默认值。
+
+### multimap
+
+TODO
 
 ## pair
 
