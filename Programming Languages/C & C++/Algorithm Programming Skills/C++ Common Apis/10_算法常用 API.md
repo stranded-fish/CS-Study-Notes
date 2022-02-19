@@ -3,11 +3,20 @@
 目录：
 
 - [C++ 算法常用 API](#c-算法常用-api)
-  - [max / min](#max--min)
-  - [accumulate](#accumulate)
+  - [极值](#极值)
+    - [max / min](#max--min)
+    - [max_element / min_element](#max_element--min_element)
+  - [统计](#统计)
+    - [accumulate](#accumulate)
+    - [count / count_if](#count--count_if)
+    - [__builtin_clz、__builtin_popcount](#__builtin_clz__builtin_popcount)
+  - [搜索](#搜索)
+    - [upper_bound() lower_bound()](#upper_bound-lower_bound)
   - [参考链接](#参考链接)
 
-## max / min
+## 极值
+
+### max / min
 
 `max` / `min` 函数定义在头文件 `<algorithm>` 中。
 
@@ -43,7 +52,35 @@ max(a, b, comp) // b: -2
 max({a, b, c}); // c: 3
 ```
 
-## accumulate
+### max_element / min_element
+
+`max_element` / `min_element` 函数定义在头文件 `<algorithm>` 中。
+
+函数原型如下（min_element 函数与 max_element 类似）：
+
+```C++
+default (1)	
+template <class ForwardIterator>
+  ForwardIterator max_element (ForwardIterator first, ForwardIterator last);
+custom (2)	
+template <class ForwardIterator, class Compare>
+  ForwardIterator max_element (ForwardIterator first, ForwardIterator last,
+                               Compare comp);
+```
+
+该方法返回一个迭代器，该迭代器指向 `[first,last)` 范围内具有最大（小）值的元素。如果有多个最大（小）值，则会指向所遇到的第一个值。
+
+常见用法：
+
+```C++
+vector<int> arr = {1, 3, 4, 5, 6, 7, 8, 2};
+cout << *min_element(arr.begin(), arr.end()); // 1
+cout << *max_element(arr.begin(), arr.end()); // 8
+```
+
+## 统计
+
+### accumulate
 
 `accumulate` 函数定义在头文件 `<numeric>` 中。
 
@@ -74,6 +111,15 @@ vector<int> arr = {1,2,3,4};
 // 对 arr 中的元素求和，和的初值为 0
 int sum = accumulate(arr.begin(), arr.end(), 0); // sum = 10
 ```
+
+### count / count_if
+
+### __builtin_clz、__builtin_popcount
+
+## 搜索
+
+### upper_bound() lower_bound()
+
 
 ## 参考链接
 
