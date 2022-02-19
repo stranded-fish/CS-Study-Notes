@@ -16,6 +16,7 @@
     - [基本框架](#基本框架)
   - [常见题型](#常见题型)
     - [网格问题](#网格问题)
+    - [记忆化搜索](#记忆化搜索)
   - [参考链接](#参考链接)
 
 ## 算法模板
@@ -111,10 +112,10 @@ void dfs(node) {
 }
 ```
 
-`path`：二叉树遍历通常不需要记录遍历过程中的完整 `path`，故只需要保留当前 `node` 节点信息，用于递归遍历即可；
-`selectList`：二叉树的访问列表总是当前节点的左右孩子节点，故不需要显性的 `selectList` 入参；
-`constraint`：二叉树不用担心重复访问，仅需要对节点合法性做一定判断，故也不需要 `constraint` 相关的入参；
-`target`：视题目要求添加相应的 `target` 入参。
+* `path`：二叉树遍历通常不需要记录遍历过程中的完整 `path`，故只需要保留当前 `node` 节点信息，用于递归遍历即可；
+* `selectList`：二叉树的访问列表总是当前节点的左右孩子节点，故不需要显性的 `selectList` 入参；
+* `constraint`：二叉树不用担心重复访问，仅需要对节点合法性做一定判断，故也不需要 `constraint` 相关的入参；
+* `target`：视题目要求添加相应的 `target` 入参。
 
 **剪枝时机：**
 
@@ -285,7 +286,37 @@ void flood_fill(int x, int y, int color) {
 * [1254. 统计封闭岛屿的数目](https://leetcode-cn.com/problems/number-of-closed-islands/)
 * [1905. 统计子岛屿](https://leetcode-cn.com/problems/count-sub-islands/)
 
+### 记忆化搜索
+
+朴素 DFS 基本等价于暴力搜索，并且在搜索的过程中会有大量重复计算，在数据量较大的情况下会出现超时。此时一般可设置备忘录 `memo` 数据结构，作为缓存用于记录已经计算过的情况，以避免重复计算。
+
+**`memo` 数据结构通常可以通过 DFS 递归方法的签名来决定：`memo` 维度 = 递归方法中的可变因素数量。** 例如：[688. 骑士在棋盘上的概率](https://leetcode-cn.com/problems/knight-probability-in-chessboard/)，DFS 方法签名有 3 个可变变量（k, row, col），则 memo 声明为一个 3 维数组，[518. 零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/)
+ 有 2 个可变变量（pos, money），则 memo 声明为一个 2 维数组。
+
+设置 `memo` 后，在每次递归之前先检查  `memo` 中是否已经有过记录:
+
+* 如果有则直接返回结果，
+* 如果没有则再进一步递归计算并设置 `memo` 值，以供下次重复使用。
+
+```C++
+// 缓存命中，直接返回结果
+if (memo[x][y] != -1) return memo[x][y];
+
+// 未命中，进一步递归计算结果
+int res = 0;
+for (...) {
+    res += dfs(next_x, next_y);
+}
+
+// 设置 memo 值，并返回
+memo[x][y] = res;
+return memo[x][y];
+```
+
+**记忆化搜索可以看作是动态规划的一种写法。** 两者一般能够相互转换，通常直接把记忆化搜索的缓存数组 `memo` 改成 dp 数组，再把递归改成迭代，就成了动态规划。
+
 ## 参考链接
 
 * [深度优先搜索](https://zh.wikipedia.org/wiki/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2)
 * [岛屿类问题的通用解法、DFS 遍历框架](https://leetcode-cn.com/problems/number-of-islands/solution/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/)
+* [【彤哥来刷题啦】一题两解：记忆化搜索 转 动态规划！](https://leetcode-cn.com/problems/knight-probability-in-chessboard/solution/tong-ge-lai-shua-ti-la-yi-ti-liang-jie-j-y92k/)
