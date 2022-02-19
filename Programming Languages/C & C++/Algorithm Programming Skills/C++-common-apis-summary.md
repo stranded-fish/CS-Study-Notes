@@ -55,26 +55,25 @@
     - [基本操作](#基本操作-6)
   - [集合](#集合)
     - [set](#set)
-      - [元素访问](#元素访问)
+      - [基本操作](#基本操作-7)
     - [unordered_set](#unordered_set)
       - [声明及初始化](#声明及初始化-8)
       - [遍历集合](#遍历集合)
-      - [基本操作](#基本操作-7)
+      - [基本操作](#基本操作-8)
     - [multiset](#multiset)
   - [哈希表](#哈希表)
     - [map](#map)
       - [声明及初始化](#声明及初始化-9)
       - [遍历哈希表](#遍历哈希表)
-      - [基本操作](#基本操作-8)
-      - [元素访问](#元素访问-1)
+      - [基本操作](#基本操作-9)
     - [unordered_map](#unordered_map)
       - [声明及初始化](#声明及初始化-10)
       - [遍历无序哈希表](#遍历无序哈希表)
-      - [基本操作](#基本操作-9)
+      - [基本操作](#基本操作-10)
     - [multimap](#multimap)
   - [pair](#pair)
     - [声明及初始化](#声明及初始化-11)
-    - [基本操作](#基本操作-10)
+    - [基本操作](#基本操作-11)
   - [其他操作](#其他操作)
     - [max / min](#max--min)
     - [accumulate](#accumulate)
@@ -389,7 +388,7 @@ newArray.swap(oldArray);
 **元素访问：**
 
 ```C++
-/* 返回数组 首个/末尾 元素的引用（type &）*/
+/* 1. 返回数组 首个/末尾 元素的引用（type &）*/
       reference front();
 const_reference front() const;
       reference back();
@@ -400,7 +399,7 @@ int &val = v.back(); // 定义末尾元素的引用
 v.back()++;          // 末尾元素 + 1
 v.back() -= 1;       // 末尾元素 - 1
 
-/* 返回指向数组 首个/ past-the-end 元素的 iterator 指针
+/* 2. 返回指向数组 首个 / past-the-end 元素的 iterator 指针
 注意：past-the-end 不指向任何元素，故不能被解引用 */
       iterator begin() noexcept;
 const_iterator begin() const noexcept;
@@ -413,6 +412,16 @@ auto it = v.begin();        // 声明指向数组首个元素的 iterator 指针
 cout << *(--v.end());       // 输出数组最后一个元素
 cout << *(v.end() - 2);     // 输出数组倒数第 2 个元素
 cout << (*(v.end() - 2))++; // 输出数组倒数第 2 个元素，并使其 + 1
+
+/* 3. 反向迭代器，rbegin() 指向最后一个元素，rend() 指向第一个元素之前的理论元素，不可解引用 */
+      reverse_iterator rbegin() noexcept;
+const_reverse_iterator rbegin() const noexcept;
+      reverse_iterator rend() noexcept;
+const_reverse_iterator rend() const noexcept;
+
+// 示例
+cout << *v.rbegin();      // 输出最后一个元素
+cout << *(v.rbegin() + 1) // 输出倒数第 2 个元素
 ```
 
 **数组逆转：**
@@ -1175,16 +1184,44 @@ void pop();
 
 TODO
 
-#### 元素访问
+#### 基本操作
+
+**基础操作：**
+
+TODO
+
+**元素访问：**
 
 ```C++
-/* 注意：set 为关联式容器，不能像 vector 之类的序列式容器那样实现随机访问（Random Access），
-故其迭代器不能使用 +=、-= 、- 、+ 运算符，只能使用 ++、-- */
-cout << *(--ss.end()) << endl;            // 输出 set 最后一个元素
+/* 1. 返回指向集合 首个 / past-the-end 元素的 iterator 指针
+注意：past-the-end 不指向任何元素，故不能被解引用 */
+      iterator begin() noexcept;
+const_iterator begin() const noexcept;
+      iterator end() noexcept;
+const_iterator end() const noexcept;
+
+// 示例
+cout << *(--ss.end());            // 输出 set 最后一个元素
 auto it = ss.end();
 --it; --it;
-cout << *it << endl;                      // 输出 set 倒数第 2 个元素
+cout << *it;                      // 输出 set 倒数第 2 个元素
+
+/* 2. 反向迭代器，rbegin() 指向最后一个元素，rend() 指向第一个元素之前的理论元素，不可解引用 */
+      reverse_iterator rbegin() noexcept;
+const_reverse_iterator rbegin() const noexcept;
+      reverse_iterator rend() noexcept;
+const_reverse_iterator rend() const noexcept;
+
+// 示例
+cout << *ss.rbegin();    // 输出 set 最后一个元素
+cout << *(++ss.rbegin()) // 输出 set 倒数第 2 个元素
 ```
+
+> **注意：**
+> **①** `set` 没有类似于 `vector` 的 `front()、back()` 方法，只能通过迭代器访问首尾元素。
+>
+> **②** `set` 为关联式容器，不能像 `vector` 之类的序列式容器那样实现随机访问（Random Access），
+故其迭代器不能使用 `+=、-= 、- 、+` 运算符，只能使用 `++、--` 运算符。
 
 ### unordered_set
 
@@ -1305,6 +1342,8 @@ for (map<int, int>::iterator iter = mappings.begin(); iter != mappings.end(); ++
 
 #### 基本操作
 
+**基础操作：**
+
 ```C++
 // 返回哈希表中的键值对个数
 size_type size();
@@ -1315,14 +1354,8 @@ bool empty();
 // 如果 key 存在返回 1，否则返回 0
 size_type count(const key_type& key);
 
-// 返回指向头元素的迭代器指针，访问形式 mappings.begin()->first
-iterator begin() noexcept;
-
-// 返回指向尾元素的迭代器指针，访问形式 mappings.end()->first
-iterator end() noexcept;
-
 // 通过 key 或 迭代器指针删除哈希表中的键值对，如果删除成功则返回 1，否则返回 0
-size_type erase(const key_type& key);
+size_type erase (const key_type& key);
 iterator  erase (const_iterator position);
 iterator  erase (const_iterator first, const_iterator last);
 
@@ -1330,21 +1363,43 @@ iterator  erase (const_iterator first, const_iterator last);
 void clear();
 ```
 
-#### 元素访问
+**元素访问：**
 
 ```C++
-/* 注意：map 为关联式容器，不能像 vector 之类的序列式容器那样实现随机访问（Random Access），
-故其迭代器不能使用 +=、-= 、- 、+ 运算符，只能使用 ++、-- */
+/* 1. 返回指向 map 首个 / past-the-end 元素的 iterator 指针
+注意：past-the-end 不指向任何元素，故不能被解引用 */
+      iterator begin() noexcept;
+const_iterator begin() const noexcept;
+      iterator end() noexcept;
+const_iterator end() const noexcept;
+
+// 示例
 cout << (--mappings.end())->first << " "  // 输出 map 最后一个元素
      << (--mappings.end())->second;
 auto it = mappings.end();
 --it; --it;
 cout << it->first << " " << it->second;   // 输出 map 倒数第 2 个元素
+
+/* 2. 反向迭代器，rbegin() 指向最后一个元素，rend() 指向第一个元素之前的理论元素，不可解引用 */
+      reverse_iterator rbegin() noexcept;
+const_reverse_iterator rbegin() const noexcept;
+      reverse_iterator rend() noexcept;
+const_reverse_iterator rend() const noexcept;
+
+// 示例
+cout << mappings.rbegin()->first << " "     // 输出 map 最后一个元素
+     << mappings.rbegin()->second;  
+cout << (++mappings.rbegin())->first << " " // 输出 map 倒数第 2 个元素
+<< (++mappings.rbegin())->second;
 ```
 
-> **注意：** `begin()`，`end()` 方法返回的迭代器指向类型为 `pair<const type, type>`
+> **注意：**
+> **①** `map` 没有类似于 `vector` 的 `front()`、`back()` 方法，只能通过迭代器访问首尾元素。
 >
-> 由于 `map` 内部以 `key` 为关键值排序，故可以通过 `begin()` 关键字修改头元素，并 `mappings.erase(mappings.begin())` 实现删除 `map` 头元素的功能，以实现等价于 优先队列 + 哈希计数 的效果。
+> **②** `map` 为关联式容器，不能像 `vector` 之类的序列式容器那样实现随机访问（Random Access），
+故其迭代器不能使用 `+=、-= 、- 、+` 运算符，只能使用 `++、--` 运算符。
+>
+> **③** `begin()`，`end()` 方法返回的迭代器指向类型为 `pair<const type, type>` 由于 `map` 内部以 `key` 为关键值排序，故可以通过 `begin()` 关键字修改头元素，并 `mappings.erase(mappings.begin())` 实现删除 `map` 头元素的功能，以实现等价于 优先队列 + 哈希计数 的效果。
 
 ### unordered_map
 
