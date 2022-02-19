@@ -114,6 +114,32 @@ int sum = accumulate(arr.begin(), arr.end(), 0); // sum = 10
 
 ### count / count_if
 
+`count` / `count_if` 函数定义在头文件 `<algorithm>` 中。
+
+两者函数原型如下：
+
+```C++
+/* count - 返回范围 [first,last) 中比较等于 val 的元素数量。
+该函数使用 operator== 将各个元素与 val 进行比较。*/
+template <class InputIterator, class T>
+  typename iterator_traits<InputIterator>::difference_type
+    count (InputIterator first, InputIterator last, const T& val);
+
+// count_if - 返回范围 [first,last) 中 pred 为 true 的元素数量。
+template <class InputIterator, class UnaryPredicate>
+  typename iterator_traits<InputIterator>::difference_type
+    count_if (InputIterator first, InputIterator last, UnaryPredicate pred);
+```
+
+常见用法：
+
+```C++
+vector<int> arr = {1, 3, 4, 5, 6, 7, 8, 2, 2, 2, 2, 3};
+cout << count(arr.begin(), arr.end(), 2); // 输出元素 2 的数量
+cout << count_if(arr.begin(), arr.end(),  // 输出奇数元素的数量
+        [](const int &val){ return val % 2; });
+```
+
 ### __builtin_clz、__builtin_popcount
 
 ## 搜索
