@@ -11,16 +11,16 @@
     - [count / count_if](#count--count_if)
     - [__builtin](#__builtin)
   - [搜索](#搜索)
-    - [upper_bound() lower_bound()](#upper_bound-lower_bound)
+    - [二分搜索](#二分搜索)
+      - [binary_search](#binary_search)
+      - [lower_bound / upper_bound](#lower_bound--upper_bound)
   - [参考链接](#参考链接)
 
 ## 极值
 
 ### max / min
 
-`max` / `min` 函数定义在头文件 `<algorithm>` 中。
-
-C++ 11 标准下的函数原型如下（min 函数与 max 类似）：
+`max` / `min` 函数定义在头文件 `<algorithm>` 中，C++ 11 标准下的函数原型如下（min 函数与 max 类似）：
 
 ```C++
 default (1) 
@@ -54,9 +54,7 @@ max({a, b, c}); // c: 3
 
 ### max_element / min_element
 
-`max_element` / `min_element` 函数定义在头文件 `<algorithm>` 中。
-
-函数原型如下（min_element 函数与 max_element 类似）：
+`max_element` / `min_element` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（min_element 函数与 max_element 类似）：
 
 ```C++
 default (1)	
@@ -82,9 +80,7 @@ cout << *max_element(arr.begin(), arr.end()); // 8
 
 ### accumulate
 
-`accumulate` 函数定义在头文件 `<numeric>` 中。
-
-函数原型如下：
+`accumulate` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
 
 ```C++
 sum (1)	
@@ -114,9 +110,7 @@ int sum = accumulate(arr.begin(), arr.end(), 0); // sum = 10
 
 ### count / count_if
 
-`count` / `count_if` 函数定义在头文件 `<algorithm>` 中。
-
-两者函数原型如下：
+`count` / `count_if` 函数定义在头文件 `<algorithm>` 中，两者函数原型如下：
 
 ```C++
 /* count - 返回范围 [first,last) 中比较等于 val 的元素数量。
@@ -155,8 +149,67 @@ cout << count_if(arr.begin(), arr.end(),  // 输出奇数元素的数量
 
 ## 搜索
 
-### upper_bound() lower_bound()
+### 二分搜索
 
+#### binary_search
+
+`binary_search` 函数定义在头文件 `<algorithm>` 中，其函数原型如下：
+
+```C++
+default (1)	
+template <class ForwardIterator, class T>
+  bool binary_search (ForwardIterator first, ForwardIterator last,
+                      const T& val);
+custom (2)	
+template <class ForwardIterator, class T, class Compare>
+  bool binary_search (ForwardIterator first, ForwardIterator last,
+                      const T& val, Compare comp);
+```
+
+如果 `[first,last)` 范围内的任何元素等价于 `val`，则返回 `true`，否则返回 `false`。
+
+常见用法：
+
+```C++
+// default (1) - 升序
+vector<int> arr = {1, 3, 2, 8, 5, 6};
+sort(arr.begin(), arr.end());
+if (binary_search(arr.begin(), arr.end(), 2)) cout << "Found" << endl;
+
+// default (1) - 降序
+sort(arr.begin(), arr.end(), greater<int>());
+if (binary_search(arr.begin(), arr.end(), 2, greater<int>())) cout << "Found" << endl;
+```
+
+#### lower_bound / upper_bound
+
+`lower_bound` / `upper_bound` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（`upper_bound` 函数与 `lower_bound` 类似）：
+
+```C++
+default (1)	
+template <class ForwardIterator, class T>
+  ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
+                               const T& val);
+custom (2)	
+template <class ForwardIterator, class T, class Compare>
+  ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
+                               const T& val, Compare comp);
+```
+
+* `lower_bound` 返回一个迭代器，指向范围 `[first,last)` 中 `>= val` 的第一个元素。
+* `upper_bound` 返回一个迭代器，指向范围 `[first,last)` 中 `> val` 的第一个元素。
+
+常见用法：
+
+```C++
+vector<int> arr = {1, 3, 5, 8, 7, 6};
+auto it_lower = lower_bound(arr.begin(), arr.end(), 5);
+auto it_upper = upper_bound(arr.begin(), arr.end(), 5);
+
+// 输出下标和值
+cout << it_lower - arr.begin() << " " << *it_lower << endl; // 2 5
+cout << it_upper - arr.begin() << " " << *it_upper << endl; // 3 8
+```
 
 ## 参考链接
 
