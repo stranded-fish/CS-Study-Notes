@@ -14,6 +14,8 @@
     - [二分搜索](#二分搜索)
       - [binary_search](#binary_search)
       - [lower_bound / upper_bound](#lower_bound--upper_bound)
+  - [赋值](#赋值)
+    - [iota](#iota)
   - [参考链接](#参考链接)
 
 ## 极值
@@ -209,6 +211,28 @@ auto it_upper = upper_bound(arr.begin(), arr.end(), 5);
 // 输出下标和值
 cout << it_lower - arr.begin() << " " << *it_lower << endl; // 2 5
 cout << it_upper - arr.begin() << " " << *it_upper << endl; // 3 8
+```
+
+## 赋值
+
+### iota
+
+`iota` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
+
+```C++
+template <class ForwardIterator, class T>
+  void iota (ForwardIterator first, ForwardIterator last, T val);
+```
+
+主要用于给 `[first,last)` 范围内的元素，依次累加赋值，等价于 `arr[idx++] = val++`。
+
+常见用法：
+
+```C++
+// 初始化数组元素值等于其下标值
+vector<int> arr(10);
+iota(arr.begin(), arr.end(), 0);
+for (auto &val : arr) cout << val << " "; // 输出：0 1 2 3 4 5 6 7 8 9
 ```
 
 ## 参考链接
