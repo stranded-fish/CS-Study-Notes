@@ -177,6 +177,59 @@ while (!q.empty()) {
 * 数据量较大
 * 稀疏图
 
+**扩展 1：** 只需要计算源点到终点的最短路径
+
+因为每次从队列中弹出的结点，都已经确定了到源点的最短路径，故如果弹出节点是终点 `end`，那么此时 `dist[end]` 就是从 `start` 到 `end` 的最短距离，可直接返回。
+
+```C++
+while (!q.empty()) {
+    auto [time, cur] = q.top(); q.pop();
+    if (cur == end) return dist[end]; // 注意：当弹出结点为 end 时，直接返回到 end 最短距离
+    if (time > dist[cur]) continue;
+    for (const auto &[next, ntime] : adj[cur]) {
+        if (dist[next] > dist[cur] + ntime) {
+            dist[next] = dist[cur] + ntime;
+            q.emplace(dist[next], next);
+        }
+    }
+}
+```
+
+**扩展 2：** 计算最短路的同时，统计最短路径数量
+
+```C++
+// 核心代码
+
+/* 声明 cnts 计数数组，用于统计每个点到源点的最短路径数量
+源点初始为 1，其余点初始为 0 */
+vector<int> cnts(n);
+cnts[0] = 1;
+
+while (!q.empty()) {
+    auto [d, cur] = q.top(); q.pop();
+    if (dist[cur] < d) continue;
+    for (const auto &[next, nd] : adj[cur]) {
+        if (dist[next] > dist[cur] + nd) {
+            /* 注意 1：当寻找到一条更优路径时，修改最短距离的同时，
+            更改 cnts 数组为更优路径数量 */
+            cnts[next] = cnts[cur];
+            dist[next] = dist[cur] + nd;
+            q.emplace(dist[next], next);
+        } else if (dist[next] == dist[cur] + nd) {
+            /* 注意 2：当两者距离相同时，表示寻找到了两条最短距离相同的路径，
+            此时累加两者路径数 */
+            cnts[next] += cnts[cur];
+            cnts[next] %= MOD;
+        }
+    }
+}
+
+// 返回起点到终点的最短路径的路径数
+return cnts[n - 1];
+```
+
+典型例题：[1976. 到达目的地的方案数](https://leetcode-cn.com/problems/number-of-ways-to-arrive-at-destination/)
+
 ## 参考资料
 
 * 《算法导论》
