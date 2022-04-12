@@ -8,6 +8,7 @@
 
 - [CentOS 快速开始](#centos-快速开始)
   - [yum 更新](#yum-更新)
+  - [配置环境变量](#配置环境变量)
   - [编程环境](#编程环境)
     - [C/C++](#cc)
       - [GCC](#gcc)
@@ -16,24 +17,25 @@
       - [CMake](#cmake)
       - [常用第三方库](#常用第三方库)
         - [Boost](#boost)
-        - [protobuf](#protobuf)
-        - [grpc](#grpc)
-        - [glog](#glog)
-        - [leveldb](#leveldb)
-        - [rocksdb](#rocksdb)
+        - [ProtoBuf](#protobuf)
+        - [gRPC](#grpc)
+        - [gflags/glog](#gflagsglog)
+        - [LevelDB](#leveldb)
+        - [RocksDB](#rocksdb)
     - [Java](#java)
+      - [JDK](#jdk)
+      - [Maven](#maven)
     - [Go](#go)
-  - [基础软件](#基础软件)
+  - [常用软件](#常用软件)
     - [Git](#git)
-  - [常用工具](#常用工具)
     - [lrzsz](#lrzsz)
     - [lsof](#lsof)
     - [tree](#tree)
     - [zip/unzip](#zipunzip)
     - [telnet](#telnet)
   - [界面美化](#界面美化)
-    - [bash 美化](#bash-美化)
-    - [Vim 美化](#vim-美化)
+    - [自定义 Shell 终端提示符](#自定义-shell-终端提示符)
+    - [Vim 配置](#vim-配置)
   - [参考链接](#参考链接)
 
 ## yum 更新
@@ -48,9 +50,42 @@ yum info updates # 列出所有可更新的软件包信息
 **Step 2.** 更新软件
 
 ```bash
-yum update <package_name> # 仅更新指定软件
+yum update <package_name> # 更新指定软件
 yum update                # 更新所有软件
 ```
+
+## 配置环境变量
+
+**读取环境变量：**
+
+* `export` 命令显示当前系统定义的所有环境变量。
+* `echo $VAL` 命令输出当前的 `VAL` 环境变量的值。
+
+**编辑 `/etc/profile`，永久修改系统配置：**
+
+```bash
+# 末尾添加
+export VAL=$VAL:/usr/local/newApp/bin
+```
+
+**注意：**
+
+* 生效时间：新建终端生效，或 `source /etc/profile` 立即生效；
+* 生效期限：永久有效；
+* 生效范围：对所有用户有效；
+* 新配置的环境变量需要加上原来的配置，即 `$VAL` 部分，以避免覆盖原来的配置；
+* `export` 空格敏感，`=` 两侧不能添加空格。
+
+更多可参见：[Linux环境变量配置全攻略](https://www.cnblogs.com/youyoui/p/10680329.html)
+
+**C/C++ 常用环境变量：**
+
+* 头文件搜索路径，等价于编译参数 `-I`：
+  * `C_INCLUDE_PATH`：C 程序头文件搜索路径（gcc）
+  * `CPLUS_INCLUDE_PATH`：C++ 程序头文件搜索路径（g++）
+* 库文件搜索路径，等价于 `-l` 系统库 \\ `-L` 自定义库：
+  * `LIBRARY_PATH`：静态库搜索路径
+  * `LD_LIBRARY_PATH`动态库搜索路径
 
 ## 编程环境
 
@@ -58,7 +93,7 @@ yum update                # 更新所有软件
 
 #### GCC
 
-CentOS 7.6 默认 gcc 版本为 4.8，可通过 devtoolset 工具安装多个不同高版本 gcc 备用。
+CentOS 7.6 默认 gcc 版本为 4.8，可通过 devtoolset 工具安装多个不同的高版本 gcc 备用。
 
 **Step 1.** 安装 centos-release-scl
 
@@ -90,7 +125,7 @@ echo "source /opt/rh/devtoolset-9/enable" >> /etc/profile
 source /etc/profile
 ```
 
-**Step 4.** 检查版本
+**Step 4.** 安装检验
 
 ```bash
 gcc --version
@@ -123,7 +158,7 @@ cd gdb-11.2/
 make && make install
 ```
 
-**Step 4.** 检查版本
+**Step 4.** 安装检验
 
 ```bash
 gdb --version
@@ -146,10 +181,10 @@ cd make-4.3/
 **Step 2.** 安装基本编译工具并设置安装路径
 
 ```bash
-./configure --prefix=/usr/local/cmake
+./configure --prefix=/usr/local/make
 ```
 
-make 安装路径被设置为 `/usr/local/cmake`。
+设置 make 安装路径为 `/usr/local/make`。
 
 **Step 3.** 编译并安装 make
 
@@ -169,7 +204,7 @@ mv /usr/bin/make /usr/bin/make.bak
 ln -s /usr/local/make/bin/make /usr/bin/make
 ```
 
-**Step 6.** 检查版本
+**Step 6.** 安装检验
 
 ```bash
 make -v
@@ -195,7 +230,7 @@ cd cmake-3.23.0/
 ./configure --prefix=/usr/local/cmake
 ```
 
-CMake 安装路径被设置为 `/usr/local/cmake`。
+设置 CMake 安装路径为 `/usr/local/cmake`。
 
 **注意：** 该命令执行过程中，可能会出现 `CMake Error：Could not find OpenSSL.` 报错，可通过以下命令解决：
 
@@ -234,7 +269,7 @@ export PATH=$PATH:$CMAKE_HOME/bin
 [root@localhost ~]# source /etc/profile
 ```
 
-**Step 6.** 检查版本
+**Step 6.** 安装检验
 
 ```bash
 cmake --version
@@ -262,7 +297,7 @@ cd boost_1_78_0/
 ./bootstrap.sh --prefix=/opt/boost
 ```
 
-Boost 安装路径被设置为 `/opt/boost`。
+设置 Boost 安装路径为 `/opt/boost`。
 
 **Step 3.** 安装
 
@@ -272,7 +307,7 @@ Boost 安装路径被设置为 `/opt/boost`。
 
 安装完成后，`/opt/boost` 将新增 `include` 与 `lib` 文件夹，分别用于保存头文件与库文件。
 
-**Step 4.** 检验安装
+**Step 4.** 安装检验
 
 创建 `test.cc` 文件内容如下：
 
@@ -299,21 +334,230 @@ g++ test.cc -o test -I /opt/boost/include/
 ./test
 ```
 
-##### protobuf
+##### ProtoBuf
 
-##### grpc
+**Step 1.** 下载最新版 ProtoBuf
 
-##### glog
+* 通过官网 [ProtoBuf Releases](https://github.com/protocolbuffers/protobuf/releases) 获取最新版 `protobuf-all-x.xx.x.tar.gz` 下载地址；
+* 下载至服务器并解压；
+* 进入到源代码根目录。
 
-##### leveldb
+```bash
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/protobuf-all-3.20.0.tar.gz
+tar -zxvf protobuf-all-3.20.0.tar.gz
+cd protobuf-3.20.0/
+```
 
-##### rocksdb
+**Step 2.** 配置
+
+```bash
+./configure                                # 默认路径
+# ./configure --prefix=/usr/local/protobuf # 自定义路径
+```
+
+**Step 3.** 编译并安装
+
+```bash
+make && make install
+```
+
+如果自定义安装路径，则安装完成后还需配置环境变量，编辑 `/etc/profile`，在其末尾添加如下配置：
+
+```bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/protobuf/lib/
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/protobuf/lib/
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/protobuf/include/
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/protobuf/include/
+export PATH=$PATH:/usr/local/protobuf/bin/
+export PKG_CONFIG_PATH=/usr/local/protobuf/lib/pkgconfig/
+```
+
+保存后，可通过 `source /etc/profile` 命令使配置立即生效。
+
+**Step 4.** 安装检验
+
+```bash
+protoc --version
+```
+
+##### gRPC
+
+**Step 1.** Clone the repository (including submodules)
+
+可通过官网获取 [latest stable release tag](https://github.com/grpc/grpc/releases)。
+
+```bash
+git clone -b RELEASE_TAG_HERE https://github.com/grpc/grpc
+cd grpc
+git submodule update --init
+```
+
+**Step 2.** 编译并安装
+
+```bash
+mkdir -p cmake/build
+cd cmake/build
+cmake ../..
+make && make install
+```
+
+**Step 3.** 安装检验
+
+C++ 可通过 `cmake` 编译并运行 `grpc/examples/cpp/helloworld` 示例来实现检验。
+
+##### gflags/glog
+
+glog 依赖于 gflags，需先安装 gflags。
+
+**安装 gflags：**
+
+```bash
+git clone https://github.com/gflags/gflags.git
+cd gflags
+mkdir build && cd build
+cmake .. -DBUILD_SHARED_LIBS=ON
+make && make install
+```
+
+**安装 glog**：参见官网 [Building glog with CMake](https://github.com/google/glog#building-glog-with-cmake)。
+
+##### LevelDB
+
+**Step 1.** 下载源码
+
+```bash
+git clone --recurse-submodules https://github.com/google/leveldb.git
+```
+
+**Step 2.** 编译并安装
+
+```bash
+mkdir -p build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+```
+
+**Step 3.** 安装检验
+
+参见：[搭建LevelDB环境及原理分析](https://blog.csdn.net/tuwenqi2013/article/details/88560600)
+
+##### RocksDB
+
+**Step 1.** 下载最新版 RocksDB
+
+* 通过官网 [RocksDB Releases](https://github.com/facebook/rocksdb/releases/) 获取最新版 `rocksdb-x.x.x.tar.gz` 下载地址；
+* 下载至服务器并解压；
+* 进入到源代码根目录。
+
+```bash
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/protobuf-all-3.20.0.tar.gz
+tar -zxvf rocksdb-7.0.4.tar.gz
+cd rocksdb-7.0.4/
+```
+
+**Step 2.** 编译并安装
+
+```bash
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rocksdb ..
+make && make install
+```
+
+**Step 3.** 安装检验
+
+参见：[RocksDB 简单使用](https://www.jianshu.com/p/f233528c8303)
+
+通过如下命令编译并运行：
+
+```bash
+g++ -std=c++17 rocksdbtest.cpp -o rocksdbtest -lpthread -lrocksdb
+```
 
 ### Java
 
+#### JDK
+
+**Step 1.** 查询当前 yum 库支持安装的 jdk 版本
+
+```bash
+yum search java | grep jdk
+```
+
+**Step 2.** 选择并安装需要的 jdk
+
+```bash
+# 安装最新版 jdk
+yum install java-latest-openjdk
+yum install java-latest-openjdk-devel
+```
+
+**Step 3.** 安装检验
+
+```bash
+java --version
+javac --version
+```
+
+#### Maven
+
+**Step 1.** 下载最新版 Maven
+
+* 通过官网 [Maven Download](https://maven.apache.org/download.cgi) 获取最新版 `apache-maven-x.x.x-bin.tar.gz` 下载地址；
+* 下载至服务器并解压至指定目录；
+
+```bash
+wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
+tar -zxvf apache-maven-3.8.5-bin.tar.gz -C /usr/local
+```
+
+**Step 2.** 配置环境变量
+
+编辑 `/etc/profile`，在其末尾添加如下配置：
+
+```bash
+export MAVEN_HOME=/usr/local/apache-maven-3.8.5
+export PATH=$MAVEN_HOME/bin:$PATH
+```
+
+保存后，可通过 `source /etc/profile` 命令使配置立即生效。
+
+**Step 3.** 安装检验
+
+```bash
+mvn -v
+```
+
 ### Go
 
-## 基础软件
+**Step 1.** 下载最新版 Go
+
+* 通过官网 [Go Download](https://go.dev/dl/) 获取最新版 `gox.xx.linux-amd64.tar.gz` 下载地址；
+* 下载至服务器并解压至指定目录；
+
+```bash
+wget https://dl.google.com/go/go1.18.linux-amd64.tar.gz
+tar -zxvf go1.18.linux-amd64.tar.gz -C /usr/local
+```
+
+**Step 2.** 配置环境变量
+
+编辑 `/etc/profile`，在其末尾添加如下配置：
+
+```bash
+export GO111MODULE=auto
+export GOROOT=/usr/local/go
+export GOPATH=/home/gopath
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+```
+
+保存后，可通过 `source /etc/profile` 命令使配置立即生效。
+
+**Step 3.** 安装检验
+
+```bash
+go version
+```
+
+## 常用软件
 
 ### Git
 
@@ -349,13 +593,11 @@ make configure
 make all && make install
 ```
 
-**Step 5.** 检查版本
+**Step 5.** 安装检验
 
 ```bash
 git --version
 ```
-
-## 常用工具
 
 ### lrzsz
 
@@ -394,9 +636,24 @@ yum install telnet-server
 
 ## 界面美化
 
-### bash 美化
+### 自定义 Shell 终端提示符
 
-### Vim 美化
+编辑 `~/.bashrc`，在其末尾添加如下配置：
+
+```txt
+PS1="\033[0;34m\W\033[00m\033[0;36m > \033[00m"
+```
+
+该配置简化了终端提示符，仅保留并显示当前目录：
+
+```bash
+local > pwd
+/usr/local
+```
+
+### Vim 配置
+
+参见：[The Ultimate vimrc](https://github.com/amix/vimrc)
 
 ## 参考链接
 
@@ -407,3 +664,9 @@ yum install telnet-server
 * [linux centos7 升级 make 4.3](https://blog.csdn.net/CLinuxF/article/details/108705142)
 * [centos升级和安装cmake](https://zhuanlan.zhihu.com/p/358146707)
 * [Build git from source code](https://gist.github.com/egorsmkv/30faa3e61c185a41e89cf849737d4d4b)
+* [linux下安装google protobuf（详细）](https://blog.csdn.net/xiexievv/article/details/47396725)
+* [centos 7 安装golang](https://www.jianshu.com/p/35a161738d83)
+* [CentOS 7 安装JDK 1.8 环境教程](https://www.timberkito.com/?p=12)
+* [Linux|CentOS下配置Maven环境](https://cloud.tencent.com/developer/article/1640173)
+* [【Linux下自定义Shell终端提示符】](【Linux下自定义Shell终端提示符】)
+* [gRPC C++ - Building from source](https://github.com/grpc/grpc/blob/master/BUILDING.md)
