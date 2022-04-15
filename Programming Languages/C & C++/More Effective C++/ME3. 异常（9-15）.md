@@ -52,7 +52,7 @@
 
 * 调用函数后，控制权最终会回到调用端（除非函数失败以至无法返回）。但抛出 exception 后，控制权不会再回到抛出端。
 * exception objects 总是会被复制。但函数参数传递则不一定。
-  * 任何 exception 都会产生一个临时对象，即使采用 by reference 方式也需要付出该临时对象的构造成本，而如果是 by value 则需要付出两次构造成本。推荐选择 by reference（参见条款 13）。
+  * 任何 exception 都会产生一个临时对象，即使采用 by reference 方式也需要付出该临时对象的构造成本，而如果是 by value 则需要付出两次构造成本。推荐选择 by reference（参见条款 ME13）。
   * 如果 catch 语句中还有可能抛出异常，则应该使用 `throw;` 而不是 `throw w;` 以避免产生新的 exception objects。
 * 被抛出成为 exception 的对象，其被允许的类型转换动作，比函数传参更少。
   * exception 与 catch 子句相匹配的过程中，仅有两种转换可以发生：
@@ -69,7 +69,7 @@
   * 避免指向已经被销毁的局部对象。
   * 如果是 heap object 将不用考虑资源释放问题。
 * 相比 by value：
-  * 避免复制两次（参见条款 12）。
+  * 避免复制两次（参见条款 ME12）。
   * 避免引起切割问题，即 derived class exception object 被捕捉并被视为 base object，失去了其派生部分。
 
 ## 条款 14：明智运用 exception specifications
@@ -95,7 +95,7 @@
 
 **noexcept 使用建议：**
 
-* 析构函数。因为析构函数不允许抛出异常（参见条款 11）。
+* 析构函数。因为析构函数不允许抛出异常（参见条款 ME11）。
 * 构造函数（普通、拷贝、移动），赋值运算符。
 * 确保一定不会抛出异常的函数。
   * 如：内置类型 int、double 这类的 setter 和 getter。
