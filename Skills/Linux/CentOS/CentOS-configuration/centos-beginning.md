@@ -26,6 +26,8 @@
       - [JDK](#jdk)
       - [Maven](#maven)
     - [Go](#go)
+  - [数据库](#数据库)
+    - [MySQL](#mysql)
   - [常用软件](#常用软件)
     - [Git](#git)
     - [lrzsz](#lrzsz)
@@ -557,6 +559,103 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 go version
 ```
 
+## 数据库
+
+### MySQL
+
+**Step 1.** 下载所需版本 MySQL
+
+* 通过官网 [MySQL Product Archives](https://downloads.mysql.com/archives/community/) 获取所需版本 MySQL `rpm` 包，所需 `rpm` 包如下：
+
+![CentOS 7 所需 rmp 包](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/202204202102202.png)
+
+```bash
+wget \
+https://cdn.mysql.com/archives/mysql-5.7/mysql-community-server-5.7.36-1.el7.x86_64.rpm \
+https://cdn.mysql.com/archives/mysql-5.7/mysql-community-client-5.7.36-1.el7.x86_64.rpm \
+https://cdn.mysql.com/archives/mysql-5.7/mysql-community-common-5.7.36-1.el7.x86_64.rpm \
+https://cdn.mysql.com/archives/mysql-5.7/mysql-community-libs-5.7.36-1.el7.x86_64.rpm \
+https://cdn.mysql.com/archives/mysql-5.7/mysql-community-libs-compat-5.7.36-1.el7.x86_64.rpm
+```
+
+**Step 2.** 安装 MySQL
+
+```bash
+yum install -y mysql-community-*-5.7.36-1.el7.x86_64.rpm
+```
+
+最终显示如下内容表示安装成功：
+
+![MySQL 安装成功输出](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/202204202111311.png)
+
+**Step 3.** 启动 MySQL server 并初始化密码
+
+```bash
+# 启动 MySQL server
+systemctl start mysqld
+# 查看默认生成的密码
+cat /var/log/mysqld.log | grep password
+# 使用默认生成密码登录 MySQL
+mysql -uroot -p
+```
+
+登录成功后，通过以下命令修改默认密码：
+
+```sql
+# 设置密码等级（可选）
+mysql> set global validate_password_length=4;
+mysql> set global validate_password_policy=0;
+# 修改默认密码（注意替换 '您的密码'）
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '您的密码';
+```
+
+修改完，退出即可。
+
+**Step 4.** 修改部分默认字符集为 UTF-8
+
+修改 `/etc/my.cnf` 文件，新增以下内容：
+
+```txt
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+character-set-server=utf8
+```
+
+修改完成后，使用命令 `systemctl restart mysqld` 重启 MySQL server，并再次登录 MySQL 查看：
+
+```sql
+mysql> show variables like 'character%';
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+8 rows in set (0.00 sec)
+```
+
+**Step 5.** 设置 root 用户远程登陆（可选）
+
+```sql
+mysql> use mysql;
+# 注意替换 '您的密码'
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '您的密码' WITH GRANT OPTION;
+mysql> FLUSH PRIVILEGES;
+```
+
+设置完成后，在确保防火墙开放 `3306` 端口的情况下，即可实现远程连接。
+
 ## 常用软件
 
 ### Git
@@ -670,3 +769,4 @@ local > pwd
 * [Linux|CentOS下配置Maven环境](https://cloud.tencent.com/developer/article/1640173)
 * [#Linux学习笔记# 自定义shell终端提示符](https://www.cnblogs.com/lienhua34/p/5018119.html)
 * [gRPC C++ - Building from source](https://github.com/grpc/grpc/blob/master/BUILDING.md)
+* [CentOS7上安装MySQL 5.7.32（超详细）](https://blog.csdn.net/m0_51510236/article/details/113791490)
