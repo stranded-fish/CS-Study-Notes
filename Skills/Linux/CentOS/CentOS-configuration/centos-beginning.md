@@ -20,14 +20,14 @@
         - [gflags/glog](#gflagsglog)
         - [ProtoBuf](#protobuf)
         - [gRPC](#grpc)
-        - [LevelDB](#leveldb)
-        - [RocksDB](#rocksdb)
     - [Java](#java)
       - [JDK](#jdk)
       - [Maven](#maven)
     - [Go](#go)
   - [数据库](#数据库)
     - [MySQL](#mysql)
+    - [LevelDB](#leveldb)
+    - [RocksDB](#rocksdb)
   - [常用软件](#常用软件)
     - [Git](#git)
     - [lrzsz](#lrzsz)
@@ -423,57 +423,6 @@ make && make install
 
 C++ 可通过 `cmake` 编译并运行 `grpc/examples/cpp/helloworld` 示例来实现检验。
 
-##### LevelDB
-
-**Step 1.** 下载源码
-
-```bash
-git clone --recurse-submodules https://github.com/google/leveldb.git
-```
-
-**Step 2.** 编译并安装
-
-```bash
-mkdir -p build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
-```
-
-**Step 3.** 安装检验
-
-参见：[搭建LevelDB环境及原理分析](https://blog.csdn.net/tuwenqi2013/article/details/88560600)
-
-##### RocksDB
-
-**Step 1.** 下载最新版 RocksDB
-
-* 通过官网 [RocksDB Releases](https://github.com/facebook/rocksdb/releases/) 获取最新版 `rocksdb-x.x.x.tar.gz` 下载地址；
-* 下载至服务器并解压；
-* 进入到源代码根目录。
-
-```bash
-wget https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/protobuf-all-3.20.0.tar.gz
-tar -zxvf rocksdb-7.0.4.tar.gz
-cd rocksdb-7.0.4/
-```
-
-**Step 2.** 编译并安装
-
-```bash
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rocksdb ..
-make && make install
-```
-
-**Step 3.** 安装检验
-
-参见：[RocksDB 简单使用](https://www.jianshu.com/p/f233528c8303)
-
-通过如下命令编译并运行：
-
-```bash
-g++ -std=c++17 rocksdbtest.cpp -o rocksdbtest -lpthread -lrocksdb
-```
-
 ### Java
 
 #### JDK
@@ -676,6 +625,57 @@ mysql> FLUSH PRIVILEGES;
 ```
 
 设置完成后，在确保防火墙开放 `3306` 端口的情况下，即可实现远程连接。
+
+### LevelDB
+
+**Step 1.** 下载源码
+
+```bash
+git clone --recurse-submodules https://github.com/google/leveldb.git
+```
+
+**Step 2.** 编译并安装
+
+```bash
+mkdir -p build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+```
+
+**Step 3.** 安装检验
+
+参见：[搭建LevelDB环境及原理分析](https://blog.csdn.net/tuwenqi2013/article/details/88560600)
+
+### RocksDB
+
+**Step 1.** 下载最新版 RocksDB
+
+* 通过官网 [RocksDB Releases](https://github.com/facebook/rocksdb/releases/) 获取最新版 `rocksdb-x.x.x.tar.gz` 下载地址；
+* 下载至服务器并解压；
+* 进入到源代码根目录。
+
+```bash
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/protobuf-all-3.20.0.tar.gz
+tar -zxvf rocksdb-7.0.4.tar.gz
+cd rocksdb-7.0.4/
+```
+
+**Step 2.** 编译并安装
+
+```bash
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rocksdb ..
+make && make install
+```
+
+**Step 3.** 安装检验
+
+参见：[RocksDB 简单使用](https://www.jianshu.com/p/f233528c8303)
+
+通过如下命令编译并运行：
+
+```bash
+g++ -std=c++17 rocksdbtest.cpp -o rocksdbtest -lpthread -lrocksdb
+```
 
 ## 常用软件
 
