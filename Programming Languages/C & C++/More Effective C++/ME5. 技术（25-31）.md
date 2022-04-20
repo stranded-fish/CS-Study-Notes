@@ -74,6 +74,7 @@ public:
     void doWork();
     ...
     friend Singleton &getInstance();
+    Singleton& operator=(const Singleton &) = delete; // 禁止拷贝赋值运算符
 private:
     Singleton() = default;
     Singleton(const Singleton &) = default;
@@ -102,6 +103,7 @@ public:
     void doWork();
     ...
     static Singleton &getInstance();
+    Singleton& operator=(const Singleton &) = delete; // 禁止拷贝赋值运算符
 private:
     Singleton() = default;
     Singleton(const Singleton &) = default;
@@ -125,6 +127,7 @@ namespace SingletonStuff {
         void doWork();
         ...
         friend Singleton &getInstance();
+        Singleton& operator=(const Singleton &) = delete; // 禁止拷贝赋值运算符
     private:
         Singleton() = default;
         Singleton(const Singleton &) = default;
@@ -144,8 +147,6 @@ using namespace SingletonStuff;
 // 或 using SingletonStuff::getInstance;
 getInstance().doWork();
 ```
-
-TODO static 方法会被默认调用初始化嘛？
 
 **在函数中生成 static 对象，而非 class 拥有一个 static 对象的优点：**
 
