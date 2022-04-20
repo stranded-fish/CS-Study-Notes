@@ -28,6 +28,7 @@
     - [MySQL](#mysql)
     - [LevelDB](#leveldb)
     - [RocksDB](#rocksdb)
+    - [Redis](#redis)
   - [常用软件](#常用软件)
     - [Git](#git)
     - [lrzsz](#lrzsz)
@@ -675,6 +676,47 @@ make && make install
 
 ```bash
 g++ -std=c++17 rocksdbtest.cpp -o rocksdbtest -lpthread -lrocksdb
+```
+
+### Redis
+
+**Step 1.** 下载所需版本 Redis
+
+通过官网 [Redis Download](https://redis.io/download/) 获取 Redis 源码下载地址。
+
+```bash
+wget https://download.redis.io/releases/redis-6.2.6.tar.gz
+tar -zxvf redis-6.2.6.tar.gz
+mv redis-6.2.6/ /usr/local/
+cd redis-6.2.6
+```
+
+选择将源码文件保存至 `/usr/local/` 以便于管理。
+
+**Step 2.** 编译与安装
+
+```bash
+make && make PREFIX=/usr/local/redis-6.2.6/ install
+```
+
+指定可执行文件安装路径为：`PREFIX=/usr/local/redis-6.2.6/bin`。
+
+**Step 3.** 配置环境变量
+
+编辑 `/etc/profile`，在其末尾添加如下配置：
+
+```bash
+export REDIS_HOME=/usr/local/redis-6.2.6
+export PATH=$PATH:$REDIS_HOME/bin
+```
+
+保存后，可通过 `source /etc/profile` 命令使配置立即生效。
+
+**Step 4.** 安装检验
+
+```bash
+redis-server -v
+redis-cls -v
 ```
 
 ## 常用软件
