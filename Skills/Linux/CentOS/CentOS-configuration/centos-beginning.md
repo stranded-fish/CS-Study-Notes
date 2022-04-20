@@ -17,9 +17,9 @@
       - [CMake](#cmake)
       - [常用第三方库](#常用第三方库)
         - [Boost](#boost)
+        - [gflags/glog](#gflagsglog)
         - [ProtoBuf](#protobuf)
         - [gRPC](#grpc)
-        - [gflags/glog](#gflagsglog)
         - [LevelDB](#leveldb)
         - [RocksDB](#rocksdb)
     - [Java](#java)
@@ -334,6 +334,22 @@ g++ test.cc -o test -I /opt/boost/include/
 ./test
 ```
 
+##### gflags/glog
+
+glog 依赖于 gflags，需先安装 gflags。
+
+**安装 gflags：**
+
+```bash
+git clone https://github.com/gflags/gflags.git
+cd gflags
+mkdir build && cd build
+cmake .. -DBUILD_SHARED_LIBS=ON
+make && make install
+```
+
+**安装 glog**：参见官网 [Building glog with CMake](https://github.com/google/glog#building-glog-with-cmake)。
+
 ##### ProtoBuf
 
 **Step 1.** 下载最新版 ProtoBuf
@@ -404,22 +420,6 @@ make && make install
 **Step 3.** 安装检验
 
 C++ 可通过 `cmake` 编译并运行 `grpc/examples/cpp/helloworld` 示例来实现检验。
-
-##### gflags/glog
-
-glog 依赖于 gflags，需先安装 gflags。
-
-**安装 gflags：**
-
-```bash
-git clone https://github.com/gflags/gflags.git
-cd gflags
-mkdir build && cd build
-cmake .. -DBUILD_SHARED_LIBS=ON
-make && make install
-```
-
-**安装 glog**：参见官网 [Building glog with CMake](https://github.com/google/glog#building-glog-with-cmake)。
 
 ##### LevelDB
 
@@ -641,7 +641,7 @@ yum install telnet-server
 编辑 `~/.bashrc`，在其末尾添加如下配置：
 
 ```txt
-PS1="\033[0;34m\W\033[00m\033[0;36m > \033[00m"
+PS1="\[\033[0;34m\]\W\[\033[0;36m\] >\[\033[00m\] "
 ```
 
 该配置简化了终端提示符，仅保留并显示当前目录：
@@ -668,5 +668,5 @@ local > pwd
 * [centos 7 安装golang](https://www.jianshu.com/p/35a161738d83)
 * [CentOS 7 安装JDK 1.8 环境教程](https://www.timberkito.com/?p=12)
 * [Linux|CentOS下配置Maven环境](https://cloud.tencent.com/developer/article/1640173)
-* [【Linux下自定义Shell终端提示符】](【Linux下自定义Shell终端提示符】)
+* [#Linux学习笔记# 自定义shell终端提示符](https://www.cnblogs.com/lienhua34/p/5018119.html)
 * [gRPC C++ - Building from source](https://github.com/grpc/grpc/blob/master/BUILDING.md)
