@@ -588,6 +588,27 @@ yum install -y mysql-community-*-5.7.36-1.el7.x86_64.rpm
 
 ![MySQL 安装成功输出](https://yulan-img-work.oss-cn-beijing.aliyuncs.com/img/202204202111311.png)
 
+**补充：**
+
+如果之前曾安装过其他版本（不兼容的旧版），安装过程中可能出现如下错误：
+
+```bash
+Error: Package: 1:mariadb-devel-5.5.68-1.el7.x86_64 (@base)
+           Requires: mariadb-libs(x86-64) = 1:5.5.68-1.el7
+           Removing: 1:mariadb-libs-5.5.68-1.el7.x86_64 (@base)
+               mariadb-libs(x86-64) = 1:5.5.68-1.el7
+           Obsoleted By: mysql-community-libs-5.7.36-1.el7.x86_64 (/mysql-community-libs-5.7.36-1.el7.x86_64)
+               Not found
+ You could try using --skip-broken to work around the problem
+ You could try running: rpm -Va --nofiles --nodigest
+```
+
+解决方法：
+
+```bash
+yum remove mysql-libs
+```
+
 **Step 3.** 启动 MySQL server 并初始化密码
 
 ```bash
