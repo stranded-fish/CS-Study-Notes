@@ -36,6 +36,7 @@
     - [tree](#tree)
     - [zip/unzip](#zipunzip)
     - [telnet](#telnet)
+    - [sysbench](#sysbench)
   - [界面美化](#界面美化)
     - [自定义 Shell 终端提示符](#自定义-shell-终端提示符)
     - [Vim 配置](#vim-配置)
@@ -794,6 +795,12 @@ yum install xinetd
 # 安装 telnet
 yum install telnet
 yum install telnet-server
+```
+
+### sysbench
+
+```bash
+yum install sysbench
 ```
 
 ## 界面美化
