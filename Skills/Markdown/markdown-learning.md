@@ -84,7 +84,7 @@ VS Code 快捷键：
 - 粗体：<kbd>Ctrl</kbd> + <kbd>B</kbd>
 - 粗斜体：<kbd>Ctrl</kbd> + <kbd>I</kbd> + <kbd>Ctrl</kbd> + <kbd>B</kbd>
   
-> **注意：** 符号必须 **紧邻**，不能有空格。
+**注意：** 符号必须 **紧邻**，不能有空格。
 
 ```markdown
 *斜体文本*
@@ -107,7 +107,7 @@ ___粗斜体文本___
 
 可以通过在一行中使用三个以上星号、减号、底线来实现一条分割线（行内可以有空格，但不能有其他东西）。
 
-> **注意：** 减号 `-` 上方紧接上方内容时，将会被识别为标题符号，故需上方空行。
+**注意：** 减号 `-` 上方紧接上方内容时，将会被识别为标题符号，故需上方空行。
 
 ```markdown
 ***
@@ -125,7 +125,7 @@ ___粗斜体文本___
 
 文字两端添加两个波浪线 ~~
 
-> **注意：** 符号须 **紧邻**，不能有空格。
+**注意：** 符号须 **紧邻**，不能有空格。
 
 ```markdown
 ~~test~~
@@ -308,7 +308,7 @@ for example:
 
     echo hello world
 
-eg 2. 通过` ``` `包围一段代码，并指定语言（也可不指定）。
+eg 2. 通过 \``` 包围一段代码，并指定语言（也可不指定）。
 
 ```java
 public static void main(String args[]) {
@@ -365,7 +365,7 @@ eg 3:
 
 使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。
 
->注意：无相关空格要求。
+**注意：** 无相关空格要求。
   
 ```markdown
 表格可以不用开头和结尾的 | 可以简单一点
@@ -419,6 +419,7 @@ eg 3:
 ```
 
 1\. 转义字符
+
 2\. 缩进失效
 
 ### 公式
@@ -444,13 +445,14 @@ $D$ = {$D^1$,...,$D^n$} // 上标
 ```
 
 $X$ = {$X_1$,...,$X_n$}
+
 $D$ = {$D^1$,...,$D^n$}
 
 ### 目录
 
 通过 `[TOC]` 自动生成目录。
 
->注意：有些渲染器无法解析 `[TOC]`，故为了确保可移植性，可使用 Markdown All in One 插件来自动生成目录。
+**注意：** 有些渲染器无法解析 `[TOC]`，故为了确保可移植性，可使用 Markdown All in One 插件来自动生成目录。
 
 ### 自定义 CSS 样式
 
@@ -465,20 +467,20 @@ $D$ = {$D^1$,...,$D^n$}
 
 ## 相关插件
 
-1. Markdown All in One (相关文本编辑功能、快捷键等)
-2. Markdown Preview Enhanced (文本高级预览功能)
-3. Markdown Shortcuts (提供快捷键功能)
-4. markdownlint (提供语法检查、提示与自动修复功能)
-5. Markdown Table Prettifier (提供表格美化功能)
-6. Markdown PDF（提供 Markdown 格式转换与打印功能）
+* Markdown All in One (相关文本编辑功能、快捷键等)
+* Markdown Preview Enhanced (文本高级预览功能)
+* Markdown Shortcuts (提供快捷键功能)
+* markdownlint (提供语法检查、提示与自动修复功能)
+* Markdown Table Prettifier (提供表格美化功能)
+* Markdown PDF（提供 Markdown 格式转换与打印功能）
 
 ## 相关设置
 
-1. 回车换行设置：
+* 回车换行设置：
   VS Code：settings.json -> 添加 `"markdown.preview.breaks": true,`
-2. 关于图床的相关设置
+* 关于图床的相关设置
   使用PicGo作为图床软件，快捷键设置：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd>。
-3. 关于markdownlint 规则的自定义设置
+* 关于markdownlint 规则的自定义设置
   在setting.json中添加配置数据：
 
    ```JSON
@@ -523,7 +525,7 @@ key              | command
 create table ... | 创建目录
 export ...       | 打印为 pdf、html、png  ...
 
->注意：在 markdown 源文件下操作，而不是预览模式。
+**注意：** 在 markdown 源文件下操作，而不是预览模式。
 
 ## 参考链接
 
