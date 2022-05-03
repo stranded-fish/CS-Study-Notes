@@ -10,6 +10,7 @@
     - [accumulate](#accumulate)
     - [count / count_if](#count--count_if)
     - [__builtin](#__builtin)
+    - [partial_sum / adjacent_difference](#partial_sum--adjacent_difference)
   - [搜索](#搜索)
     - [二分搜索](#二分搜索)
       - [binary_search](#binary_search)
@@ -22,7 +23,7 @@
 
 ### max / min
 
-`max` / `min` 函数定义在头文件 `<algorithm>` 中，C++ 11 标准下的函数原型如下（min 函数与 max 类似）：
+`std::max` / `std::min` 函数定义在头文件 `<algorithm>` 中，C++ 11 标准下的函数原型如下（min 函数与 max 类似）：
 
 ```C++
 default (1) 
@@ -56,7 +57,7 @@ max({a, b, c}); // c: 3
 
 ### max_element / min_element
 
-`max_element` / `min_element` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（min_element 函数与 max_element 类似）：
+`std::max_element` / `std::min_element` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（min_element 函数与 max_element 类似）：
 
 ```C++
 default (1)	
@@ -82,7 +83,7 @@ cout << *max_element(arr.begin(), arr.end()); // 8
 
 ### accumulate
 
-`accumulate` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
+`std::accumulate` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
 
 ```C++
 sum (1)	
@@ -112,7 +113,7 @@ int sum = accumulate(arr.begin(), arr.end(), 0); // sum = 10
 
 ### count / count_if
 
-`count` / `count_if` 函数定义在头文件 `<algorithm>` 中，两者函数原型如下：
+`std::count` / `std::count_if` 函数定义在头文件 `<algorithm>` 中，两者函数原型如下：
 
 ```C++
 /* count - 返回范围 [first,last) 中比较等于 val 的元素数量。
@@ -149,13 +150,54 @@ cout << count_if(arr.begin(), arr.end(),  // 输出奇数元素的数量
 
 以上函数均有相应的 `usigned long` 和 `usigned long long` 版本，只需要在函数名后面加上 `l` 或 `ll`，如 `int __builtin_clzll`。
 
+### partial_sum / adjacent_difference
+
+`std::partial_sum` / `std::adjacent_difference` 函数定义在头文件 `<numeric>` 中，其函数原型如下（adjacent_difference 类似）：
+
+```C++
+sum (1)	
+template <class InputIterator, class OutputIterator>
+   OutputIterator partial_sum (InputIterator first, InputIterator last,
+                               OutputIterator result);
+custom (2)	
+template <class InputIterator, class OutputIterator, class BinaryOperation>
+   OutputIterator partial_sum (InputIterator first, InputIterator last,
+                               OutputIterator result, BinaryOperation binary_op);
+```
+
+* `partial_sum` 用于计算 `[first,last)` 范围内的元素的前缀和。默认为加法，可以指定不同的操作 `binary_op`。
+* `adjacent_difference` 用于计算 `[first,last)` 范围内的元素的差分。默认为计算差值，可以指定不同的操作 `binary_op`。
+
+常见用法：
+
+```C++
+vector<int> arr = {5, 3, 5, 8, 16}; // 原始数组
+int res[5];                         // 结果保存数
+
+/* partial_sum() */
+
+// 默认加法 - 前缀和
+partial_sum(arr.begin(), arr.end(), res);
+for (auto &val : res) cout << val << " "; // 5 8 13 21 37
+
+// 自定义运算符 - 前缀乘
+partial_sum(arr.begin(), arr.end(), res, multiplies<>());
+for (auto &val : res) cout << val << " "; // 5 15 75 600 9600
+
+/* adjacent_difference() */
+
+// 默认减法 - 差分
+adjacent_difference(arr.begin(), arr.end(), res);
+for (auto &val : res) cout << val << " "; // 5 -2 2 3 8
+```
+
 ## 搜索
 
 ### 二分搜索
 
 #### binary_search
 
-`binary_search` 函数定义在头文件 `<algorithm>` 中，其函数原型如下：
+`std::binary_search` 函数定义在头文件 `<algorithm>` 中，其函数原型如下：
 
 ```C++
 default (1)	
@@ -185,7 +227,7 @@ if (binary_search(arr.begin(), arr.end(), 2, greater<int>())) cout << "Found" <<
 
 #### lower_bound / upper_bound
 
-`lower_bound` / `upper_bound` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（`upper_bound` 函数与 `lower_bound` 类似）：
+`std::lower_bound` / `std::upper_bound` 函数定义在头文件 `<algorithm>` 中，其函数原型如下（`upper_bound` 函数与 `lower_bound` 类似）：
 
 ```C++
 default (1)	
@@ -217,7 +259,7 @@ cout << it_upper - arr.begin() << " " << *it_upper << endl; // 3 8
 
 ### iota
 
-`iota` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
+`std::iota` 函数定义在头文件 `<numeric>` 中，其函数原型如下：
 
 ```C++
 template <class ForwardIterator, class T>
