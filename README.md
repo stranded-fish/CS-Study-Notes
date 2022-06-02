@@ -1,4 +1,4 @@
-# Study Notes
+# CS Study Notes
 
 本仓库主要为计算机专业技术的学习与总结。
 
@@ -6,7 +6,7 @@
 
 目录：
 
-- [Study Notes](#study-notes)
+- [CS Study Notes](#cs-study-notes)
   - [Programming Languages](#programming-languages)
   - [Subjects](#subjects)
   - [Skills](#skills)
@@ -15,7 +15,7 @@
 
 ## Programming Languages
 
-该目录主要为编程语言的相关学习与总结，部分典型工作如下：
+该目录主要为编程语言的相关学习与总结，部分工作如下：
 
 **C++ 相关：**
 
@@ -51,7 +51,7 @@
 
 ## Subjects
 
-该目录主要针对计算机相关课程的系统学习，部分典型工作如下：
+该目录主要针对计算机相关课程的系统学习，部分工作如下：
 
 * `/Subjects/Data Structure & Algorithm/Algorithm/`：主要总结了一些常见算法的设计思想与编程实现。
   * [Algorithm](/Subjects/Data%20Structure%20%26%20Algorithm/Algorithm/)
@@ -60,7 +60,7 @@
 
 ## Skills
 
-该目录主要针对计算机开发过程中的相关基础技能的学习与总结，部分典型工作如下：
+该目录主要针对计算机开发过程中的相关基础技能的学习与总结，部分工作如下：
 
 * `/Skills/Linux/`：总结了 Linux 系统的相关环境配置与软件安装步骤，同时还系统整理了一些高频操作，如：解压缩、链接以及监视系统资源等。
   * [CentOS-beginning](/Skills/Linux/CentOS/CentOS-beginning/)
@@ -80,7 +80,7 @@
 
 ## Tools
 
-该目录主要针对计算机开发过程中所使用的相关工具的学习与总结，部分典型工作如下：
+该目录主要针对计算机开发过程中所使用的相关工具的学习与总结，部分工作如下：
 
 * `/Tools/VS Code/`：总结了 VS Code 配置、功能、快捷键以及远程开发等相关操作。
   * [vs-code-learning.md](/Tools/VS%20Code/vs-code-learning.md)
@@ -91,7 +91,7 @@
 
 ## Others
 
-该目录主要针对计算机其他技术总结，部分典型工作如下：
+该目录主要针对计算机其他技术总结，部分工作如下：
 
 * `/Others/Blog/Hugo/`：总结了 Hugo 博客系统的入门操作以及自动化部署流程。
   * [Hugo-Quick-Start.md](/Others/Blog/Hugo/Hugo-Quick-Start.md)
