@@ -1,5 +1,7 @@
 # C++ 多线程编程
 
+本文章主要针对 C++ 11 引入的 `<thread>` 多线程编程的学习与总结。
+
 目录：
 
 - [C++ 多线程编程](#c-多线程编程)
@@ -8,24 +10,28 @@
     - [线程监视](#线程监视)
     - [线程操作](#线程操作)
   - [互斥锁](#互斥锁)
-  - [条件变量](#条件变量)
     - [成员函数](#成员函数)
+    - [使用示例](#使用示例)
+      - [std::lock_guard](#stdlock_guard)
+      - [std::unique_lock](#stdunique_lock)
+  - [条件变量](#条件变量)
+    - [成员函数](#成员函数-1)
       - [constructor](#constructor)
       - [Notification](#notification)
       - [Waiting](#waiting)
-    - [使用示例](#使用示例)
-  - [原子类型](#原子类型)
     - [使用示例](#使用示例-1)
+  - [原子类型](#原子类型)
+    - [使用示例](#使用示例-2)
   - [异步线程](#异步线程)
-  - [线程池](#线程池)
-  - [代码实例](#代码实例)
-    - [生产者消费者问题](#生产者消费者问题)
+    - [成员函数](#成员函数-2)
+      - [Getting the result](#getting-the-result)
+      - [State](#state)
+    - [使用示例](#使用示例-3)
   - [参考链接](#参考链接)
 
 ## 线程基础操作
 
-头文件说明 TODO
-`#include <thread>` 其中包括 std::thread 类
+`std::thread` 类定义于头文件 `<thread>`。
 
 ### 线程创建
 
@@ -98,20 +104,14 @@ void swap( std::thread& other ) noexcept;
 
 ## 互斥锁
 
-**std::mutex**
+互斥锁 `std::mutex` 定义于头文件 `<mutex>`。
 
 ```C++
 #include <mutex>
 class mutex;
 ```
 
-使用步骤：
-
-* 实例化 `std::mutex` 对象；
-* 在进入临界区之前对互斥锁加锁；
-* 退出临界区时对互斥锁解锁。
-
-函数签名：
+### 成员函数
 
 ```C++
 // 对互斥锁加锁，必要时阻塞
@@ -131,7 +131,7 @@ bool try_lock();
 void unlock();
 ```
 
-使用示例：
+### 使用示例
 
 ```C++
 int cnt = 0;
@@ -156,18 +156,16 @@ int main() {
 
 **注意：** 不建议直接使用 `lock()` 方法，因为可能会忘记执行 `unlock()` 或者程序出现异常无法 `unlock()`，最终导致锁无法释放，可以使用 RAII 对象思想来管理互斥锁（如：`lock_guard` 或 `unique_lock`）。
 
-**std::lock_guard**
+#### std::lock_guard
 
 ```C++
 template< class Mutex >
 class lock_guard;
 ```
 
-类 lock_guard 是一个互斥体包装器，它提供了一种方便的 RAII 样式机制，用于在作用域块的持续时间内拥有互斥体。
-
-当一个 lock_guard 对象被创建时，它会尝试获取给它的互斥锁的所有权。当控制离开创建 lock_guard 对象的范围时， lock_guard 被破坏并且互斥体被释放。
-
-lock_guard 类是不可复制的。
+* 类 `lock_guard` 是一个互斥体包装器，它提供了一种方便的 RAII 风格机制，用于在作用域块的持续时间内拥有互斥体。
+* 当一个 `lock_guard` 对象被创建时，它会尝试获取给它的互斥锁的所有权。当控制离开创建 `lock_guard` 对象的范围时，`lock_guard` 被破坏并且互斥体被释放。
+* `lock_guard` 类是不可复制的。
 
 使用示例：
 
@@ -193,11 +191,15 @@ int main() {
 }
 ```
 
-通过设定作用域，使得std::lock_guard在合适的地方被析构（在互斥量锁定到互斥量解锁之间的代码叫做临界区（需要互斥访问共享资源的那段代码称为临界区），临界区范围应该尽可能的小，即lock互斥量后应该尽早unlock），通过使用{}来调整作用域范围，可使得互斥量m在合适的地方被解锁：
+可以通过 `{}` 设定作用域，可以使得 `std::lock_guard` 在合适的地方被析构。
+
+#### std::unique_lock
+
+`std::unique_lock` 类似于 `lock_guard`，只是 `std::unique_lock` 用法更加丰富，同时支持 `std::lock_guard()` 的原有功能。
 
 ## 条件变量
 
-条件变量 `std::condition_variable` 定义于头文件 `<condition_variable>`
+条件变量 `std::condition_variable` 定义于头文件 `<condition_variable>`。
 
 ```C++
 #include <condition_variable>
@@ -272,8 +274,6 @@ bool wait_for( std::unique_lock<std::mutex>& lock,
 ```
 
 **3. `wait_until`：阻塞当前线程，直到条件变量被唤醒或到达指定时间点**
-
-函数签名：
 
 ```C++
 // (1)
@@ -439,17 +439,89 @@ int main() {
 
 ## 异步线程
 
-```C++
+类模板 `std::future` 提供了一种异步执行的机制，异步操作对象 `std::future` 可以通过 `std::async`、`std::packaged_task`、`std::std::promise` 创建。
 
+### 成员函数
+
+#### Getting the result
+
+**`get`：返回结果**
+
+```C++
+T get();    // (1)
+T& get();   // (2)
+void get(); // (3)
 ```
 
-## 线程池
+get 成员函数会一直等到 future 有一个有效的结果并（取决于使用的模板）检索它，它将调用 `wait()` 以等待结果。
 
-## 代码实例
+#### State
 
-### 生产者消费者问题
+**1. valid：检查 future 对象是否拥有共享的状态**
+
+```C++
+bool valid() const noexcept;
+```
+
+**2. wait：主线程等待结果可用**
+
+```C++
+void wait() const;
+```
+
+**3. wait_for：等待结果可用，直到超出规定时间则返回**
+
+```C++
+template< class Rep, class Period >
+std::future_status wait_for( const std::chrono::duration<Rep,Period>& timeout_duration ) const;
+```
+
+**4. wait_until：等待结果，直到指定时间点可用才返回**
+
+```C++
+template< class Clock, class Duration >
+std::future_status wait_until( const std::chrono::time_point<Clock,Duration>& timeout_time ) const;
+```
+
+### 使用示例
+
+```C++
+#include <iostream>
+#include <future>
+#include <thread>
+
+int main() {
+    // future from a packaged_task
+    std::packaged_task<int()> task([] { return 7; }); // wrap the function
+    std::future<int> f1 = task.get_future();  // get a future
+    std::thread t(std::move(task)); // launch on a thread
+
+    // future from an async()
+    std::future<int> f2 = std::async(std::launch::async, [] { return 8; });
+
+    // future from a promise
+    std::promise<int> p;
+    std::future<int> f3 = p.get_future();
+    std::thread([&p] { p.set_value_at_thread_exit(9); }).detach();
+
+    std::cout << "Waiting..." << std::flush;
+    f1.wait();
+    f2.wait();
+    f3.wait();
+    std::cout << "Done!\nResults are: "
+              << f1.get() << ' ' << f2.get() << ' ' << f3.get() << '\n';
+    t.join();
+}
+
+// 输出
+// Waiting...Done!
+// Results are: 7 8 9
+```
 
 ## 参考链接
 
 * [std::thread - cppreference.com](https://en.cppreference.com/w/cpp/thread/thread)
-* [C++ 多线程并发基础入门教程](https://zhuanlan.zhihu.com/p/194198073)
+* [std::mutex - cppreference.com](https://en.cppreference.com/w/cpp/thread/mutex)
+* [std::condition_variable - cppreference.com](https://en.cppreference.com/w/cpp/thread/condition_variable)
+* [std::atomic - cppreference.com](https://en.cppreference.com/w/cpp/atomic/atomic)
+* [std::future - cppreference.com](https://en.cppreference.com/w/cpp/thread/future)
