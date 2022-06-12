@@ -14,7 +14,8 @@
       - [Notification](#notification)
       - [Waiting](#waiting)
     - [使用示例](#使用示例)
-  - [原子类型 atomic](#原子类型-atomic)
+  - [原子类型](#原子类型)
+    - [使用示例](#使用示例-1)
   - [异步线程](#异步线程)
   - [线程池](#线程池)
   - [代码实例](#代码实例)
@@ -207,15 +208,15 @@ class condition_variable;
 
 **Notification**
 
-函数         | 功能
--------------|------------
+函数       | 功能
+-----------|------------
 notify_one | 解除一个等待线程的阻塞
 notify_all | 解除所有等待线程的阻塞
 
 **Waiting**
 
-函数         | 功能
--------------|----------------------------
+函数       | 功能
+-----------|----------------------------
 wait       | 阻塞当前线程直到条件变量被唤醒
 wait_for   | 阻塞当前线程，直到条件变量被唤醒或在指定的超时时间之后
 wait_until | 阻塞当前线程，直到条件变量被唤醒或到达指定时间点
@@ -391,10 +392,49 @@ Notifying again...
 Thread 3 finished waiting. i == 1
 ```
 
-## 原子类型 atomic
+## 原子类型
+
+原子类型 `std::atomic` 定义于头文件 `<atomic>`
 
 ```C++
+// (1)
+template< class T >
+struct atomic;
 
+// (2)
+template< class U >
+struct atomic<U*>;
+```
+
+* `std::atomic` 模板的每个实例化和完全特化都定义了一个原子类型。如果一个线程写入一个原子对象，而另一个线程从它读取，则行为是明确定义的。
+* `std::atomic` 既不可复制也不可移动。
+* `std::atomic` 特化了以下操作以保证原子性：
+  * `operator++`
+  * `operator++(int)`
+  * `operator--`
+  * `operator--(int)`
+  * `operator+=`
+  * `operator-=`
+  * `operator&=`
+  * `operator|=`
+  * `operator^=`
+
+### 使用示例
+
+```C++
+atomic<long long> cnt;
+
+void safe_inc(int val) {
+    for (int i = 0; i < val; ++i) {
+        ++cnt;
+    }
+}
+
+int main() {
+    thread t1(safe_inc, 1000000), t2(safe_inc, 1000000);
+    t1.join(); t2.join();
+    cout << cnt << endl; // 输出：2000000
+}
 ```
 
 ## 异步线程
