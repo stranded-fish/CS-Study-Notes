@@ -44,7 +44,7 @@
 C++ 标准程序库特点：
 
 * 标准程序库中的几乎每一样东西都是 template。
-  * 包括 string，string 本质上是 `basic_string<char>`，由于其使用频繁，标准程序库提供了 `typydef basic_string<char> string`，string 还可由 wide chars，Unicode chars 等构成。
+  * 包括 string，string 本质上是 `basic_string<char>`，由于其使用频繁，标准程序库提供了 `typydef basic_string<char> string`，string 还可由 wide chars，Unicode chars 等构成（补充：C++ 11 之后，原基于 Reference-counted（引用计数）和 COW（copy on write - 写时复制）的 string 实现已经被废弃）。
 * 所有成分都位于 namespace std 内。
   * 为了在不用写出显式完全限定名的情况下使用标准程序库组件，可使用 `using namespace std;`。
 
@@ -53,6 +53,12 @@ STL（Standard Template Library，标准模板库）是 C++ 标准程序库中�
 * 容器（containers）：持有一系列对象。
 * 迭代器（iterators）：一种类似指针的对象，使得可以像指针遍历内建数组一样，遍历 STL 容器。
 * 算法（algorithms）：可作用于 STL 容器 身上的函数，以 iterators 来协助工作。
+
+其他三大模块补充：
+
+* 分配器（allocators）：用于 STL 容器分配内存，一般不直接调用。
+* 适配器（adapters）：将一种接口适配为另一种接口。例如：queue、stack 默认为 deque 的适配器。
+* 仿函数（functors）：表现为函数的重载了函数调用运算符的类对象（又称函数对象）。
 
 ## 参考资料
 

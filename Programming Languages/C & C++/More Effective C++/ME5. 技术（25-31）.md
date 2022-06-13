@@ -48,7 +48,7 @@ void test(Base *ptr) {
 }
 ```
 
-以上实现基于 derived class 重新定义其 base class 的一个虚函数时，不再需要一定得声明与原本相同的返回类型的规则。
+**注意：** 以上实现基于 derived class 重新定义其 base class 的一个虚函数时，不要求其返回类型与原本类型相同的规则。
 
 **b. 将 non-member functions 的行为虚化**
 
@@ -320,6 +320,7 @@ p->destory();           // 正确
 ```
 
 * 由于 non-heap objects 会在其寿命结束时自动析构，而隐式调用析构动作现在变得不合法了，故变相禁止了创建 non-heap objects。
+* delete 表达式，首先会调用该对象的析构函数，然后调用 operator delete 释放内存，当析构函数为 private 时，delete 表达式也将不合法，故必须引入伪 destructor。
 * 不建议选择将所有 constructors 声明为 private，因为 class 通常有多个 constructors，一旦遗忘声明某一个为 private，编译器将自动生成 public constructors。所以仅声明 destructor 为 private 较好，因为 class 仅能有一个 destructor。
 * 如果需要继承：可令 destructor 为 protected，并保持其 constructors 为 public。
 * 如果需要内嵌于其他对象：可改为内含一个指针，指向其 heap 对象。
@@ -341,6 +342,7 @@ Object *p = new Object; // 错误！企图调用 private new delete
 delete p;               // 错误！企图调用 private delete
 ```
 
+* C++ new operator（new 表达式）的行为无法被修改，但是 new 表达式总是会调用 operator new 分配内存，故可以通过禁止 operator new 来间接实现目的。同时应该仅修改成员函数版本而不是全局版本。
 * 如果想禁止由 Object 对象组成的数组位于 heap 内，可以将 `operator new[]` 和 `operator delete[]` 也声明为 private。
 * 如果 derived class 继承 Object 且不重新声明属于自己的 `operator new/delete`，那么以上方法同时也会阻止 Object 作为 base class 成分，被 derived class 实例化到 heap 内，因为 derived class 继承的是 Object 声明的 private 版本。
 
@@ -362,6 +364,8 @@ Smart Pointers 行为：
 实现 Reference counting 的一大方法是 Copy-on-Write（写时复制）：和其他对象共享一份实值，直到我们必须对自己所拥有的那一份实值进行写动作。该方式同样也是提升效率的一般化做法（缓式评估，参见条款 ME17）中的重要实现手段。
 
 Reference counting 的实现也需要一定成本，其适用前提是：对象常常共享实值。
+
+**补充：** C++ 11 之后，原基于 Reference-counted（引用计数）和 COW（copy on write - 写时复制）的 string 实现已经被废弃。
 
 > 更多内容可参见原文。
 

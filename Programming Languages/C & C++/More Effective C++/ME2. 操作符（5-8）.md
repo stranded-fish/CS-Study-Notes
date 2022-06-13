@@ -13,7 +13,7 @@
 
 ## 条款 5：对定制的 “类型转换函数” 保持警觉
 
-隐式类型转换操作符 和 单自变量 constructors 允许编译器进行隐式类型转换。
+隐式类型转换操作符 和 单自变量 constructors（转换构造函数）允许编译器进行隐式类型转换。
 
 **a. 隐式类型转换操作符：**
 
@@ -37,7 +37,7 @@ double d = 0.5 * r; // r 将被转换为 double，然后执行乘法运算
 * **潜在问题：** 可能导致错误（非预期）的函数被调用。
 * **解决方法：** 以功能对等的另一个函数取代类型转换操作符。
 
-**b. 单自变量 constructors：**
+**b. 单自变量 constructors（转换构造函数）：**
 
 ```C++
 class Name {
@@ -116,9 +116,7 @@ const UPInt UPInt::operator++(int) {
 
 同时为保证前置和后置的行为一致，后置式的实现应以其前置实现为基础。
 
-**补充：**
-
-编译器在某些情况下会对后置式进行优化，使最终其汇编表现与前置式相同。
+**补充：** 编译器在某些情况下会对后置式进行优化，使最终其汇编表现与前置式相同。
 
 ## 条款 7：千万不要重载 `&&` `||` 和 `,` 操作符
 
@@ -131,11 +129,16 @@ const UPInt UPInt::operator++(int) {
 
 ## 条款 8：了解各种不同意义的 new 和 delete
 
-* new operator：创建对象于堆上。其不但分配内存，还调用 constructor。
+* new operator（C++ 表达式）：创建对象于堆上。其不但分配内存，还调用 constructor。
   * `string *ps = new string("hello");`
-* operator new：仅分配内存。
+* operator new（C++ 函数）：仅分配内存。
   * `void *rawMemory = operator new(sizeof(string));`
-* placement new：在已经分配且拥有指针的内存中构造对象。
+* placement new（C++ 函数，可视为 operator new 的重载版本）：在已经分配且拥有指针的内存中构造对象。
+  * 构造函数：`explicit Bar(long long input) : obj(input) {}`
+  * 分配 raw 内存：
+    * `Bar *ptr = static_cast<Bar *>(operator new(sizeof(Bar)));`
+    * `Bar *ptr = static_cast<Bar *>(malloc(sizeof(Bar)));`
+  * 在已分配内存中构造对象：`new(ptr) Bar(100);`
 
 > 更多内容可参见《Effective C++》3. 资源管理（条款 16） 与 8. 定制 new 和 delete。
 
