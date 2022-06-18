@@ -7,6 +7,19 @@
 - [C++ ACM 编程模式总结](#c-acm-编程模式总结)
   - [代码模板](#代码模板)
   - [输入/输出处理](#输入输出处理)
+  - [基本输入](#基本输入)
+    - [单组输入](#单组输入)
+    - [多组输入 - 固定数量](#多组输入---固定数量)
+    - [多组输入 - 直到读至输入文件末尾](#多组输入---直到读至输入文件末尾)
+    - [多组输入 - 直到读至特殊输入](#多组输入---直到读至特殊输入)
+  - [字符串输入](#字符串输入)
+    - [单个字符串不含默认分隔符（空格、制表符、回车换行）](#单个字符串不含默认分隔符空格制表符回车换行)
+    - [单个字符串含有空格、制表符，但不含回车换行](#单个字符串含有空格制表符但不含回车换行)
+    - [逐个字符输入](#逐个字符输入)
+    - [单行输入 - 固定单行字符串数量](#单行输入---固定单行字符串数量)
+    - [多行输入 - 不定单行字符串数量](#多行输入---不定单行字符串数量)
+    - [多行输入 - 单行含分隔符](#多行输入---单行含分隔符)
+  - [输出](#输出)
   - [参考链接](#参考链接)
 
 ## 代码模板
@@ -159,6 +172,200 @@ int main() {
 
 ## 输入/输出处理
 
+## 基本输入
+
+### 单组输入
+
+```C++
+int main() {
+    int a, b;
+    cin >> a >> b;
+    cout << a + b << '\n';
+    return 0;
+}
+```
+
+### 多组输入 - 固定数量
+
+示例：[A+B(2)](https://ac.nowcoder.com/acm/contest/5657/B)
+
+```C++
+int main() {
+    int t, a, b;
+    cin >> t;
+    while (t--) {
+        cin >> a >> b;
+        cout << a + b << '\n';
+    }
+}
+```
+
+### 多组输入 - 直到读至输入文件末尾
+
+示例：[A+B(1)](https://ac.nowcoder.com/acm/contest/5657/A)
+
+```C++
+int main() {
+    int a, b;
+    while (cin >> a >> b) {
+        cout << a + b << '\n';
+    }
+    return 0;
+}
+```
+
+### 多组输入 - 直到读至特殊输入
+
+示例：[A+B(3)](https://ac.nowcoder.com/acm/contest/5657/C)
+
+```C++
+int main() {
+    int a, b;
+    while (cin >> a >> b && (a != 0 || b != 0)) {
+        cout << a + b << '\n';
+    }
+    return 0;
+}
+```
+
+## 字符串输入
+
+### 单个字符串不含默认分隔符（空格、制表符、回车换行）
+
+```C++
+int main() {
+    string a, b;
+    cin >> a >> b;         // 输入: 123 456
+    cout << a << " " << b; // 输出: 123 456
+}
+```
+
+### 单个字符串含有空格、制表符，但不含回车换行
+
+```C++
+string a;
+cin >> a;        // 输入: how are you!
+cout << a;       // 输出: how
+
+string b;
+getline(cin, b); // 输入: how are you!
+cout << b;       // 输出: how are you!
+```
+
+### 逐个字符输入
+
+`std::istream::get`：从流中提取字符，作为未格式化的输入。
+
+函数签名：
+
+```C++
+// single character (1)
+// 从流中提取单个字符
+int get();
+istream& get (char& c);
+
+// c-string (2)
+// 从流中提取字符并将它们作为 c 字符串存储在 s 中，
+// 直到提取 (n-1) 个字符或遇到分隔符：分隔符是换行符 ('\n') 或 delim（如果指定了此参数）
+// 如果找到分隔符，则不会从输入序列中提取，而是保留在那里作为要从流中提取的下一个字符
+istream& get (char* s, streamsize n);
+istream& get (char* s, streamsize n, char delim);
+
+// stream buffer (3)
+// 从流中提取字符并将它们插入到由流缓冲区对象 sb 控制的输出序列中，
+// 一旦这样的插入失败或在输入序列中遇到定界字符（定界字符是换行符）就停止，
+// 如果指定了 delim 参数，则为字符 delim
+istream& get (streambuf& sb);
+istream& get (streambuf& sb, char delim);
+```
+
+示例：
+
+```C++
+// single character (1)
+char c;
+while (c = cin.get()) {...}
+while (cin.get(c)) {...}
+
+// c-string (2)
+char ch[20];
+cin.get(ch, 10, '.'); // 读取前 9 个字符或直到分隔符 '.'
+```
+
+### 单行输入 - 固定单行字符串数量
+
+示例：[字符串排序(1)](https://ac.nowcoder.com/acm/contest/5657/H)
+
+```C++
+int main() {
+    int t;
+    cin >> t;
+    vector<string> arr;
+    string tmp;
+    while (t--) {
+        cin >> tmp;
+        arr.push_back(std::move(tmp));
+    }
+    ...
+    return 0;
+}
+```
+
+### 多行输入 - 不定单行字符串数量
+
+示例：[字符串排序(2)](https://ac.nowcoder.com/acm/contest/5657/I)
+
+```C++
+int main() {
+    string str;
+    vector<string> arr;
+    while (cin >> str) {
+        arr.push_back(std::move(str));
+        if (cin.get() == '\n') {
+            sort(arr.begin(), arr.end());
+            for (const auto &s : arr) cout << s << ' ';
+            cout << '\n';
+            arr.clear();
+        }
+    }
+    return 0;
+}
+```
+
+### 多行输入 - 单行含分隔符
+
+示例：[字符串排序(3)](https://ac.nowcoder.com/acm/contest/5657/J)
+
+```C++
+vector<string> split(const string &str, const char &delim) {
+    vector<string> res;
+    stringstream ss(str);
+    string tmp;
+    while (getline(ss, tmp, delim)) { if (!tmp.empty()) res.push_back(std::move(tmp)); }
+    return res;
+}
+
+int main() {
+    string str;
+    while (getline(cin, str)) {
+        vector<string> arr = split(str, ',');
+        sort(arr.begin(), arr.end());
+        for (int i = 0; i < arr.size(); ++i) {
+            if (i != arr.size() - 1) {
+                cout << arr[i] << ',';
+            } else cout << arr[i] << '\n';
+        }
+    }
+    return 0;
+}
+```
+
+## 输出
+
 ## 参考链接
 
 * [SamZhangQingChuan/Templates-for-Competitive-Programming](https://github.com/SamZhangQingChuan/Templates-for-Competitive-Programming/blob/master/%E5%A4%B4%E6%96%87%E4%BB%B6%E5%8F%8A%E6%B5%8B%E8%AF%95/Template.cpp)
+* [OJ在线编程常见输入输出练习场](https://ac.nowcoder.com/acm/contest/5657#question)
+* [ACM竞赛之输入输出（以C与C++为例）](https://cloud.tencent.com/developer/article/1077645)
+* [C++ get()函数读入一个字符](http://c.biancheng.net/cpp/biancheng/view/2231.html)
+* [std::istream::get](https://m.cplusplus.com/reference/istream/istream/get/)
