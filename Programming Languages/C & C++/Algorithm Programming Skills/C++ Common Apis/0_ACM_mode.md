@@ -88,6 +88,15 @@ const int INF = 1 << 29;
 const int MOD = 1e9 + 7;
 const int MAX_N = 100;
 
+/* ----------------- 字符串分割 ----------------- */
+vector<string> split(const string &str, const char &delim) {
+    vector<string> res;
+    stringstream ss(str);
+    string tmp;
+    while (getline(ss, tmp, delim)) { if (!tmp.empty()) res.push_back(std::move(tmp)); }
+    return res;
+}
+
 /* ----------------- debug 输出 ----------------- */
 string to_string(const string &s) { return '"' + s + '"'; }
 
@@ -119,15 +128,6 @@ template<typename Head, typename... Tail>
 void debug(Head H, Tail... T) {
     cerr << to_string(H) << " ";
     debug(T...);
-}
-
-/* ----------------- 字符串分割 ----------------- */
-vector<string> split(const string &str, const char &delim) {
-    vector<string> res;
-    stringstream ss(str);
-    string tmp;
-    while (getline(ss, tmp, delim)) { if (!tmp.empty()) res.push_back(std::move(tmp)); }
-    return res;
 }
 
 // 示例
