@@ -641,6 +641,10 @@ $ git push origin [branch-name] --force
 
 ```git
 $ git config --global alias.s status
+$ git config --global alias.b branch
+$ git config --global alias.l log
+$ git config --global alias.d diff
+$ git config --global alias.si switch
 $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 $ git config --global alias.last 'log -1'
 ```
