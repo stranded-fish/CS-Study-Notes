@@ -156,7 +156,8 @@ key                                                               | command
 :-----------------------------------------------------------------|:-------
 <kbd>F1</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> | 打开命令面板
 <kbd>Ctrl</kbd> + <kbd>P</kbd>                                    | 选择操作模式
-<kbd>Ctrl</kbd> + <kbd>P</kbd> 常用操作如下：
+<kbd>Ctrl</kbd> + <kbd>P</kbd> ｜ 常用操作如下｜
+
 > ?   列出当前可执行的动作
   !   显示 Errors或 Warnings，也可以 Ctrl+Shift+M
   :   跳转到行数，也可以 Ctrl+G 直接进入

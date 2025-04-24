@@ -359,7 +359,7 @@ eg 3:
 
 通过标签设置图片高度与宽度。
 `<img src="http://static.runoob.com/images/runoob-logo.png" width="50%">`
-<img src="http://static.runoob.com/images/runoob-logo.png" width="50%">
+<img src="http://static.runoob.com/images/runoob-logo.png" width="50%" alt = "RUNOOB 图标"/>
 
 ## 表格
 
@@ -386,23 +386,23 @@ eg 3:
 - :-  设置内容和标题栏居左对齐
 - :-: 设置内容和标题栏居中对齐
 
-左对齐 | 右对齐 | 居中对齐
-----|-----|-----
-单元格 | 单元格 | 单元格
-单元格 | 单元格 | 单元格
+| 左对齐 | 右对齐 | 居中对齐 |
+|-----|-----|-------|
+| 单元格 | 单元格 | 单元格   |
+| 单元格 | 单元格 | 单元格   |
 
 ## 高级技巧
 
 ### HTML 元素
 
-元素                                                                             | 效果
-:--------------------------------------------------------------------------------|:--------------------------------------------------------------------------
-\<u>下划线文本\</u>                                                              | <u>下划线文本</u>
-\<kbd>Ctrl\</kbd>                                                                | <kbd>Ctrl</kbd>
-\<font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"\</font> | <font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"</font>
-\<table>\<tr>\<td bgcolor=orange>背景色是：orange\</td>\</tr>\</table>            | <table><tr><td bgcolor=orange>背景色是：orange</td></tr></table>
-篮球 \<br> 羽毛球                                                                | 篮球 <br> 羽毛球
-\<details>\<summary>展开\</summary>Answer\</details>                             | Question 1 ? <details><summary>展开</summary>Answer</details>
+| 元素                                                                             | 效果                                                                           |
+|:---------------------------------------------------------------------------------|:-------------------------------------------------------------------------------|
+| \<u>下划线文本\</u>                                                              | <u>下划线文本</u>                                                              |
+| \<kbd>Ctrl\</kbd>                                                                | <kbd>Ctrl</kbd>                                                                |
+| \<font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"\</font> | <font color=#0099ff size=5 face="黑体">color=#0099ff size=5 face="黑体"</font> |
+| \<table>\<tr>\<td bgcolor=orange>背景色是：orange\</td>\</tr>\</table>            | <table><tr><td bgcolor=orange>背景色是：orange</td></tr></table>                |
+| 篮球 \<br> 羽毛球                                                                | 篮球 <br> 羽毛球                                                               |
+| \<details>\<summary>展开\</summary>Answer\</details>                             | Question 1 ? <details><summary>展开</summary>Answer</details>                  |
 
 ### 转义
 
@@ -497,33 +497,33 @@ $D$ = {$D^1$,...,$D^n$}
 
 VS Code 环境下：
   
-key                                                             | command
-:---------------------------------------------------------------|:--------------
-<kbd>Ctrl</kbd> + <kbd>B</kbd>                                  | 加粗
-<kbd>Ctrl</kbd> + <kbd>I</kbd>                                  | 斜体
-<kbd>Alt</kbd> + <kbd>S</kbd>                                   | 删除线
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>]</kbd>               | 当前标题升级
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>[</kbd>               | 当前标题降级
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>.</kbd>               | 聚焦到导航路径视图
-<kbd>Ctrl</kbd> + <kbd>L</kbd>                                  | 添加链接
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>C</kbd>                   | 生成代码块 \``` ```
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>I</kbd>                   | 生成行内代码块 \` `
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>B</kbd>                   | 生成无序标题
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>1</kbd>                   | 生成有序标题
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>X</kbd>                   | 生成可选框
-<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>M</kbd>                   | 显示出所有功能
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>               | 显示所有错误信息
-<kbd>Alt</kbd> + <kbd>F8</kbd>                                  | 显示当前错误信息
-<kbd>Ctrl</kbd> + <kbd>.</kbd>                                  | 自动修复
-<kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> \  <kbd>L</kbd> | 格式化所有表格
-<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>→</kbd>                | 内容选取
+|key                                                             | command|
+|:---------------------------------------------------------------|:--------------|
+|<kbd>Ctrl</kbd> + <kbd>B</kbd>                                  | 加粗|
+|<kbd>Ctrl</kbd> + <kbd>I</kbd>                                  | 斜体|
+|<kbd>Alt</kbd> + <kbd>S</kbd>                                   | 删除线|
+|<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>]</kbd>               | 当前标题升级|
+|<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>[</kbd>               | 当前标题降级|
+|<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>.</kbd>               | 聚焦到导航路径视图|
+|<kbd>Ctrl</kbd> + <kbd>L</kbd>                                  | 添加链接|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>C</kbd>                   | 生成代码块 \``` ```|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>I</kbd>                   | 生成行内代码块 \` `|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>B</kbd>                   | 生成无序标题|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>1</kbd>                   | 生成有序标题|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>X</kbd>                   | 生成可选框|
+|<kbd>Ctrl</kbd> + <kbd>M</kbd> + <kbd>M</kbd>                   | 显示出所有功能|
+|<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>               | 显示所有错误信息|
+|<kbd>Alt</kbd> + <kbd>F8</kbd>                                  | 显示当前错误信息|
+|<kbd>Ctrl</kbd> + <kbd>.</kbd>                                  | 自动修复|
+|<kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> \  <kbd>L</kbd> | 格式化所有表格|
+|<kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>→</kbd>                | 内容选取|
 
 命令面板操作（ <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> ）：
 
-key              | command
-:----------------|:---------------------
-create table ... | 创建目录
-export ...       | 打印为 pdf、html、png  ...
+|key              | command|
+|:----------------|:---------------------|
+|create table ... | 创建目录|
+|export ...       | 打印为 pdf、html、png  ...|
 
 **注意：** 在 markdown 源文件下操作，而不是预览模式。
 
